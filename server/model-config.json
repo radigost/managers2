@@ -1,0 +1,65 @@
+{
+  "_meta": {
+    "sources": [
+      "loopback/common/models",
+      "loopback/server/models",
+      "../common/models",
+      "./models"
+    ],
+    "mixins": [
+      "loopback/common/mixins",
+      "loopback/server/mixins",
+      "../common/mixins",
+      "./mixins"
+    ]
+  },
+  "User": {
+    "dataSource": "db"
+  },
+  "AccessToken": {
+    "dataSource": "db",
+    "public": false
+  },
+  "ACL": {
+    "dataSource": "db",
+    "public": false
+  },
+  "RoleMapping": {
+    "dataSource": "db",
+    "public": false,
+    "options": {
+      "strictObjectIDCoercion": true
+    }
+  },
+  "Role": {
+    "dataSource": "db",
+    "public": false
+  },
+  "Note": {
+    "dataSource": "db"
+  },
+  "Company": {
+    "dataSource": "postgres",
+    "public": true
+  },
+  "Person": {
+    "dataSource": "postgres",
+    "public": true
+  },
+  "Npc": {
+    "dataSource": "postgres",
+    "public": true
+  },
+  "Industry": {
+    "dataSource": "postgres",
+    "public": true
+  },
+  "Node": {
+    "dataSource": "postgres",
+    "public": true
+  },
+  "Link": {
+    "dataSource": "postgres",
+    "public": true
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "name": "Company",
+  "plural": "Companies",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true,
+    "postgresql": {
+      "table": "managers_company"
+    }
+  },
+  "properties": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string"
+    },
+    "size": {
+      "type": "number"
+    },
+    "industry_id": {
+      "type": "object"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "industry": {
+      "type": "belongsTo",
+      "model": "Industry",
+      "foreignKey": "industry_id"
+    },
+    "npcs": {
+      "type": "hasMany",
+      "model": "Npc",
+      "foreignKey": "id"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

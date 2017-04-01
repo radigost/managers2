@@ -1,0 +1,25 @@
+{
+  "name": "Link",
+  "plural": "Links",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true,
+    "postgresql": {
+      "table": "managers_node_choice"
+    }
+  },
+  "properties": {
+    "from_node_id": {
+      "type": "number",
+      "required": true
+    },
+    "to_node_id": {
+      "type": "number"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

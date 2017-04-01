@@ -1,0 +1,40 @@
+{
+  "name": "Npc",
+  "plural": "Npcs",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true,
+    "postgresql": {
+      "table": "managers_npc"
+    }
+  },
+  "properties": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "image_path": {
+      "type": "string"
+    },
+    "stats": {
+      "type": "object"
+    },
+    "company_id": {
+      "type": "number"
+    },
+    "position_id": {
+      "type": "number"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "company": {
+      "type": "belongsTo",
+      "model": "Company",
+      "foreignKey": "company_id"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

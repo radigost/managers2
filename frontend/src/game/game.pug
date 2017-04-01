@@ -1,0 +1,11 @@
+
+.centered
+    h3 [[ctrl.service.gameName]]
+.container
+    .row
+        .col-lg-4
+            .panel.panel-default(style="background-color:#C4D9D4;")
+               player-info($router="ctrl.$router")
+
+        .panel.panel-default.col-lg-8(style="background-color:#C4D9D4;")
+            ng-outlet

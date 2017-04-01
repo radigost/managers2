@@ -1,0 +1,28 @@
+{
+  "name": "Industry",
+  "plural": "Industries",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true,
+    "postgresql": {
+      "table": "managers_industry"
+    }
+  },
+  "properties": {
+    "name": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {
+    "companies": {
+      "type": "hasMany",
+      "model": "Company",
+      "foreignKey": "id"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}
