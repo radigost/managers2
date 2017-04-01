@@ -1,6 +1,6 @@
 {
   "name": "Npc",
-  "plural": "Npcs",
+  "plural": "Npc",
   "base": "PersistedModel",
   "idInjection": true,
   "options": {

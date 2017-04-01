@@ -138,7 +138,8 @@ function Npc(Restangular,q) {
   //working with dialog
   function loadNodes() {
     var def = q.defer();
-    Restangular.one('api/v1/nodes/npc').get().then(
+    var params = {filter:{"where":{"category":"npc"}}};
+    Restangular.one('api/v1/nodes').get(params).then(
       (res)=> {
         this.nodes = res;
         def.resolve();
@@ -148,7 +149,8 @@ function Npc(Restangular,q) {
 
   function loadTree() {
     var def = q.defer();
-    Restangular.one('api/v1/nodes/player').get().then(
+    var params = {filter:{"where":{"category":"player"}}};
+    Restangular.one('api/v1/nodes').get(params).then(
       (res)=> {
         this.tree = res;
         def.resolve();
@@ -157,14 +159,18 @@ function Npc(Restangular,q) {
   }
 
   function findNode(questionId) {
-    return this.branch = _.find(this.tree, {
+     this.branch = _.find(this.tree, {
       id: questionId
     });
+    console.log(this.branch);
+    return this.branch;
   }
 
   function findCurrent() {
     var choiceIndex, name;
+
     choiceIndex = _.sample(this.branch.choice);
+    
     this.current = _.find(this.nodes, {
       id: choiceIndex
     });
@@ -172,6 +178,7 @@ function Npc(Restangular,q) {
       name = this.name;
       return this.current.text = _.replace(this.current.text, 'PERSONNAME', name);
     }
+    console.log(this.current);
   }
 
 

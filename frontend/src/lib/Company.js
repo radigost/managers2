@@ -21,16 +21,20 @@ function Company(Restangular){
     return service;
 
     function selectCurrent(id) {
-        Restangular.one('api/v1/companies/', id).get().then((res)=>service.current = res);
-        Restangular.one('api/v1/companies/', id,'/npcs/').get().then((res)=>{
-            var s = [];
-            _.forEach(res,(npc)=>{
-                s.push(npc.id);
-            })
-            service.current.npc_set = s;
+        if (service.current.id != id) {
+        Restangular.one('api/v1/companies/', id).get().then((res)=>{
+            service.current = res;
+            Restangular.one('api/v1/companies/'+ id+'/npcs/').get().then((res)=>{
+                var s = [];
+                _.forEach(res,(npc)=>{
+                    s.push(npc.id);
+                })
+                service.current.npc_set = s;
+            });
         });
+        
     }
-
+    }
 
 };
 

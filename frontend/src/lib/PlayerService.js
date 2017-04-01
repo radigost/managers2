@@ -59,7 +59,8 @@ function Player(Restangular,q) {
 
   function loadNodes () {
     var def = q.defer();
-    Restangular.one('api/v1/nodes/player').get().then(function(res) {
+    var params = {filter:{"where":{"category":"player"}}};
+    Restangular.one('api/v1/nodes').get(params).then(function(res) {
         service.nodes = res;
         def.resolve();
       }
@@ -70,7 +71,8 @@ function Player(Restangular,q) {
   function loadTree () {
     var def;
     def = q.defer();
-    Restangular.one('api/v1/nodes/npc').get().then((function(_this) {
+    var params = {filter:{"where":{"category":"npc"}}};
+    Restangular.one('api/v1/nodes').get(params).then((function(_this) {
       return function(res) {
         _this.tree = res;
         return def.resolve();
@@ -123,9 +125,12 @@ function Player(Restangular,q) {
   }
 
   function findCurrent(questionId) {
-    return this.current = _.find(this.nodes, {
+    
+     this.current = _.find(this.nodes, {
       id: questionId
     });
+    console.log(this.current);
+    return this.current;
   }
 
   function fail() {

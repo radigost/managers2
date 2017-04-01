@@ -471,7 +471,8 @@ function Npc(Restangular,q) {
   //working with dialog
   function loadNodes() {
     var def = q.defer();
-    Restangular.one('api/v1/nodes/npc').get().then(
+    var params = {filter:{"where":{"category":"npc"}}};
+    Restangular.one('api/v1/nodes').get(params).then(
       (res)=> {
         this.nodes = res;
         def.resolve();
@@ -481,7 +482,8 @@ function Npc(Restangular,q) {
 
   function loadTree() {
     var def = q.defer();
-    Restangular.one('api/v1/nodes/player').get().then(
+    var params = {filter:{"where":{"category":"player"}}};
+    Restangular.one('api/v1/nodes').get(params).then(
       (res)=> {
         this.tree = res;
         def.resolve();
@@ -490,14 +492,18 @@ function Npc(Restangular,q) {
   }
 
   function findNode(questionId) {
-    return this.branch = _.find(this.tree, {
+     this.branch = _.find(this.tree, {
       id: questionId
     });
+    console.log(this.branch);
+    return this.branch;
   }
 
   function findCurrent() {
     var choiceIndex, name;
+
     choiceIndex = _.sample(this.branch.choice);
+    
     this.current = _.find(this.nodes, {
       id: choiceIndex
     });
@@ -505,6 +511,7 @@ function Npc(Restangular,q) {
       name = this.name;
       return this.current.text = _.replace(this.current.text, 'PERSONNAME', name);
     }
+    console.log(this.current);
   }
 
 
@@ -646,7 +653,8 @@ function Player(Restangular,q) {
 
   function loadNodes () {
     var def = q.defer();
-    Restangular.one('api/v1/nodes/player').get().then(function(res) {
+    var params = {filter:{"where":{"category":"player"}}};
+    Restangular.one('api/v1/nodes').get(params).then(function(res) {
         service.nodes = res;
         def.resolve();
       }
@@ -657,7 +665,8 @@ function Player(Restangular,q) {
   function loadTree () {
     var def;
     def = q.defer();
-    Restangular.one('api/v1/nodes/npc').get().then((function(_this) {
+    var params = {filter:{"where":{"category":"npc"}}};
+    Restangular.one('api/v1/nodes').get(params).then((function(_this) {
       return function(res) {
         _this.tree = res;
         return def.resolve();
@@ -710,9 +719,12 @@ function Player(Restangular,q) {
   }
 
   function findCurrent(questionId) {
-    return this.current = _.find(this.nodes, {
+    
+     this.current = _.find(this.nodes, {
       id: questionId
     });
+    console.log(this.current);
+    return this.current;
   }
 
   function fail() {
@@ -67611,16 +67623,20 @@ function Company(Restangular){
     return service;
 
     function selectCurrent(id) {
-        Restangular.one('api/v1/companies/', id).get().then((res)=>service.current = res);
-        Restangular.one('api/v1/companies/', id,'/npcs/').get().then((res)=>{
-            var s = [];
-            _.forEach(res,(npc)=>{
-                s.push(npc.id);
-            })
-            service.current.npc_set = s;
+        if (service.current.id != id) {
+        Restangular.one('api/v1/companies/', id).get().then((res)=>{
+            service.current = res;
+            Restangular.one('api/v1/companies/'+ id+'/npcs/').get().then((res)=>{
+                var s = [];
+                _.forEach(res,(npc)=>{
+                    s.push(npc.id);
+                })
+                service.current.npc_set = s;
+            });
         });
+        
     }
-
+    }
 
 };
 
@@ -68152,8 +68168,10 @@ function TalkService(Restangular,player,npc,q) {
     function findAnswerForQuestion (questionId) {
         var startElement;
         if (!questionId || questionId === 1) {
+            
             startElement = _.find(npc.tree, 'is_start');
             questionId = startElement.id;
+            
         }
         if (questionId) {
             npc.findNode(questionId);
@@ -68194,6 +68212,7 @@ function TalkService(Restangular,player,npc,q) {
 
     function writeHistory () {
         var inHistory;
+        console.log(player);
         if (player.current) {
             inHistory = _.find(history, {
                 text: player.current.text

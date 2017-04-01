@@ -92,8 +92,10 @@ function TalkService(Restangular,player,npc,q) {
     function findAnswerForQuestion (questionId) {
         var startElement;
         if (!questionId || questionId === 1) {
+            
             startElement = _.find(npc.tree, 'is_start');
             questionId = startElement.id;
+            
         }
         if (questionId) {
             npc.findNode(questionId);
@@ -134,6 +136,7 @@ function TalkService(Restangular,player,npc,q) {
 
     function writeHistory () {
         var inHistory;
+        console.log(player);
         if (player.current) {
             inHistory = _.find(history, {
                 text: player.current.text
