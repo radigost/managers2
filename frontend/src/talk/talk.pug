@@ -70,7 +70,7 @@
                         href=""
                       ).list-group-item(
                           ng-repeat='element in ctrl.getPlayerQuestions()'
-                          ng-click='ctrl.update(element.id)'
+                          ng-click='ctrl.update(element.to_node_id)'
                           style="background-color:#F8FBF4;"
                           ) -&nbsp;[[element.text]]
         .col-lg-6

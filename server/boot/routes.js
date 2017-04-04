@@ -30,30 +30,24 @@ module.exports = function(app) {
 
     app.get('/api/v1/update', function(req, res) {
       var npcAnswer,content,nodeChoices;
-      var questionId = req.query.questionId;
+      var questionId = req.query.questionId || 1; //hardcoded TODO@radigost переделать на выбор начального элемента
       var Link = app.models.Link;
       var Node = app.models.Node;
       // console.log(Link);
        var s = Link.find({where:{'from_node_id':questionId}},function (err,links) {
-
          npcAnswer  = _.sample(links);
-         console.log(npcAnswer);
-         Node.find({where:{'id':npcAnswer.to_node_id},include:'links'},function (err,node) {
-           console.log(node);
-           Link.find({where:{'from_node_id':node.id}},function (err,nodeChoices) {
-             content = {
-               is_fail:true,
-               is_success:true,
-               questions:nodeChoices,
-               previousAnswer:{text:npcAnswer.id},
-               gameStats:{},
-               time:50
-             };
-             res.json(content);
-           });
-
+         npcAnswer.node_to(function (err,nodeTo) {
+             Link.find({where:{'from_node_id':npcAnswer.to_node_id}},function (err,nodeChoices) {
+                 content = {
+                     type:nodeTo.type,
+                     questions:nodeChoices,
+                     previousAnswer:{text:npcAnswer.text},
+                     gameStats:{},
+                     time:_.random(10,80)
+                 };
+                 res.json(content);
+             });
          });
-
 
 
        });

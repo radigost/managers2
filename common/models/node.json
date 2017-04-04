@@ -13,24 +13,21 @@
     "category": {
       "type": "string"
     },
-    "text": {
-      "type": "string"
-    },
-    "is_fail": {
-      "type": "boolean"
-    },
-    "is_success": {
-      "type": "boolean"
-    },
     "is_start": {
       "type": "boolean"
     },
     "type": {
-      "type": "object"
+      "type": "string"
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "links_to": {
+      "type": "hasMany",
+      "model": "Link",
+      "foreignKey": "from_node_id"
+    }
+  },
   "acls": [],
   "methods": {}
 }

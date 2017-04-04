@@ -52,9 +52,11 @@ function TalkCtrl(service)
         var f;
         f = "";
         if (service.isStatus('failure')) {
+            console.log('failure');
             f = "failure";
         }
         if (service.isStatus('success')) {
+            console.log('success');
             f = "success";
         }
         return f;

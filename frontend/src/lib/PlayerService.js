@@ -38,6 +38,7 @@ function Player(Restangular,q) {
             d.resolve();
         });
     }
+    else {d.resolve();}
     return d.promise;
   }
 

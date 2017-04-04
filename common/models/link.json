@@ -22,7 +22,13 @@
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "node_to": {
+      "type": "belongsTo",
+      "model": "Node",
+      "foreignKey": "to_node_id"
+    }
+  },
   "acls": [],
   "methods": {}
 }
