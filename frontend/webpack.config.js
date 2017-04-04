@@ -43,6 +43,16 @@ module.exports = {
                 { test: /\.html$/, use: "html" },
                 { test: /\.pug/, use: "pug-loader"},
                 { test: /\.jade/, use: "pug-loader"},
+                {
+                    test: /\.js$/,
+                    exclude: /(node_modules|bower_components)/,
+                    use: {
+                        loader: 'babel-loader',
+                        options: {
+                        presets: ['env']
+                        }
+                    }
+                }
                 // { test: /\.ts$/, use: 'ts-loader' },
 
         ]

@@ -32,29 +32,23 @@ function TalkCtrl(service)
 {
     this.gameName = "Окно переговоров";
 
-    var _this=this;
-    _this.player=service.getPlayer();
-    _this.npc=service.getNpc();
-    _this.getHistory = service.getHistory;
-    _this.getPlayerQuestions = service.getPlayerQuestions;
-    _this.update = service.update;
-    _this.getNpcAnswers = service.getNpcAnswers;
-    _this.getTime = service.getTime;
+    this.player=service.getPlayer();
+    this.npc=service.getNpc();
+    this.getHistory = service.getHistory;
+    this.getPlayerQuestions = service.getPlayerQuestions;
+    this.update = service.update;
+    this.getNpcAnswers = service.getNpcAnswers;
+    this.getTime = service.getTime;
 
-    _this.$routerOnActivate = function() {
+    this.$routerOnActivate = function() {
         service.init();
     };
     
-    _this.notTheEnd  = function() {
-            var r;
-            r = true;
-            if (service.isStatus('failure') || service.isStatus('success')) {
-                r = false;
-            }
-            return r;
-        }
+    this.notTheEnd  = function() {
+        return !(service.isStatus('failure') || service.isStatus('success'));
+    }
 
-    _this.checkColor=function () {
+    this.checkColor=function () {
         var f;
         f = "";
         if (service.isStatus('failure')) {

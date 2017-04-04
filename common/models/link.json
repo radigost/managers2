@@ -16,6 +16,9 @@
     },
     "to_node_id": {
       "type": "number"
+    },
+    "text": {
+      "type": "string"
     }
   },
   "validations": [],

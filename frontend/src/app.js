@@ -59,9 +59,9 @@ angular
         template:appTpl(),
         $routeConfig: [
             {path: '/', name: 'Menu', component: 'menu',useAsDefault:true},
-            {path: '/talk', name: 'Talk', component: 'talk'},
-            {path: '/tree', name: 'Tree', component: 'tree'},
-            {path: '/newgame', name: 'NewGame', component: 'newgame'},
+            {path: '/talk/', name: 'Talk', component: 'talk'},
+            {path: '/tree/', name: 'Tree', component: 'tree'},
+            {path: '/newgame/', name: 'NewGame', component: 'newgame'},
             {path: '/game/...', name: 'Game', component: 'game'}
         ]
         })

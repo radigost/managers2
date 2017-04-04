@@ -329,214 +329,53 @@ function pug_rethrow(err, filename, lineno, str){
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-// import * as angular from "angular";
-// import IQService = angular.IQService;
-// import IService = restangular.IService;
-// import * as restangular from "restangular";
-// import * as _ from "lodash";
+"use strict";
+
+
 /**
  * Created by user on 05.01.17.
  */
-angular.module('app').service('Npc',  Npc);
+angular.module('app').service('Npc', Npc);
 
 Npc.$inject = ['Restangular', '$q'];
 
-function Npc(Restangular,q) {
+function Npc(Restangular, q) {
   var type = 'npc',
-  tree = [],
-  nodes = [
-    {
-      id: 1,
-      text: "Да, здравствуйте, чем можем вам помочь?",
-      used: false
-    }, {
-      id: 2,
-      text: "Да отошел он, не знаем когда будет...",
-      used: false
-    }, {
-      id: 3,
-      text: "Да не работают такие у нас...",
-      used: false
-    }, {
-      id: 7,
-      text: "И вам добрый день!",
-      used: false
-    }, {
-      id: 4,
-      text: "А кто его спрашивает?",
-      used: false
-    }, {
-      id: 5,
-      text: "Алло?",
-      used: false
-    }, {
-      id: 6,
-      text: "Меня зовут PERSONNAME",
-      used: false
-    }, {
-      id: 8,
-      text: "Вы знаете, он сейчас находится на совещании, но вы можете оставить информацию о вашей компании у нас на электронной почте",
-      used: false
-    }, {
-      id: 9,
-      text: "%EMAIL%, Можете высысылать на него информацию, и мы с вами свяжемся, если нам будет интересно",
-      used: false
-    }, {
-      id: 10,
-      text: "Нет не надо нас набирать, мы вас сами наберем, до свидания!",
-      used: false,
-      type: "failure"
-    }, {
-      id: 11,
-      text: "Ну тогда всего доброго!",
-      used: false,
-      type: "failure"
-    }, {
-      id: 12,
-      text: "Ну знаете, сегодня скорее всего уже не освободится, но можете позвонить завтра в районе обеда, попробую вас с ним соединить",
-      used: false,
-      type: "failure"
-    }, {
-      id: 13,
-      text: "Да, конечно. Давайте соединю",
-      used: false,
-      type: "success"
-    }, {
-      id: 14,
-      text: "Я извиняюсь, но мне кажется вы не долны сюда больше звонить, всего доброго!",
-      used: false,
-      type: "failure"
-    }, {
-      id: 15,
-      text: "Я могу продиктовать вам электронную почту и вы вышлите на нее ваше предложение",
-      used: false
-    }, {
-      id: 16,
-      text: "А что вам конкретно нужно, вы хотите что то предложить?",
-      used: false
-    }, {
-      id: 17,
-      text: "А он о вас знает, как вас представить?",
-      used: false
-    }
-  ],
-  loadedData = [],
-  currentNpc = {},
-  npcList = {};
-
+      currentNpc = {},
+      npcList = {};
 
   var service = {
-
-    type:type,
-    tree:tree,
-    nodes:nodes,
-    loadedData:loadedData,
-    getNpc:getNpc,
-
-    getCurrentNpc:getCurrentNpc,
-    initNew:initNew,
-    loadNodes:loadNodes,
-    loadTree:loadTree,
-    findNode:findNode,
-    findCurrent:findCurrent,
-    selectCurrent:selectCurrent,
-    fail:fail,
-    succeed:succeed
-
+    type: type,
+    initNew: initNew,
+    getNpc: getNpc,
+    selectCurrent: selectCurrent,
+    getCurrentNpc: getCurrentNpc
   };
   return service;
-
 
   //factory method
   function initNew(Restangular, q) {
     return new Npc(Restangular, q);
   }
   function selectCurrent(id) {
-      getNpc(id).then((res)=> currentNpc = res);
+    getNpc(id).then(function (res) {
+      return currentNpc = res;
+    });
   }
   function getCurrentNpc() {
     return currentNpc;
   }
   function getNpc(id) {
     var defer = q.defer();
-    npcList[id] ? defer.resolve(npcList[id]) :  Restangular.one('api/v1/npc/', id).get().then((res)=>{
+    npcList[id] ? defer.resolve(npcList[id]) : Restangular.one('api/v1/npc/', id).get().then(function (res) {
       npcList[id] = res;
-     defer.resolve(npcList[id]);
+      defer.resolve(npcList[id]);
     });
     return defer.promise;
   }
-
-  //working with dialog
-  function loadNodes() {
-    var def = q.defer();
-    var params = {filter:{"where":{"category":"npc"}}};
-    Restangular.one('api/v1/nodes').get(params).then(
-      (res)=> {
-        this.nodes = res;
-        def.resolve();
-      });
-    return def.promise;
-  }
-
-  function loadTree() {
-    var def = q.defer();
-    var params = {filter:{"where":{"category":"player"}}};
-    Restangular.one('api/v1/nodes').get(params).then(
-      (res)=> {
-        this.tree = res;
-        def.resolve();
-    });
-    return def.promise;
-  }
-
-  function findNode(questionId) {
-     this.branch = _.find(this.tree, {
-      id: questionId
-    });
-    console.log(this.branch);
-    return this.branch;
-  }
-
-  function findCurrent() {
-    var choiceIndex, name;
-
-    choiceIndex = _.sample(this.branch.choice);
-    
-    this.current = _.find(this.nodes, {
-      id: choiceIndex
-    });
-    if (this.current && this.current.text.indexOf("PERSONNAME")) {
-      name = this.name;
-      return this.current.text = _.replace(this.current.text, 'PERSONNAME', name);
-    }
-    console.log(this.current);
-  }
-
-
-
-  function fail() {
-    return this.current = {
-      id: null,
-      text: "Извините, Всего доброго! (звук кладущейся трубки)"
-    };
-  }
-
-  function succeed() {
-    return this.current = {
-      id: null,
-      text: "Давайте соединю"
-    };
-  }
-
-
 };
-
-
-
-
-
 
 /***/ }),
 /* 2 */
@@ -550,6 +389,9 @@ module.exports = angular;
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 // import * as angular from "angular";
 // import * as restangular from "restangular";
 // import {storage} from "angular";
@@ -561,36 +403,35 @@ __webpack_require__(4);
 angular.module('app').service('gameService', GameService);
 
 GameService.$inject = ['Restangular', 'Player'];
-function GameService(Restangular,player) {
+function GameService(Restangular, player) {
 
-    var inited,companies;
+    var inited, companies;
 
     var inited = false;
 
-    var service =  {
-        inited:inited,
-        companies:companies,
-        player:player,
-        init:init
+    var service = {
+        inited: inited,
+        companies: companies,
+        player: player,
+        init: init
     };
     return service;
 
     function init() {
         player.init();
-        Restangular.one('api/v1/companies/').get().then(function(res) {
-          service.companies = res;
-          inited = true;
+        Restangular.one('api/v1/companies/').get().then(function (res) {
+            service.companies = res;
+            inited = true;
         });
     }
 }
 
-
-
-
-
 /***/ }),
 /* 4 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 /**
  * Created by user on 05.01.17.
@@ -600,242 +441,104 @@ angular.module('app').service('Player', Player);
 
 Player.$inject = ['Restangular', '$q'];
 
-function Player(Restangular,q) {
+function Player(Restangular, q) {
   var inited = false;
-    var type = 'player',
-    name = "",
-    fakeName = "Иван Иванович",
-    company = "",
-    money = "",
-    position = "",
-    nodes = [],
-    tree = [];
+  var id;
+  var type = 'player',
+      name = "",
+      fakeName = "Иван Иванович",
+      company = "",
+      money = "",
+      position = "";
   var service = {
-  type:type,
-  name:name,
-  fakeName:fakeName,
-  company:company,
-  money:money,
-  position:position,
-  nodes:nodes,
-  tree:tree,
+    type: type,
+    name: name,
+    fakeName: fakeName,
+    company: company,
+    money: money,
+    position: position,
 
-  init:init,
-  loadNodes:loadNodes,
-  loadTree:loadTree,
-  findNode:findNode,
-  findCurrent:findCurrent,
-  choosePlayer:choosePlayer,
-  fail:fail,
-  succeed:succeed
-};
+    init: init,
+    choosePlayer: choosePlayer
+  };
   return service;
+
   function init() {
+    var _this = this;
+
+    var d = q.defer();
     id = localStorage.getItem("playerId");
     if (!inited) {
-        Restangular.one('api/v1/persons/', id).get().then((function(_this){
-            return function(res)  {
-              _.extend(_this, res);
-              inited = true;
-            }
-        })(this));
+      Restangular.one('api/v1/persons/', id).get().then(function (res) {
+        _.extend(_this, res);
+        inited = true;
+        d.resolve();
+      });
     }
+    return d.promise;
   }
+
   function choosePlayer(playerAvatarID) {
     if (playerAvatarID) {
       return this.playerAvatarID = playerAvatarID;
     }
   }
-
-
-
-  //Working with dialog
-
-  function loadNodes () {
-    var def = q.defer();
-    var params = {filter:{"where":{"category":"player"}}};
-    Restangular.one('api/v1/nodes').get(params).then(function(res) {
-        service.nodes = res;
-        def.resolve();
-      }
-    );
-    return def.promise;
-  }
-
-  function loadTree () {
-    var def;
-    def = q.defer();
-    var params = {filter:{"where":{"category":"npc"}}};
-    Restangular.one('api/v1/nodes').get(params).then((function(_this) {
-      return function(res) {
-        _this.tree = res;
-        return def.resolve();
-      };
-    })(this));
-    return def.promise;
-  };
-
-  function findNode(questionId) {
-    this.branch = _.find(this.tree, {
-      id: questionId
-    });
-    if (this.branch) {
-      this.questionArray = _.filter(this.nodes, (function(_this) {
-        return function(element) {
-          return _.includes(_this.branch.choice, element.id);
-        };
-      })(this));
-      _.forEach(this.questionArray, (function(_this) {
-        return function(element) {
-          var name;
-          if (element.text.indexOf("%USERNAME%")) {
-            name = _this.name;
-            return element.text = _.replace(element.text, '%USERNAME%', name);
-          }
-        };
-      })(this));
-      _.forEach(this.questionArray, (function(_this) {
-        return function(element) {
-          var name;
-          if (element.text.indexOf("%FAKEUSERNAME%")) {
-            name = _this.fakeName;
-            return element.text = _.replace(element.text, '%FAKEUSERNAME%', name);
-          }
-        };
-      })(this));
-      return _.forEach(this.questionArray, (function(_this) {
-        return function(element) {
-          var name;
-          if (element.text.indexOf("%LPRNAME%")) {
-            name = "Михаила Сергеевича";
-            element.text = _.replace(element.text, '%LPRNAME%', name);
-            return _this.fakeName;
-          }
-        };
-      })(this));
-    } else {
-      return this.questionArray = [];
-    }
-  }
-
-  function findCurrent(questionId) {
-    
-     this.current = _.find(this.nodes, {
-      id: questionId
-    });
-    console.log(this.current);
-    return this.current;
-  }
-
-  function fail() {
-    return this.current = {
-      id: null,
-      text: "Эммм..ну до свиданья"
-    };
-  }
-
-  function succeed(){
-    return this.current = {
-      id: null,
-      text: "Да, спасибо большое"
-    };
-  }
-
-
 };
-
-
-
 
 /***/ }),
 /* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
-//styles and fonts
-__webpack_require__(18);
+"use strict";
 
+
+//styles and fonts
+__webpack_require__(32);
 
 //modules
 __webpack_require__(2);
-__webpack_require__(33);
+__webpack_require__(47);
 __webpack_require__(7);
 // import "@angular/upgrade/upgrade";
 __webpack_require__(13);
 __webpack_require__(9);
 __webpack_require__(11);
-__webpack_require__(35);
-__webpack_require__(16);
-__webpack_require__(15);
-__webpack_require__(17);
+__webpack_require__(49);
+__webpack_require__(30);
+__webpack_require__(29);
+__webpack_require__(31);
 
-
-
-
-const appTpl = __webpack_require__(22);
+var appTpl = __webpack_require__(36);
 __webpack_require__(2);
-angular
-    .module('app',
-    [
-      'restangular',
-      'ngComponentRouter',
-      'ui.bootstrap',
-      'ngCookies',
-      'ngSanitize',
-      'ui.select'
-    ])
-    .config(function($interpolateProvider) {
-      $interpolateProvider.startSymbol('[[');
-      $interpolateProvider.endSymbol(']]');
-    })
-    .config(function(RestangularProvider) {
-      return RestangularProvider.setRequestSuffix("/");
-    })
-    .config(function($locationProvider) {
-      return $locationProvider.html5Mode(false);
-}   )
-
-
-
-
-__webpack_require__(45);
-__webpack_require__(48);
-__webpack_require__(51);
-__webpack_require__(42);
-__webpack_require__(47);
-
-
-
-
-
-angular
-    .module('app').component('app',{
-        template:appTpl(),
-        $routeConfig: [
-            {path: '/', name: 'Menu', component: 'menu',useAsDefault:true},
-            {path: '/talk', name: 'Talk', component: 'talk'},
-            {path: '/tree', name: 'Tree', component: 'tree'},
-            {path: '/newgame', name: 'NewGame', component: 'newgame'},
-            {path: '/game/...', name: 'Game', component: 'game'}
-        ]
-        })
-        .value('$routerRootComponent', 'app');
-
-
-
-angular.element(document).ready(function() {
-    angular.bootstrap(document, ["app"]);
+angular.module('app', ['restangular', 'ngComponentRouter', 'ui.bootstrap', 'ngCookies', 'ngSanitize', 'ui.select']).config(function ($interpolateProvider) {
+  $interpolateProvider.startSymbol('[[');
+  $interpolateProvider.endSymbol(']]');
+}).config(function (RestangularProvider) {
+  return RestangularProvider.setRequestSuffix("/");
+}).config(function ($locationProvider) {
+  return $locationProvider.html5Mode(false);
 });
 
+__webpack_require__(22);
+__webpack_require__(25);
+__webpack_require__(28);
+__webpack_require__(19);
+__webpack_require__(24);
 
+angular.module('app').component('app', {
+  template: appTpl(),
+  $routeConfig: [{ path: '/', name: 'Menu', component: 'menu', useAsDefault: true }, { path: '/talk/', name: 'Talk', component: 'talk' }, { path: '/tree/', name: 'Tree', component: 'tree' }, { path: '/newgame/', name: 'NewGame', component: 'newgame' }, { path: '/game/...', name: 'Game', component: 'game' }]
+}).value('$routerRootComponent', 'app');
 
+angular.element(document).ready(function () {
+  angular.bootstrap(document, ["app"]);
+});
 
 /***/ }),
 /* 6 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-
-
-
+"use strict";
 
 
 /***/ }),
@@ -3938,7 +3641,7 @@ function canActivateOne(nextInstruction, prevInstruction) {
 /***/ (function(module, exports) {
 
 /**
- * @license AngularJS v1.6.3
+ * @license AngularJS v1.6.4
  * (c) 2010-2017 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -3961,7 +3664,7 @@ function canActivateOne(nextInstruction, prevInstruction) {
 
 
 angular.module('ngCookies', ['ng']).
-  info({ angularVersion: '1.6.3' }).
+  info({ angularVersion: '1.6.4' }).
   /**
    * @ngdoc provider
    * @name $cookiesProvider
@@ -4283,7 +3986,7 @@ module.exports = 'ngCookies';
 /***/ (function(module, exports) {
 
 /**
- * @license AngularJS v1.6.3
+ * @license AngularJS v1.6.4
  * (c) 2010-2017 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -4838,7 +4541,7 @@ function sanitizeText(chars) {
 // define ngSanitize module and register $sanitize service
 angular.module('ngSanitize', [])
   .provider('$sanitize', $SanitizeProvider)
-  .info({ angularVersion: '1.6.3' });
+  .info({ angularVersion: '1.6.4' });
 
 /**
  * @ngdoc filter
@@ -12843,7 +12546,7 @@ module.exports = 'ui.bootstrap';
 /***/ (function(module, exports) {
 
 /**
- * @license AngularJS v1.6.3
+ * @license AngularJS v1.6.4
  * (c) 2010-2017 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -12900,7 +12603,7 @@ function minErr(module, ErrorConstructor) {
       return match;
     });
 
-    message += '\nhttp://errors.angularjs.org/1.6.3/' +
+    message += '\nhttp://errors.angularjs.org/1.6.4/' +
       (module ? module + '/' : '') + code;
 
     for (i = 0, paramPrefix = '?'; i < templateArgs.length; i++, paramPrefix = '&') {
@@ -12973,6 +12676,7 @@ function minErr(module, ErrorConstructor) {
   includes,
   arrayRemove,
   copy,
+  simpleCompare,
   equals,
   csp,
   jq,
@@ -13951,6 +13655,10 @@ function copy(source, destination, maxDepth) {
 }
 
 
+// eslint-disable-next-line no-self-compare
+function simpleCompare(a, b) { return a === b || (a !== a && b !== b); }
+
+
 /**
  * @ngdoc function
  * @name angular.equals
@@ -14031,7 +13739,7 @@ function equals(o1, o2) {
       }
     } else if (isDate(o1)) {
       if (!isDate(o2)) return false;
-      return equals(o1.getTime(), o2.getTime());
+      return simpleCompare(o1.getTime(), o2.getTime());
     } else if (isRegExp(o1)) {
       if (!isRegExp(o2)) return false;
       return o1.toString() === o2.toString();
@@ -15586,11 +15294,11 @@ function toDebugString(obj, maxDepth) {
 var version = {
   // These placeholder strings will be replaced by grunt's `build` task.
   // They need to be double- or single-quoted.
-  full: '1.6.3',
+  full: '1.6.4',
   major: 1,
   minor: 6,
-  dot: 3,
-  codeName: 'scriptalicious-bootstrapping'
+  dot: 4,
+  codeName: 'phenomenal-footnote'
 };
 
 
@@ -15736,7 +15444,7 @@ function publishExternalAPI(angular) {
       });
     }
   ])
-  .info({ angularVersion: '1.6.3' });
+  .info({ angularVersion: '1.6.4' });
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -15940,12 +15648,6 @@ function jqLiteHasData(node) {
   return false;
 }
 
-function jqLiteCleanData(nodes) {
-  for (var i = 0, ii = nodes.length; i < ii; i++) {
-    jqLiteRemoveData(nodes[i]);
-  }
-}
-
 function jqLiteBuildFragment(html, context) {
   var tmp, tag, wrap,
       fragment = context.createDocumentFragment(),
@@ -16048,13 +15750,10 @@ function jqLiteClone(element) {
 }
 
 function jqLiteDealoc(element, onlyDescendants) {
-  if (!onlyDescendants) jqLiteRemoveData(element);
+  if (!onlyDescendants && jqLiteAcceptsData(element)) jqLite.cleanData([element]);
 
   if (element.querySelectorAll) {
-    var descendants = element.querySelectorAll('*');
-    for (var i = 0, l = descendants.length; i < l; i++) {
-      jqLiteRemoveData(descendants[i]);
-    }
+    jqLite.cleanData(element.querySelectorAll('*'));
   }
 }
 
@@ -16352,7 +16051,11 @@ forEach({
   data: jqLiteData,
   removeData: jqLiteRemoveData,
   hasData: jqLiteHasData,
-  cleanData: jqLiteCleanData
+  cleanData: function jqLiteCleanData(nodes) {
+    for (var i = 0, ii = nodes.length; i < ii; i++) {
+      jqLiteRemoveData(nodes[i]);
+    }
+  }
 }, function(fn, name) {
   JQLite[name] = fn;
 });
@@ -20213,9 +19916,9 @@ function $TemplateCacheProvider() {
  * initialized.
  *
  * <div class="alert alert-warning">
- * **Deprecation warning:** although bindings for non-ES6 class controllers are currently
- * bound to `this` before the controller constructor is called, this use is now deprecated. Please place initialization
- * code that relies upon bindings inside a `$onInit` method on the controller, instead.
+ * **Deprecation warning:** if `$compileProcvider.preAssignBindingsEnabled(true)` was called, bindings for non-ES6 class
+ * controllers are bound to `this` before the controller constructor is called but this use is now deprecated. Please
+ * place initialization code that relies upon bindings inside a `$onInit` method on the controller, instead.
  * </div>
  *
  * It is also possible to set `bindToController` to an object hash with the same format as the `scope` property.
@@ -21228,7 +20931,14 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
    *
    * If disabled (false), the compiler calls the constructor first before assigning bindings.
    *
-   * The default value is true in Angular 1.5.x but will switch to false in Angular 1.6.x.
+   * The default value is false.
+   *
+   * @deprecated
+   * sinceVersion="1.6.0"
+   * removeVersion="1.7.0"
+   *
+   * This method and the option to assign the bindings before calling the controller's constructor
+   * will be removed in v1.7.0.
    */
   var preAssignBindingsEnabled = false;
   this.preAssignBindingsEnabled = function(enabled) {
@@ -23318,8 +23028,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
             if (parentGet.literal) {
               compare = equals;
             } else {
-              // eslint-disable-next-line no-self-compare
-              compare = function simpleCompare(a, b) { return a === b || (a !== a && b !== b); };
+              compare = simpleCompare;
             }
             parentSet = parentGet.assign || function() {
               // reset the change, or we will throw this exception on every $digest
@@ -23394,9 +23103,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
       });
 
       function recordChanges(key, currentValue, previousValue) {
-        if (isFunction(destination.$onChanges) && currentValue !== previousValue &&
-            // eslint-disable-next-line no-self-compare
-            (currentValue === currentValue || previousValue === previousValue)) {
+        if (isFunction(destination.$onChanges) && !simpleCompare(currentValue, previousValue)) {
           // If we have not already scheduled the top level onChangesQueue handler then do so now
           if (!onChangesQueue) {
             scope.$$postDigest(flushOnChangesQueue);
@@ -24011,7 +23718,12 @@ function defaultHttpResponseTransform(data, headers) {
     if (tempData) {
       var contentType = headers('Content-Type');
       if ((contentType && (contentType.indexOf(APPLICATION_JSON) === 0)) || isJsonLike(tempData)) {
-        data = fromJson(tempData);
+        try {
+          data = fromJson(tempData);
+        } catch (e) {
+          throw $httpMinErr('baddata', 'Data must be a valid JSON object. Received: "{0}". ' +
+          'Parse error: "{1}"', data, e);
+        }
       }
     }
   }
@@ -25916,7 +25628,7 @@ function $IntervalProvider() {
       * @param {boolean=} [invokeApply=true] If set to `false` skips model dirty checking, otherwise
       *   will invoke `fn` within the {@link ng.$rootScope.Scope#$apply $apply} block.
       * @param {...*=} Pass additional parameters to the executed function.
-      * @returns {promise} A promise which will be notified on each iteration.
+      * @returns {promise} A promise which will be notified on each iteration. It will resolve once all iterations of the interval complete.
       *
       * @example
       * <example module="intervalExample" name="interval-service">
@@ -28139,15 +27851,13 @@ function isConstant(ast) {
   return ast.constant;
 }
 
-function ASTCompiler(astBuilder, $filter) {
-  this.astBuilder = astBuilder;
+function ASTCompiler($filter) {
   this.$filter = $filter;
 }
 
 ASTCompiler.prototype = {
-  compile: function(expression) {
+  compile: function(ast) {
     var self = this;
-    var ast = this.astBuilder.ast(expression);
     this.state = {
       nextId: 0,
       filters: {},
@@ -28202,8 +27912,6 @@ ASTCompiler.prototype = {
           ifDefined,
           plusFn);
     this.state = this.stage = undefined;
-    fn.literal = isLiteral(ast);
-    fn.constant = isConstant(ast);
     return fn;
   },
 
@@ -28606,15 +28314,13 @@ ASTCompiler.prototype = {
 };
 
 
-function ASTInterpreter(astBuilder, $filter) {
-  this.astBuilder = astBuilder;
+function ASTInterpreter($filter) {
   this.$filter = $filter;
 }
 
 ASTInterpreter.prototype = {
-  compile: function(expression) {
+  compile: function(ast) {
     var self = this;
-    var ast = this.astBuilder.ast(expression);
     findConstantAndWatchExpressions(ast, self.$filter);
     var assignable;
     var assign;
@@ -28653,8 +28359,6 @@ ASTInterpreter.prototype = {
     if (inputs) {
       fn.inputs = inputs;
     }
-    fn.literal = isLiteral(ast);
-    fn.constant = isConstant(ast);
     return fn;
   },
 
@@ -28983,20 +28687,21 @@ ASTInterpreter.prototype = {
 /**
  * @constructor
  */
-var Parser = function Parser(lexer, $filter, options) {
-  this.lexer = lexer;
-  this.$filter = $filter;
-  this.options = options;
+function Parser(lexer, $filter, options) {
   this.ast = new AST(lexer, options);
-  this.astCompiler = options.csp ? new ASTInterpreter(this.ast, $filter) :
-                                   new ASTCompiler(this.ast, $filter);
-};
+  this.astCompiler = options.csp ? new ASTInterpreter($filter) :
+                                   new ASTCompiler($filter);
+}
 
 Parser.prototype = {
   constructor: Parser,
 
   parse: function(text) {
-    return this.astCompiler.compile(text);
+    var ast = this.ast.ast(text);
+    var fn = this.astCompiler.compile(ast);
+    fn.literal = isLiteral(ast);
+    fn.constant = isConstant(ast);
+    return fn;
   }
 };
 
@@ -29142,8 +28847,8 @@ function $ParseProvider() {
             if (parsedExpression.constant) {
               parsedExpression.$$watchDelegate = constantWatchDelegate;
             } else if (oneTime) {
-              parsedExpression.$$watchDelegate = parsedExpression.literal ?
-                  oneTimeLiteralWatchDelegate : oneTimeWatchDelegate;
+              parsedExpression.oneTime = true;
+              parsedExpression.$$watchDelegate = oneTimeWatchDelegate;
             } else if (parsedExpression.inputs) {
               parsedExpression.$$watchDelegate = inputsWatchDelegate;
             }
@@ -29165,14 +28870,14 @@ function $ParseProvider() {
         return newValue === oldValueOfValue;
       }
 
-      if (typeof newValue === 'object' && !compareObjectIdentity) {
+      if (typeof newValue === 'object') {
 
         // attempt to convert the value to a primitive type
         // TODO(docs): add a note to docs that by implementing valueOf even objects and arrays can
         //             be cheaply dirty-checked
         newValue = getValueOf(newValue);
 
-        if (typeof newValue === 'object') {
+        if (typeof newValue === 'object' && !compareObjectIdentity) {
           // objects/arrays are not supported - deep-watching them would be too expensive
           return false;
         }
@@ -29229,6 +28934,7 @@ function $ParseProvider() {
     }
 
     function oneTimeWatchDelegate(scope, listener, objectEquality, parsedExpression, prettyPrintExpression) {
+      var isDone = parsedExpression.literal ? isAllDefined : isDefined;
       var unwatch, lastValue;
       if (parsedExpression.inputs) {
         unwatch = inputsWatchDelegate(scope, oneTimeListener, objectEquality, parsedExpression, prettyPrintExpression);
@@ -29245,9 +28951,9 @@ function $ParseProvider() {
         if (isFunction(listener)) {
           listener(value, old, scope);
         }
-        if (isDefined(value)) {
+        if (isDone(value)) {
           scope.$$postDigest(function() {
-            if (isDefined(lastValue)) {
+            if (isDone(lastValue)) {
               unwatch();
             }
           });
@@ -29255,31 +28961,12 @@ function $ParseProvider() {
       }
     }
 
-    function oneTimeLiteralWatchDelegate(scope, listener, objectEquality, parsedExpression) {
-      var unwatch, lastValue;
-      unwatch = scope.$watch(function oneTimeWatch(scope) {
-        return parsedExpression(scope);
-      }, function oneTimeListener(value, old, scope) {
-        lastValue = value;
-        if (isFunction(listener)) {
-          listener(value, old, scope);
-        }
-        if (isAllDefined(value)) {
-          scope.$$postDigest(function() {
-            if (isAllDefined(lastValue)) unwatch();
-          });
-        }
-      }, objectEquality);
-
-      return unwatch;
-
-      function isAllDefined(value) {
-        var allDefined = true;
-        forEach(value, function(val) {
-          if (!isDefined(val)) allDefined = false;
-        });
-        return allDefined;
-      }
+    function isAllDefined(value) {
+      var allDefined = true;
+      forEach(value, function(val) {
+        if (!isDefined(val)) allDefined = false;
+      });
+      return allDefined;
     }
 
     function constantWatchDelegate(scope, listener, objectEquality, parsedExpression) {
@@ -29295,26 +28982,31 @@ function $ParseProvider() {
       var watchDelegate = parsedExpression.$$watchDelegate;
       var useInputs = false;
 
-      var regularWatch =
-          watchDelegate !== oneTimeLiteralWatchDelegate &&
-          watchDelegate !== oneTimeWatchDelegate;
+      var isDone = parsedExpression.literal ? isAllDefined : isDefined;
 
-      var fn = regularWatch ? function regularInterceptedExpression(scope, locals, assign, inputs) {
+      function regularInterceptedExpression(scope, locals, assign, inputs) {
         var value = useInputs && inputs ? inputs[0] : parsedExpression(scope, locals, assign, inputs);
         return interceptorFn(value, scope, locals);
-      } : function oneTimeInterceptedExpression(scope, locals, assign, inputs) {
-        var value = parsedExpression(scope, locals, assign, inputs);
+      }
+
+      function oneTimeInterceptedExpression(scope, locals, assign, inputs) {
+        var value = useInputs && inputs ? inputs[0] : parsedExpression(scope, locals, assign, inputs);
         var result = interceptorFn(value, scope, locals);
         // we only return the interceptor's result if the
         // initial value is defined (for bind-once)
-        return isDefined(value) ? result : value;
-      };
+        return isDone(value) ? result : value;
+      }
 
-      // Propagate $$watchDelegates other then inputsWatchDelegate
+      var fn = parsedExpression.oneTime ? oneTimeInterceptedExpression : regularInterceptedExpression;
+
+      // Propogate the literal/oneTime attributes
+      fn.literal = parsedExpression.literal;
+      fn.oneTime = parsedExpression.oneTime;
+
+      // Propagate or create inputs / $$watchDelegates
       useInputs = !parsedExpression.inputs;
-      if (parsedExpression.$$watchDelegate &&
-          parsedExpression.$$watchDelegate !== inputsWatchDelegate) {
-        fn.$$watchDelegate = parsedExpression.$$watchDelegate;
+      if (watchDelegate && watchDelegate !== inputsWatchDelegate) {
+        fn.$$watchDelegate = watchDelegate;
         fn.inputs = parsedExpression.inputs;
       } else if (!interceptorFn.$stateful) {
         // If there is an interceptor, but no watchDelegate then treat the interceptor like
@@ -31531,12 +31223,21 @@ function $$SanitizeUriProvider() {
 var $sceMinErr = minErr('$sce');
 
 var SCE_CONTEXTS = {
+  // HTML is used when there's HTML rendered (e.g. ng-bind-html, iframe srcdoc binding).
   HTML: 'html',
+
+  // Style statements or stylesheets. Currently unused in AngularJS.
   CSS: 'css',
+
+  // An URL used in a context where it does not refer to a resource that loads code. Currently
+  // unused in AngularJS.
   URL: 'url',
-  // RESOURCE_URL is a subtype of URL used in contexts where a privileged resource is sourced from a
-  // url.  (e.g. ng-include, script src, templateUrl)
+
+  // RESOURCE_URL is a subtype of URL used where the referred-to resource could be interpreted as
+  // code. (e.g. ng-include, script src binding, templateUrl)
   RESOURCE_URL: 'resourceUrl',
+
+  // Script. Currently unused in AngularJS.
   JS: 'js'
 };
 
@@ -31598,6 +31299,16 @@ function adjustMatchers(matchers) {
  * `$sceDelegate` is a service that is used by the `$sce` service to provide {@link ng.$sce Strict
  * Contextual Escaping (SCE)} services to AngularJS.
  *
+ * For an overview of this service and the functionnality it provides in AngularJS, see the main
+ * page for {@link ng.$sce SCE}. The current page is targeted for developers who need to alter how
+ * SCE works in their application, which shouldn't be needed in most cases.
+ *
+ * <div class="alert alert-danger">
+ * AngularJS strongly relies on contextual escaping for the security of bindings: disabling or
+ * modifying this might cause cross site scripting (XSS) vulnerabilities. For libraries owners,
+ * changes to this service will also influence users, so be extra careful and document your changes.
+ * </div>
+ *
  * Typically, you would configure or override the {@link ng.$sceDelegate $sceDelegate} instead of
  * the `$sce` service to customize the way Strict Contextual Escaping works in AngularJS.  This is
  * because, while the `$sce` provides numerous shorthand methods, etc., you really only need to
@@ -31623,10 +31334,14 @@ function adjustMatchers(matchers) {
  * @description
  *
  * The `$sceDelegateProvider` provider allows developers to configure the {@link ng.$sceDelegate
- * $sceDelegate} service.  This allows one to get/set the whitelists and blacklists used to ensure
- * that the URLs used for sourcing Angular templates are safe.  Refer {@link
- * ng.$sceDelegateProvider#resourceUrlWhitelist $sceDelegateProvider.resourceUrlWhitelist} and
- * {@link ng.$sceDelegateProvider#resourceUrlBlacklist $sceDelegateProvider.resourceUrlBlacklist}
+ * $sceDelegate service}, used as a delegate for {@link ng.$sce Strict Contextual Escaping (SCE)}.
+ *
+ * The `$sceDelegateProvider` allows one to get/set the whitelists and blacklists used to ensure
+ * that the URLs used for sourcing AngularJS templates and other script-running URLs are safe (all
+ * places that use the `$sce.RESOURCE_URL` context). See
+ * {@link ng.$sceDelegateProvider#resourceUrlWhitelist $sceDelegateProvider.resourceUrlWhitelist}
+ * and
+ * {@link ng.$sceDelegateProvider#resourceUrlBlacklist $sceDelegateProvider.resourceUrlBlacklist},
  *
  * For the general details about this service in Angular, read the main page for {@link ng.$sce
  * Strict Contextual Escaping (SCE)}.
@@ -31655,6 +31370,13 @@ function adjustMatchers(matchers) {
  *    ]);
  *  });
  * ```
+ * Note that an empty whitelist will block every resource URL from being loaded, and will require
+ * you to manually mark each one as trusted with `$sce.trustAsResourceUrl`. However, templates
+ * requested by {@link ng.$templateRequest $templateRequest} that are present in
+ * {@link ng.$templateCache $templateCache} will not go through this check. If you have a mechanism
+ * to populate your templates in that cache at config time, then it is a good idea to remove 'self'
+ * from that whitelist. This helps to mitigate the security impact of certain types of issues, like
+ * for instance attacker-controlled `ng-includes`.
  */
 
 function $SceDelegateProvider() {
@@ -31670,23 +31392,23 @@ function $SceDelegateProvider() {
    * @kind function
    *
    * @param {Array=} whitelist When provided, replaces the resourceUrlWhitelist with the value
-   *    provided.  This must be an array or null.  A snapshot of this array is used so further
-   *    changes to the array are ignored.
+   *     provided.  This must be an array or null.  A snapshot of this array is used so further
+   *     changes to the array are ignored.
+   *     Follow {@link ng.$sce#resourceUrlPatternItem this link} for a description of the items
+   *     allowed in this array.
    *
-   *    Follow {@link ng.$sce#resourceUrlPatternItem this link} for a description of the items
-   *    allowed in this array.
+   * @return {Array} The currently set whitelist array.
    *
-   *    <div class="alert alert-warning">
-   *    **Note:** an empty whitelist array will block all URLs!
-   *    </div>
-   *
-   * @return {Array} the currently set whitelist array.
+   * @description
+   * Sets/Gets the whitelist of trusted resource URLs.
    *
    * The **default value** when no whitelist has been explicitly set is `['self']` allowing only
    * same origin resource requests.
    *
-   * @description
-   * Sets/Gets the whitelist of trusted resource URLs.
+   * <div class="alert alert-warning">
+   * **Note:** the default whitelist of 'self' is not recommended if your app shares its origin
+   * with other apps! It is a good idea to limit it to only your application's directory.
+   * </div>
    */
   this.resourceUrlWhitelist = function(value) {
     if (arguments.length) {
@@ -31701,25 +31423,23 @@ function $SceDelegateProvider() {
    * @kind function
    *
    * @param {Array=} blacklist When provided, replaces the resourceUrlBlacklist with the value
-   *    provided.  This must be an array or null.  A snapshot of this array is used so further
-   *    changes to the array are ignored.
+   *     provided.  This must be an array or null.  A snapshot of this array is used so further
+   *     changes to the array are ignored.</p><p>
+   *     Follow {@link ng.$sce#resourceUrlPatternItem this link} for a description of the items
+   *     allowed in this array.</p><p>
+   *     The typical usage for the blacklist is to **block
+   *     [open redirects](http://cwe.mitre.org/data/definitions/601.html)** served by your domain as
+   *     these would otherwise be trusted but actually return content from the redirected domain.
+   *     </p><p>
+   *     Finally, **the blacklist overrides the whitelist** and has the final say.
    *
-   *    Follow {@link ng.$sce#resourceUrlPatternItem this link} for a description of the items
-   *    allowed in this array.
-   *
-   *    The typical usage for the blacklist is to **block
-   *    [open redirects](http://cwe.mitre.org/data/definitions/601.html)** served by your domain as
-   *    these would otherwise be trusted but actually return content from the redirected domain.
-   *
-   *    Finally, **the blacklist overrides the whitelist** and has the final say.
-   *
-   * @return {Array} the currently set blacklist array.
-   *
-   * The **default value** when no whitelist has been explicitly set is the empty array (i.e. there
-   * is no blacklist.)
+   * @return {Array} The currently set blacklist array.
    *
    * @description
    * Sets/Gets the blacklist of trusted resource URLs.
+   *
+   * The **default value** when no whitelist has been explicitly set is the empty array (i.e. there
+   * is no blacklist.)
    */
 
   this.resourceUrlBlacklist = function(value) {
@@ -31803,17 +31523,24 @@ function $SceDelegateProvider() {
      * @name $sceDelegate#trustAs
      *
      * @description
-     * Returns an object that is trusted by angular for use in specified strict
-     * contextual escaping contexts (such as ng-bind-html, ng-include, any src
-     * attribute interpolation, any dom event binding attribute interpolation
-     * such as for onclick,  etc.) that uses the provided value.
-     * See {@link ng.$sce $sce} for enabling strict contextual escaping.
+     * Returns a trusted representation of the parameter for the specified context. This trusted
+     * object will later on be used as-is, without any security check, by bindings or directives
+     * that require this security context.
+     * For instance, marking a string as trusted for the `$sce.HTML` context will entirely bypass
+     * the potential `$sanitize` call in corresponding `$sce.HTML` bindings or directives, such as
+     * `ng-bind-html`. Note that in most cases you won't need to call this function: if you have the
+     * sanitizer loaded, passing the value itself will render all the HTML that does not pose a
+     * security risk.
      *
-     * @param {string} type The kind of context in which this value is safe for use.  e.g. url,
-     *   resourceUrl, html, js and css.
-     * @param {*} value The value that that should be considered trusted/safe.
-     * @returns {*} A value that can be used to stand in for the provided `value` in places
-     * where Angular expects a $sce.trustAs() return value.
+     * See {@link ng.$sceDelegate#getTrusted getTrusted} for the function that will consume those
+     * trusted values, and {@link ng.$sce $sce} for general documentation about strict contextual
+     * escaping.
+     *
+     * @param {string} type The context in which this value is safe for use, e.g. `$sce.URL`,
+     *     `$sce.RESOURCE_URL`, `$sce.HTML`, `$sce.JS` or `$sce.CSS`.
+     *
+     * @param {*} value The value that should be considered trusted.
+     * @return {*} A trusted representation of value, that can be used in the given context.
      */
     function trustAs(type, trustedValue) {
       var Constructor = (byType.hasOwnProperty(type) ? byType[type] : null);
@@ -31845,11 +31572,11 @@ function $SceDelegateProvider() {
      * ng.$sceDelegate#trustAs `$sceDelegate.trustAs`}.
      *
      * If the passed parameter is not a value that had been returned by {@link
-     * ng.$sceDelegate#trustAs `$sceDelegate.trustAs`}, returns it as-is.
+     * ng.$sceDelegate#trustAs `$sceDelegate.trustAs`}, it must be returned as-is.
      *
      * @param {*} value The result of a prior {@link ng.$sceDelegate#trustAs `$sceDelegate.trustAs`}
-     *      call or anything else.
-     * @returns {*} The `value` that was originally provided to {@link ng.$sceDelegate#trustAs
+     *     call or anything else.
+     * @return {*} The `value` that was originally provided to {@link ng.$sceDelegate#trustAs
      *     `$sceDelegate.trustAs`} if `value` is the result of such a call.  Otherwise, returns
      *     `value` unchanged.
      */
@@ -31866,33 +31593,38 @@ function $SceDelegateProvider() {
      * @name $sceDelegate#getTrusted
      *
      * @description
-     * Takes the result of a {@link ng.$sceDelegate#trustAs `$sceDelegate.trustAs`} call and
-     * returns the originally supplied value if the queried context type is a supertype of the
-     * created type.  If this condition isn't satisfied, throws an exception.
+     * Takes any input, and either returns a value that's safe to use in the specified context, or
+     * throws an exception.
      *
-     * <div class="alert alert-danger">
-     * Disabling auto-escaping is extremely dangerous, it usually creates a Cross Site Scripting
-     * (XSS) vulnerability in your application.
-     * </div>
+     * In practice, there are several cases. When given a string, this function runs checks
+     * and sanitization to make it safe without prior assumptions. When given the result of a {@link
+     * ng.$sceDelegate#trustAs `$sceDelegate.trustAs`} call, it returns the originally supplied
+     * value if that value's context is valid for this call's context. Finally, this function can
+     * also throw when there is no way to turn `maybeTrusted` in a safe value (e.g., no sanitization
+     * is available or possible.)
      *
-     * @param {string} type The kind of context in which this value is to be used.
+     * @param {string} type The context in which this value is to be used (such as `$sce.HTML`).
      * @param {*} maybeTrusted The result of a prior {@link ng.$sceDelegate#trustAs
-     *     `$sceDelegate.trustAs`} call.
-     * @returns {*} The value the was originally provided to {@link ng.$sceDelegate#trustAs
-     *     `$sceDelegate.trustAs`} if valid in this context.  Otherwise, throws an exception.
+     *     `$sceDelegate.trustAs`} call, or anything else (which will not be considered trusted.)
+     * @return {*} A version of the value that's safe to use in the given context, or throws an
+     *     exception if this is impossible.
      */
     function getTrusted(type, maybeTrusted) {
       if (maybeTrusted === null || isUndefined(maybeTrusted) || maybeTrusted === '') {
         return maybeTrusted;
       }
       var constructor = (byType.hasOwnProperty(type) ? byType[type] : null);
+      // If maybeTrusted is a trusted class instance or subclass instance, then unwrap and return
+      // as-is.
       if (constructor && maybeTrusted instanceof constructor) {
         return maybeTrusted.$$unwrapTrustedValue();
       }
-      // If we get here, then we may only take one of two actions.
-      // 1. sanitize the value for the requested type, or
-      // 2. throw an exception.
+      // Otherwise, if we get here, then we may either make it safe, or throw an exception. This
+      // depends on the context: some are sanitizatible (HTML), some use whitelists (RESOURCE_URL),
+      // some are impossible to do (JS). This step isn't implemented for CSS and URL, as AngularJS
+      // has no corresponding sinks.
       if (type === SCE_CONTEXTS.RESOURCE_URL) {
+        // RESOURCE_URL uses a whitelist.
         if (isResourceUrlAllowedByPolicy(maybeTrusted)) {
           return maybeTrusted;
         } else {
@@ -31901,8 +31633,10 @@ function $SceDelegateProvider() {
               maybeTrusted.toString());
         }
       } else if (type === SCE_CONTEXTS.HTML) {
+        // htmlSanitizer throws its own error when no sanitizer is available.
         return htmlSanitizer(maybeTrusted);
       }
+      // Default error when the $sce service has no way to make the input safe.
       throw $sceMinErr('unsafe', 'Attempting to use an unsafe value in a safe context.');
     }
 
@@ -31938,21 +31672,27 @@ function $SceDelegateProvider() {
  *
  * # Strict Contextual Escaping
  *
- * Strict Contextual Escaping (SCE) is a mode in which AngularJS requires bindings in certain
- * contexts to result in a value that is marked as safe to use for that context.  One example of
- * such a context is binding arbitrary html controlled by the user via `ng-bind-html`.  We refer
- * to these contexts as privileged or SCE contexts.
+ * Strict Contextual Escaping (SCE) is a mode in which AngularJS constrains bindings to only render
+ * trusted values. Its goal is to assist in writing code in a way that (a) is secure by default, and
+ * (b) makes auditing for security vulnerabilities such as XSS, clickjacking, etc. a lot easier.
  *
- * As of version 1.2, Angular ships with SCE enabled by default.
+ * ## Overview
  *
- * Note:  When enabled (the default), IE<11 in quirks mode is not supported.  In this mode, IE<11 allow
- * one to execute arbitrary javascript by the use of the expression() syntax.  Refer
- * <http://blogs.msdn.com/b/ie/archive/2008/10/16/ending-expressions.aspx> to learn more about them.
- * You can ensure your document is in standards mode and not quirks mode by adding `<!doctype html>`
- * to the top of your HTML document.
+ * To systematically block XSS security bugs, AngularJS treats all values as untrusted by default in
+ * HTML or sensitive URL bindings. When binding untrusted values, AngularJS will automatically
+ * run security checks on them (sanitizations, whitelists, depending on context), or throw when it
+ * cannot guarantee the security of the result. That behavior depends strongly on contexts: HTML
+ * can be sanitized, but template URLs cannot, for instance.
  *
- * SCE assists in writing code in a way that (a) is secure by default and (b) makes auditing for
- * security vulnerabilities such as XSS, clickjacking, etc. a lot easier.
+ * To illustrate this, consider the `ng-bind-html` directive. It renders its value directly as HTML:
+ * we call that the *context*. When given an untrusted input, AngularJS will attempt to sanitize it
+ * before rendering if a sanitizer is available, and throw otherwise. To bypass sanitization and
+ * render the input as-is, you will need to mark it as trusted for that context before attempting
+ * to bind it.
+ *
+ * As of version 1.2, AngularJS ships with SCE enabled by default.
+ *
+ * ## In practice
  *
  * Here's an example of a binding in a privileged context:
  *
@@ -31962,10 +31702,10 @@ function $SceDelegateProvider() {
  * ```
  *
  * Notice that `ng-bind-html` is bound to `userHtml` controlled by the user.  With SCE
- * disabled, this application allows the user to render arbitrary HTML into the DIV.
- * In a more realistic example, one may be rendering user comments, blog articles, etc. via
- * bindings.  (HTML is just one example of a context where rendering user controlled input creates
- * security vulnerabilities.)
+ * disabled, this application allows the user to render arbitrary HTML into the DIV, which would
+ * be an XSS security bug. In a more realistic example, one may be rendering user comments, blog
+ * articles, etc. via bindings. (HTML is just one example of a context where rendering user
+ * controlled input creates security vulnerabilities.)
  *
  * For the case of HTML, you might use a library, either on the client side, or on the server side,
  * to sanitize unsafe HTML before binding to the value and rendering it in the document.
@@ -31975,25 +31715,29 @@ function $SceDelegateProvider() {
  * ensure that you didn't accidentally delete the line that sanitized the value, or renamed some
  * properties/fields and forgot to update the binding to the sanitized value?
  *
- * To be secure by default, you want to ensure that any such bindings are disallowed unless you can
- * determine that something explicitly says it's safe to use a value for binding in that
- * context.  You can then audit your code (a simple grep would do) to ensure that this is only done
- * for those values that you can easily tell are safe - because they were received from your server,
- * sanitized by your library, etc.  You can organize your codebase to help with this - perhaps
- * allowing only the files in a specific directory to do this.  Ensuring that the internal API
- * exposed by that code doesn't markup arbitrary values as safe then becomes a more manageable task.
+ * To be secure by default, AngularJS makes sure bindings go through that sanitization, or
+ * any similar validation process, unless there's a good reason to trust the given value in this
+ * context.  That trust is formalized with a function call. This means that as a developer, you
+ * can assume all untrusted bindings are safe. Then, to audit your code for binding security issues,
+ * you just need to ensure the values you mark as trusted indeed are safe - because they were
+ * received from your server, sanitized by your library, etc. You can organize your codebase to
+ * help with this - perhaps allowing only the files in a specific directory to do this.
+ * Ensuring that the internal API exposed by that code doesn't markup arbitrary values as safe then
+ * becomes a more manageable task.
  *
  * In the case of AngularJS' SCE service, one uses {@link ng.$sce#trustAs $sce.trustAs}
  * (and shorthand methods such as {@link ng.$sce#trustAsHtml $sce.trustAsHtml}, etc.) to
- * obtain values that will be accepted by SCE / privileged contexts.
- *
+ * build the trusted versions of your values.
  *
  * ## How does it work?
  *
  * In privileged contexts, directives and code will bind to the result of {@link ng.$sce#getTrusted
- * $sce.getTrusted(context, value)} rather than to the value directly.  Directives use {@link
- * ng.$sce#parseAs $sce.parseAs} rather than `$parse` to watch attribute bindings, which performs the
- * {@link ng.$sce#getTrusted $sce.getTrusted} behind the scenes on non-constant literals.
+ * $sce.getTrusted(context, value)} rather than to the value directly.  Think of this function as
+ * a way to enforce the required security context in your data sink. Directives use {@link
+ * ng.$sce#parseAs $sce.parseAs} rather than `$parse` to watch attribute bindings, which performs
+ * the {@link ng.$sce#getTrusted $sce.getTrusted} behind the scenes on non-constant literals. Also,
+ * when binding without directives, AngularJS will understand the context of your bindings
+ * automatically.
  *
  * As an example, {@link ng.directive:ngBindHtml ngBindHtml} uses {@link
  * ng.$sce#parseAsHtml $sce.parseAsHtml(binding expression)}.  Here's the actual code (slightly
@@ -32034,11 +31778,12 @@ function $SceDelegateProvider() {
  * It's important to remember that SCE only applies to interpolation expressions.
  *
  * If your expressions are constant literals, they're automatically trusted and you don't need to
- * call `$sce.trustAs` on them (remember to include the `ngSanitize` module) (e.g.
- * `<div ng-bind-html="'<b>implicitly trusted</b>'"></div>`) just works.
- *
- * Additionally, `a[href]` and `img[src]` automatically sanitize their URLs and do not pass them
- * through {@link ng.$sce#getTrusted $sce.getTrusted}.  SCE doesn't play a role here.
+ * call `$sce.trustAs` on them (e.g.
+ * `<div ng-bind-html="'<b>implicitly trusted</b>'"></div>`) just works. The `$sceDelegate` will
+ * also use the `$sanitize` service if it is available when binding untrusted values to
+ * `$sce.HTML` context. AngularJS provides an implementation in `angular-sanitize.js`, and if you
+ * wish to use it, you will also need to depend on the {@link ngSanitize `ngSanitize`} module in
+ * your application.
  *
  * The included {@link ng.$sceDelegate $sceDelegate} comes with sane defaults to allow you to load
  * templates in `ng-include` from your application's domain without having to even know about SCE.
@@ -32056,11 +31801,17 @@ function $SceDelegateProvider() {
  *
  * | Context             | Notes          |
  * |---------------------|----------------|
- * | `$sce.HTML`         | For HTML that's safe to source into the application.  The {@link ng.directive:ngBindHtml ngBindHtml} directive uses this context for bindings. If an unsafe value is encountered and the {@link ngSanitize $sanitize} module is present this will sanitize the value instead of throwing an error. |
- * | `$sce.CSS`          | For CSS that's safe to source into the application.  Currently unused.  Feel free to use it in your own directives. |
- * | `$sce.URL`          | For URLs that are safe to follow as links.  Currently unused (`<a href=` and `<img src=` sanitize their urls and don't constitute an SCE context. |
- * | `$sce.RESOURCE_URL` | For URLs that are not only safe to follow as links, but whose contents are also safe to include in your application.  Examples include `ng-include`, `src` / `ngSrc` bindings for tags other than `IMG`, `VIDEO`, `AUDIO`, `SOURCE`, and `TRACK` (e.g. `IFRAME`, `OBJECT`, etc.)  <br><br>Note that `$sce.RESOURCE_URL` makes a stronger statement about the URL than `$sce.URL` does and therefore contexts requiring values trusted for `$sce.RESOURCE_URL` can be used anywhere that values trusted for `$sce.URL` are required. |
- * | `$sce.JS`           | For JavaScript that is safe to execute in your application's context.  Currently unused.  Feel free to use it in your own directives. |
+ * | `$sce.HTML`         | For HTML that's safe to source into the application.  The {@link ng.directive:ngBindHtml ngBindHtml} directive uses this context for bindings. If an unsafe value is encountered, and the {@link ngSanitize.$sanitize $sanitize} service is available (implemented by the {@link ngSanitize ngSanitize} module) this will sanitize the value instead of throwing an error. |
+ * | `$sce.CSS`          | For CSS that's safe to source into the application.  Currently, no bindings require this context. Feel free to use it in your own directives. |
+ * | `$sce.URL`          | For URLs that are safe to follow as links.  Currently unused (`<a href=`, `<img src=`, and some others sanitize their urls and don't constitute an SCE context.) |
+ * | `$sce.RESOURCE_URL` | For URLs that are not only safe to follow as links, but whose contents are also safe to include in your application.  Examples include `ng-include`, `src` / `ngSrc` bindings for tags other than `IMG`, `VIDEO`, `AUDIO`, `SOURCE`, and `TRACK` (e.g. `IFRAME`, `OBJECT`, etc.)  <br><br>Note that `$sce.RESOURCE_URL` makes a stronger statement about the URL than `$sce.URL` does (it's not just the URL that matters, but also what is at the end of it), and therefore contexts requiring values trusted for `$sce.RESOURCE_URL` can be used anywhere that values trusted for `$sce.URL` are required. |
+ * | `$sce.JS`           | For JavaScript that is safe to execute in your application's context.  Currently, no bindings require this context.  Feel free to use it in your own directives. |
+ *
+ *
+ * Be aware that `a[href]` and `img[src]` automatically sanitize their URLs and do not pass them
+ * through {@link ng.$sce#getTrusted $sce.getTrusted}. There's no CSS-, URL-, or JS-context bindings
+ * in AngularJS currently, so their corresponding `$sce.trustAs` functions aren't useful yet. This
+ * might evolve.
  *
  * ## Format of items in {@link ng.$sceDelegateProvider#resourceUrlWhitelist resourceUrlWhitelist}/{@link ng.$sceDelegateProvider#resourceUrlBlacklist Blacklist} <a name="resourceUrlPatternItem"></a>
  *
@@ -32179,14 +31930,15 @@ function $SceDelegateProvider() {
  * for little coding overhead.  It will be much harder to take an SCE disabled application and
  * either secure it on your own or enable SCE at a later stage.  It might make sense to disable SCE
  * for cases where you have a lot of existing code that was written before SCE was introduced and
- * you're migrating them a module at a time.
+ * you're migrating them a module at a time. Also do note that this is an app-wide setting, so if
+ * you are writing a library, you will cause security bugs applications using it.
  *
  * That said, here's how you can completely disable SCE:
  *
  * ```
  * angular.module('myAppWithSceDisabledmyApp', []).config(function($sceProvider) {
  *   // Completely disable SCE.  For demonstration purposes only!
- *   // Do not use in new projects.
+ *   // Do not use in new projects or libraries.
  *   $sceProvider.enabled(false);
  * });
  * ```
@@ -32201,8 +31953,8 @@ function $SceProvider() {
    * @name $sceProvider#enabled
    * @kind function
    *
-   * @param {boolean=} value If provided, then enables/disables SCE.
-   * @return {boolean} true if SCE is enabled, false otherwise.
+   * @param {boolean=} value If provided, then enables/disables SCE application-wide.
+   * @return {boolean} True if SCE is enabled, false otherwise.
    *
    * @description
    * Enables/disables SCE and returns the current value.
@@ -32256,9 +32008,9 @@ function $SceProvider() {
    *     getTrusted($sce.RESOURCE_URL, value) succeeding implies that getTrusted($sce.URL, value)
    *     will also succeed.
    *
-   * Inheritance happens to capture this in a natural way.  In some future, we
-   * may not use inheritance anymore.  That is OK because no code outside of
-   * sce.js and sceSpecs.js would need to be aware of this detail.
+   * Inheritance happens to capture this in a natural way. In some future, we may not use
+   * inheritance anymore. That is OK because no code outside of sce.js and sceSpecs.js would need to
+   * be aware of this detail.
    */
 
   this.$get = ['$parse', '$sceDelegate', function(
@@ -32280,8 +32032,8 @@ function $SceProvider() {
      * @name $sce#isEnabled
      * @kind function
      *
-     * @return {Boolean} true if SCE is enabled, false otherwise.  If you want to set the value, you
-     * have to do it at module config time on {@link ng.$sceProvider $sceProvider}.
+     * @return {Boolean} True if SCE is enabled, false otherwise.  If you want to set the value, you
+     *     have to do it at module config time on {@link ng.$sceProvider $sceProvider}.
      *
      * @description
      * Returns a boolean indicating if SCE is enabled.
@@ -32308,14 +32060,14 @@ function $SceProvider() {
      * wraps the expression in a call to {@link ng.$sce#getTrusted $sce.getTrusted(*type*,
      * *result*)}
      *
-     * @param {string} type The kind of SCE context in which this result will be used.
+     * @param {string} type The SCE context in which this result will be used.
      * @param {string} expression String expression to compile.
-     * @returns {function(context, locals)} a function which represents the compiled expression:
+     * @return {function(context, locals)} A function which represents the compiled expression:
      *
-     *    * `context` – `{object}` – an object against which any expressions embedded in the strings
-     *      are evaluated against (typically a scope object).
-     *    * `locals` – `{object=}` – local variables context object, useful for overriding values in
-     *      `context`.
+     *    * `context` – `{object}` – an object against which any expressions embedded in the
+     *      strings are evaluated against (typically a scope object).
+     *    * `locals` – `{object=}` – local variables context object, useful for overriding values
+     *      in `context`.
      */
     sce.parseAs = function sceParseAs(type, expr) {
       var parsed = $parse(expr);
@@ -32333,18 +32085,18 @@ function $SceProvider() {
      * @name $sce#trustAs
      *
      * @description
-     * Delegates to {@link ng.$sceDelegate#trustAs `$sceDelegate.trustAs`}.  As such,
-     * returns an object that is trusted by angular for use in specified strict contextual
-     * escaping contexts (such as ng-bind-html, ng-include, any src attribute
-     * interpolation, any dom event binding attribute interpolation such as for onclick,  etc.)
-     * that uses the provided value.  See * {@link ng.$sce $sce} for enabling strict contextual
-     * escaping.
+     * Delegates to {@link ng.$sceDelegate#trustAs `$sceDelegate.trustAs`}. As such, returns a
+     * wrapped object that represents your value, and the trust you have in its safety for the given
+     * context. AngularJS can then use that value as-is in bindings of the specified secure context.
+     * This is used in bindings for `ng-bind-html`, `ng-include`, and most `src` attribute
+     * interpolations. See {@link ng.$sce $sce} for strict contextual escaping.
      *
-     * @param {string} type The kind of context in which this value is safe for use.  e.g. url,
-     *   resourceUrl, html, js and css.
-     * @param {*} value The value that that should be considered trusted/safe.
-     * @returns {*} A value that can be used to stand in for the provided `value` in places
-     * where Angular expects a $sce.trustAs() return value.
+     * @param {string} type The context in which this value is safe for use, e.g. `$sce.URL`,
+     *     `$sce.RESOURCE_URL`, `$sce.HTML`, `$sce.JS` or `$sce.CSS`.
+     *
+     * @param {*} value The value that that should be considered trusted.
+     * @return {*} A wrapped version of value that can be used as a trusted variant of your `value`
+     *     in the context you specified.
      */
 
     /**
@@ -32355,11 +32107,23 @@ function $SceProvider() {
      * Shorthand method.  `$sce.trustAsHtml(value)` →
      *     {@link ng.$sceDelegate#trustAs `$sceDelegate.trustAs($sce.HTML, value)`}
      *
-     * @param {*} value The value to trustAs.
-     * @returns {*} An object that can be passed to {@link ng.$sce#getTrustedHtml
-     *     $sce.getTrustedHtml(value)} to obtain the original value.  (privileged directives
-     *     only accept expressions that are either literal constants or are the
-     *     return value of {@link ng.$sce#trustAs $sce.trustAs}.)
+     * @param {*} value The value to mark as trusted for `$sce.HTML` context.
+     * @return {*} A wrapped version of value that can be used as a trusted variant of your `value`
+     *     in `$sce.HTML` context (like `ng-bind-html`).
+     */
+
+    /**
+     * @ngdoc method
+     * @name $sce#trustAsCss
+     *
+     * @description
+     * Shorthand method.  `$sce.trustAsCss(value)` →
+     *     {@link ng.$sceDelegate#trustAs `$sceDelegate.trustAs($sce.CSS, value)`}
+     *
+     * @param {*} value The value to mark as trusted for `$sce.CSS` context.
+     * @return {*} A wrapped version of value that can be used as a trusted variant
+     *     of your `value` in `$sce.CSS` context. This context is currently unused, so there are
+     *     almost no reasons to use this function so far.
      */
 
     /**
@@ -32370,11 +32134,10 @@ function $SceProvider() {
      * Shorthand method.  `$sce.trustAsUrl(value)` →
      *     {@link ng.$sceDelegate#trustAs `$sceDelegate.trustAs($sce.URL, value)`}
      *
-     * @param {*} value The value to trustAs.
-     * @returns {*} An object that can be passed to {@link ng.$sce#getTrustedUrl
-     *     $sce.getTrustedUrl(value)} to obtain the original value.  (privileged directives
-     *     only accept expressions that are either literal constants or are the
-     *     return value of {@link ng.$sce#trustAs $sce.trustAs}.)
+     * @param {*} value The value to mark as trusted for `$sce.URL` context.
+     * @return {*} A wrapped version of value that can be used as a trusted variant of your `value`
+     *     in `$sce.URL` context. That context is currently unused, so there are almost no reasons
+     *     to use this function so far.
      */
 
     /**
@@ -32385,11 +32148,10 @@ function $SceProvider() {
      * Shorthand method.  `$sce.trustAsResourceUrl(value)` →
      *     {@link ng.$sceDelegate#trustAs `$sceDelegate.trustAs($sce.RESOURCE_URL, value)`}
      *
-     * @param {*} value The value to trustAs.
-     * @returns {*} An object that can be passed to {@link ng.$sce#getTrustedResourceUrl
-     *     $sce.getTrustedResourceUrl(value)} to obtain the original value.  (privileged directives
-     *     only accept expressions that are either literal constants or are the return
-     *     value of {@link ng.$sce#trustAs $sce.trustAs}.)
+     * @param {*} value The value to mark as trusted for `$sce.RESOURCE_URL` context.
+     * @return {*} A wrapped version of value that can be used as a trusted variant of your `value`
+     *     in `$sce.RESOURCE_URL` context (template URLs in `ng-include`, most `src` attribute
+     *     bindings, ...)
      */
 
     /**
@@ -32400,11 +32162,10 @@ function $SceProvider() {
      * Shorthand method.  `$sce.trustAsJs(value)` →
      *     {@link ng.$sceDelegate#trustAs `$sceDelegate.trustAs($sce.JS, value)`}
      *
-     * @param {*} value The value to trustAs.
-     * @returns {*} An object that can be passed to {@link ng.$sce#getTrustedJs
-     *     $sce.getTrustedJs(value)} to obtain the original value.  (privileged directives
-     *     only accept expressions that are either literal constants or are the
-     *     return value of {@link ng.$sce#trustAs $sce.trustAs}.)
+     * @param {*} value The value to mark as trusted for `$sce.JS` context.
+     * @return {*} A wrapped version of value that can be used as a trusted variant of your `value`
+     *     in `$sce.JS` context. That context is currently unused, so there are almost no reasons to
+     *     use this function so far.
      */
 
     /**
@@ -32413,16 +32174,17 @@ function $SceProvider() {
      *
      * @description
      * Delegates to {@link ng.$sceDelegate#getTrusted `$sceDelegate.getTrusted`}.  As such,
-     * takes the result of a {@link ng.$sce#trustAs `$sce.trustAs`}() call and returns the
-     * originally supplied value if the queried context type is a supertype of the created type.
-     * If this condition isn't satisfied, throws an exception.
+     * takes any input, and either returns a value that's safe to use in the specified context,
+     * or throws an exception. This function is aware of trusted values created by the `trustAs`
+     * function and its shorthands, and when contexts are appropriate, returns the unwrapped value
+     * as-is. Finally, this function can also throw when there is no way to turn `maybeTrusted` in a
+     * safe value (e.g., no sanitization is available or possible.)
      *
-     * @param {string} type The kind of context in which this value is to be used.
-     * @param {*} maybeTrusted The result of a prior {@link ng.$sce#trustAs `$sce.trustAs`}
-     *                         call.
-     * @returns {*} The value the was originally provided to
-     *              {@link ng.$sce#trustAs `$sce.trustAs`} if valid in this context.
-     *              Otherwise, throws an exception.
+     * @param {string} type The context in which this value is to be used.
+     * @param {*} maybeTrusted The result of a prior {@link ng.$sce#trustAs
+     *     `$sce.trustAs`} call, or anything else (which will not be considered trusted.)
+     * @return {*} A version of the value that's safe to use in the given context, or throws an
+     *     exception if this is impossible.
      */
 
     /**
@@ -32434,7 +32196,7 @@ function $SceProvider() {
      *     {@link ng.$sceDelegate#getTrusted `$sceDelegate.getTrusted($sce.HTML, value)`}
      *
      * @param {*} value The value to pass to `$sce.getTrusted`.
-     * @returns {*} The return value of `$sce.getTrusted($sce.HTML, value)`
+     * @return {*} The return value of `$sce.getTrusted($sce.HTML, value)`
      */
 
     /**
@@ -32446,7 +32208,7 @@ function $SceProvider() {
      *     {@link ng.$sceDelegate#getTrusted `$sceDelegate.getTrusted($sce.CSS, value)`}
      *
      * @param {*} value The value to pass to `$sce.getTrusted`.
-     * @returns {*} The return value of `$sce.getTrusted($sce.CSS, value)`
+     * @return {*} The return value of `$sce.getTrusted($sce.CSS, value)`
      */
 
     /**
@@ -32458,7 +32220,7 @@ function $SceProvider() {
      *     {@link ng.$sceDelegate#getTrusted `$sceDelegate.getTrusted($sce.URL, value)`}
      *
      * @param {*} value The value to pass to `$sce.getTrusted`.
-     * @returns {*} The return value of `$sce.getTrusted($sce.URL, value)`
+     * @return {*} The return value of `$sce.getTrusted($sce.URL, value)`
      */
 
     /**
@@ -32470,7 +32232,7 @@ function $SceProvider() {
      *     {@link ng.$sceDelegate#getTrusted `$sceDelegate.getTrusted($sce.RESOURCE_URL, value)`}
      *
      * @param {*} value The value to pass to `$sceDelegate.getTrusted`.
-     * @returns {*} The return value of `$sce.getTrusted($sce.RESOURCE_URL, value)`
+     * @return {*} The return value of `$sce.getTrusted($sce.RESOURCE_URL, value)`
      */
 
     /**
@@ -32482,7 +32244,7 @@ function $SceProvider() {
      *     {@link ng.$sceDelegate#getTrusted `$sceDelegate.getTrusted($sce.JS, value)`}
      *
      * @param {*} value The value to pass to `$sce.getTrusted`.
-     * @returns {*} The return value of `$sce.getTrusted($sce.JS, value)`
+     * @return {*} The return value of `$sce.getTrusted($sce.JS, value)`
      */
 
     /**
@@ -32494,12 +32256,12 @@ function $SceProvider() {
      *     {@link ng.$sce#parseAs `$sce.parseAs($sce.HTML, value)`}
      *
      * @param {string} expression String expression to compile.
-     * @returns {function(context, locals)} a function which represents the compiled expression:
+     * @return {function(context, locals)} A function which represents the compiled expression:
      *
-     *    * `context` – `{object}` – an object against which any expressions embedded in the strings
-     *      are evaluated against (typically a scope object).
-     *    * `locals` – `{object=}` – local variables context object, useful for overriding values in
-     *      `context`.
+     *    * `context` – `{object}` – an object against which any expressions embedded in the
+     *      strings are evaluated against (typically a scope object).
+     *    * `locals` – `{object=}` – local variables context object, useful for overriding values
+     *      in `context`.
      */
 
     /**
@@ -32511,12 +32273,12 @@ function $SceProvider() {
      *     {@link ng.$sce#parseAs `$sce.parseAs($sce.CSS, value)`}
      *
      * @param {string} expression String expression to compile.
-     * @returns {function(context, locals)} a function which represents the compiled expression:
+     * @return {function(context, locals)} A function which represents the compiled expression:
      *
-     *    * `context` – `{object}` – an object against which any expressions embedded in the strings
-     *      are evaluated against (typically a scope object).
-     *    * `locals` – `{object=}` – local variables context object, useful for overriding values in
-     *      `context`.
+     *    * `context` – `{object}` – an object against which any expressions embedded in the
+     *      strings are evaluated against (typically a scope object).
+     *    * `locals` – `{object=}` – local variables context object, useful for overriding values
+     *      in `context`.
      */
 
     /**
@@ -32528,12 +32290,12 @@ function $SceProvider() {
      *     {@link ng.$sce#parseAs `$sce.parseAs($sce.URL, value)`}
      *
      * @param {string} expression String expression to compile.
-     * @returns {function(context, locals)} a function which represents the compiled expression:
+     * @return {function(context, locals)} A function which represents the compiled expression:
      *
-     *    * `context` – `{object}` – an object against which any expressions embedded in the strings
-     *      are evaluated against (typically a scope object).
-     *    * `locals` – `{object=}` – local variables context object, useful for overriding values in
-     *      `context`.
+     *    * `context` – `{object}` – an object against which any expressions embedded in the
+     *      strings are evaluated against (typically a scope object).
+     *    * `locals` – `{object=}` – local variables context object, useful for overriding values
+     *      in `context`.
      */
 
     /**
@@ -32545,12 +32307,12 @@ function $SceProvider() {
      *     {@link ng.$sce#parseAs `$sce.parseAs($sce.RESOURCE_URL, value)`}
      *
      * @param {string} expression String expression to compile.
-     * @returns {function(context, locals)} a function which represents the compiled expression:
+     * @return {function(context, locals)} A function which represents the compiled expression:
      *
-     *    * `context` – `{object}` – an object against which any expressions embedded in the strings
-     *      are evaluated against (typically a scope object).
-     *    * `locals` – `{object=}` – local variables context object, useful for overriding values in
-     *      `context`.
+     *    * `context` – `{object}` – an object against which any expressions embedded in the
+     *      strings are evaluated against (typically a scope object).
+     *    * `locals` – `{object=}` – local variables context object, useful for overriding values
+     *      in `context`.
      */
 
     /**
@@ -32562,12 +32324,12 @@ function $SceProvider() {
      *     {@link ng.$sce#parseAs `$sce.parseAs($sce.JS, value)`}
      *
      * @param {string} expression String expression to compile.
-     * @returns {function(context, locals)} a function which represents the compiled expression:
+     * @return {function(context, locals)} A function which represents the compiled expression:
      *
-     *    * `context` – `{object}` – an object against which any expressions embedded in the strings
-     *      are evaluated against (typically a scope object).
-     *    * `locals` – `{object=}` – local variables context object, useful for overriding values in
-     *      `context`.
+     *    * `context` – `{object}` – an object against which any expressions embedded in the
+     *      strings are evaluated against (typically a scope object).
+     *    * `locals` – `{object=}` – local variables context object, useful for overriding values
+     *      in `context`.
      */
 
     // Shorthand delegations.
@@ -33427,8 +33189,9 @@ function $FilterProvider($provide) {
  *     The final result is an array of those elements that the predicate returned true for.
  *
  * @param {function(actual, expected)|true|false} [comparator] Comparator which is used in
- *     determining if the expected value (from the filter expression) and actual value (from
- *     the object in the array) should be considered a match.
+ *     determining if values retrieved using `expression` (when it is not a function) should be
+ *     considered a match based on the the expected value (from the filter expression) and actual
+ *     value (from the object in the array).
  *
  *   Can be one of:
  *
@@ -34123,7 +33886,7 @@ var DATE_FORMATS = {
      GGGG: longEraGetter
 };
 
-var DATE_FORMATS_SPLIT = /((?:[^yMLdHhmsaZEwG']+)|(?:'(?:[^']|'')*')|(?:E+|y+|M+|L+|d+|H+|h+|m+|s+|a|Z|G+|w+))(.*)/,
+var DATE_FORMATS_SPLIT = /((?:[^yMLdHhmsaZEwG']+)|(?:'(?:[^']|'')*')|(?:E+|y+|M+|L+|d+|H+|h+|m+|s+|a|Z|G+|w+))([\s\S]*)/,
     NUMBER_STRING = /^-?\d+$/;
 
 /**
@@ -34181,6 +33944,8 @@ var DATE_FORMATS_SPLIT = /((?:[^yMLdHhmsaZEwG']+)|(?:'(?:[^']|'')*')|(?:E+|y+|M+
  *   `format` string can contain literal values. These need to be escaped by surrounding with single quotes (e.g.
  *   `"h 'in the morning'"`). In order to output a single quote, escape it - i.e., two single quotes in a sequence
  *   (e.g. `"h 'o''clock'"`).
+ *
+ *   Any other characters in the `format` string will be output as-is.
  *
  * @param {(Date|number|string)} date Date to format either as Date object, milliseconds (string or
  *    number) or various ISO 8601 datetime string formats (e.g. yyyy-MM-ddTHH:mm:ss.sssZ and its
@@ -38796,13 +38561,6 @@ function classDirective(name, selector) {
     return {
       restrict: 'AC',
       link: function(scope, element, attr) {
-        var expression = attr[name].trim();
-        var isOneTime = (expression.charAt(0) === ':') && (expression.charAt(1) === ':');
-
-        var watchInterceptor = isOneTime ? toFlatValue : toClassString;
-        var watchExpression = $parse(expression, watchInterceptor);
-        var watchAction = isOneTime ? ngClassOneTimeWatchAction : ngClassWatchAction;
-
         var classCounts = element.data('$classCounts');
         var oldModulo = true;
         var oldClassString;
@@ -38825,7 +38583,7 @@ function classDirective(name, selector) {
           scope.$watch(indexWatchExpression, ngClassIndexWatchAction);
         }
 
-        scope.$watch(watchExpression, watchAction, isOneTime);
+        scope.$watch($parse(attr[name], toClassString), ngClassWatchAction);
 
         function addClasses(classString) {
           classString = digestClassCounts(split(classString), 1);
@@ -38867,9 +38625,9 @@ function classDirective(name, selector) {
         }
 
         function ngClassIndexWatchAction(newModulo) {
-          // This watch-action should run before the `ngClass[OneTime]WatchAction()`, thus it
+          // This watch-action should run before the `ngClassWatchAction()`, thus it
           // adds/removes `oldClassString`. If the `ngClass` expression has changed as well, the
-          // `ngClass[OneTime]WatchAction()` will update the classes.
+          // `ngClassWatchAction()` will update the classes.
           if (newModulo === selector) {
             addClasses(oldClassString);
           } else {
@@ -38879,15 +38637,13 @@ function classDirective(name, selector) {
           oldModulo = newModulo;
         }
 
-        function ngClassOneTimeWatchAction(newClassValue) {
-          var newClassString = toClassString(newClassValue);
-
-          if (newClassString !== oldClassString) {
-            ngClassWatchAction(newClassString);
-          }
-        }
-
         function ngClassWatchAction(newClassString) {
+          // When using a one-time binding the newClassString will return
+          // the pre-interceptor value until the one-time is complete
+          if (!isString(newClassString)) {
+            newClassString = toClassString(newClassString);
+          }
+
           if (oldModulo === selector) {
             updateClasses(oldClassString, newClassString);
           }
@@ -38933,34 +38689,6 @@ function classDirective(name, selector) {
     }
 
     return classString;
-  }
-
-  function toFlatValue(classValue) {
-    var flatValue = classValue;
-
-    if (isArray(classValue)) {
-      flatValue = classValue.map(toFlatValue);
-    } else if (isObject(classValue)) {
-      var hasUndefined = false;
-
-      flatValue = Object.keys(classValue).filter(function(key) {
-        var value = classValue[key];
-
-        if (!hasUndefined && isUndefined(value)) {
-          hasUndefined = true;
-        }
-
-        return value;
-      });
-
-      if (hasUndefined) {
-        // Prevent the `oneTimeLiteralWatchInterceptor` from unregistering
-        // the watcher, by including at least one `undefined` value.
-        flatValue.push(undefined);
-      }
-    }
-
-    return flatValue;
   }
 }
 
@@ -41141,7 +40869,9 @@ function NgModelController($scope, $exceptionHandler, $attr, $element, $parse, $
 
   this.$$currentValidationRunId = 0;
 
-  this.$$scope = $scope;
+  // https://github.com/angular/angular.js/issues/15833
+  // Prevent `$$scope` from being iterated over by `copy` when NgModelController is deep watched
+  Object.defineProperty(this, '$$scope', {value: $scope});
   this.$$attr = $attr;
   this.$$element = $element;
   this.$$animate = $animate;
@@ -41750,8 +41480,8 @@ function setupModelWatcher(ctrl) {
   //    -> scope value did not change since the last digest as
   //       ng-change executes in apply phase
   // 4. view should be changed back to 'a'
-  ctrl.$$scope.$watch(function ngModelWatch() {
-    var modelValue = ctrl.$$ngModelGet(ctrl.$$scope);
+  ctrl.$$scope.$watch(function ngModelWatch(scope) {
+    var modelValue = ctrl.$$ngModelGet(scope);
 
     // if scope model value and ngModel value are out of sync
     // TODO(perf): why not move this to the action fn?
@@ -46190,30 +45920,1131 @@ $provide.value("$locale", {
 
 /***/ }),
 /* 15 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-// removed by extract-text-webpack-plugin
+"use strict";
+
+
+/**
+ * Created by user on 05.01.17.
+ */
+
+var NpcInfoTpl = __webpack_require__(34);
+__webpack_require__(1);
+
+angular.module('app').component('npcInfo', {
+  bindings: {
+    $router: '<',
+    id: '<'
+  },
+  template: NpcInfoTpl(),
+  controller: NpcInfoCtrl,
+  controllerAs: 'ctrl'
+});
+
+NpcInfoCtrl.$inject = ['Restangular', 'Npc', '$q'];
+function NpcInfoCtrl(Restangular, Npc, q) {
+  var npc;
+
+  this.$onInit = function () {
+    var _this = this;
+
+    Npc.getNpc(this.id).then(function (res) {
+      return _this.npc = res;
+    });
+  };
+  this.talk = function () {
+    Npc.selectCurrent(this.id);
+    // console.log(this.$router);
+    this.$router.navigate(['/Talk']);
+  };
+};
 
 /***/ }),
 /* 16 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-// removed by extract-text-webpack-plugin
+"use strict";
+
+
+// import * as angular from "angular";
+// import IService = restangular.IService;
+// import * as restangular from "restangular";
+// import IComponentOptions = angular.IComponentOptions;
+/**
+ * Created by user on 05.01.17.
+ */
+
+var PlayerInfoTpl = __webpack_require__(35);
+
+angular.module('app').component('playerInfo', {
+  bindings: {
+    $router: '<'
+  },
+  template: PlayerInfoTpl(),
+  controller: PlayerInfoCtrl,
+  controllerAs: 'ctrl'
+});
+
+PlayerInfoCtrl.$inject = ['Restangular', 'Player'];
+function PlayerInfoCtrl(Restangular, player) {
+  this.player = player;
+  console.log(this);
+};
 
 /***/ }),
 /* 17 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-// removed by extract-text-webpack-plugin
+"use strict";
+
+
+// import * as angular from "angular";
+// import {GameService} from "../gameService";
+// import {Company} from "../../lib/Company";
+// import IComponentOptions = angular.IComponentOptions;
+/**
+ * Created by user on 05.01.17.
+ */
+
+var companyDetailTpl = __webpack_require__(37);
+
+__webpack_require__(15);
+__webpack_require__(21);
+
+__webpack_require__(3);
+
+angular.module('app').component('companyDetail', {
+  bindings: {
+    $router: '<'
+  },
+  template: companyDetailTpl(),
+  controller: CompanyDetailCtrl,
+  controllerAs: 'ctrl'
+});
+
+CompanyDetailCtrl.$inject = ['gameService', 'Company'];
+
+function CompanyDetailCtrl(service, company) {
+  this.gameName = "Экран информации о компании";
+  this.company = company;
+
+  this.$routerOnActivate = function (next) {
+    this.company.selectCurrent(next.params.companyId);
+  };
+
+  this.goToTalk = function (id) {
+    this.$router.navigate(['Talk', {
+      npcId: id
+    }]);
+  };
+};
 
 /***/ }),
 /* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var CompanyListTpl = __webpack_require__(38);
+
+angular.module('app').component('companyList', {
+    bindings: { $router: '<' },
+    template: CompanyListTpl(),
+    controller: CompanyListCtrl,
+    controllerAs: 'ctrl'
+});
+
+CompanyListCtrl.$inject = ['gameService'];
+
+function CompanyListCtrl(service) {
+    this.service = service;
+};
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/**
+ * Created by user on 05.01.17.
+ */
+// import * as angular from "angular";
+// import {GameService} from "./gameService";
+// import IComponentOptions = angular.IComponentOptions;
+var gameTpl = __webpack_require__(39);
+
+__webpack_require__(16);
+
+__webpack_require__(3);
+
+__webpack_require__(18);
+
+__webpack_require__(17);
+
+__webpack_require__(20);
+
+angular.module('app').component('game', {
+  bindings: {
+    $router: '<'
+  },
+  template: gameTpl(),
+  controller: GameCtrl,
+  controllerAs: 'ctrl',
+  $routeConfig: [{
+    path: '/',
+    name: 'CompanyList',
+    component: 'companyList',
+    useAsDefault: true
+  }, {
+    path: '/company-detail',
+    name: 'CompanyDetail',
+    component: 'companyDetail'
+  }, {
+    path: '/profile',
+    name: 'Profile',
+    component: 'profile'
+  }]
+});
+GameCtrl.$inject = ['gameService'];
+function GameCtrl(service) {
+  this.gameName = "Основной экран";
+  this.$routerOnActivate = function () {
+    service.init();
+  };
+};
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+// import * as angular from "angular";
+// import {GameService} from "../gameService";
+// import IService = restangular.IService;
+// import * as restangular from "restangular";
+// import IComponentOptions = angular.IComponentOptions;
+/**
+ * Created by user on 05.01.17.
+ */
+
+var profileTpl = __webpack_require__(40);
+
+__webpack_require__(3);
+
+angular.module('app').component('profile', {
+  bindings: {
+    $router: '<'
+  },
+  template: profileTpl(),
+  controller: ProfileCtrl,
+  controllerAs: 'ctrl'
+});
+
+ProfileCtrl.$inject = ['gameService'];
+
+function ProfileCtrl(service) {
+  this.service = service;
+};
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+// import * as angular from "angular";
+// import IService = restangular.IService;
+// import * as restangular from "restangular";
+/**
+ * Created by user on 05.01.17.
+ */
+
+angular.module('app').service('Company', ['Restangular', Company]);
+
+function Company(Restangular) {
+    // public current: {};
+    // public items: Array<any>;
+    var current = {},
+        items = [];
+    var service = {
+        current: current,
+        items: items,
+
+        selectCurrent: selectCurrent
+    };
+    return service;
+
+    function selectCurrent(id) {
+        if (service.current.id != id) {
+            Restangular.one('api/v1/companies/', id).get().then(function (res) {
+                service.current = res;
+                Restangular.one('api/v1/companies/' + id + '/npcs/').get().then(function (res) {
+                    var s = [];
+                    _.forEach(res, function (npc) {
+                        s.push(npc.id);
+                    });
+                    service.current.npc_set = s;
+                });
+            });
+        }
+    }
+};
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+// import * as angular from "angular";
+// import IComponentController = angular.IComponentController;
+// import * as restangular from "restangular";
+// import IService = restangular.IService;
+// import {IModalService} from "angular-ui-bootstrap";
+// import {storage} from "angular";
+// import {cookies} from "angular";
+// import IComponentOptions = angular.IComponentOptions;
+
+
+var menuTpl = __webpack_require__(41);
+var modalTpl = __webpack_require__(42);
+__webpack_require__(23);
+
+angular.module('app').component('menu', {
+  bindings: {
+    $router: '<'
+  },
+  template: menuTpl(),
+  controller: MenuCtrl,
+  controllerAs: 'ctrl'
+}).value('$routerRootComponent', 'app');
+
+MenuCtrl.$inject = ['$uibModal', 'Restangular', '$cookies'];
+function MenuCtrl(uibModal, Restangular, cookies) {
+  // var  canSeeEditor,modal,players,$router;
+  var vm = this;
+  vm.canSeeEditor = false;
+  vm.$onInit = function () {
+    Restangular.one('api/v1/my/').get().then(function (res) {
+      localStorage.setItem("userId", res.user_id);
+      vm.canSeeEditor = res.see_editor;
+    });
+
+    Restangular.one('api/v1/persons').get().then(function (res) {
+      vm.players = res;
+    });
+  };
+  vm.goToGame = function (playerId) {
+    localStorage.setItem("playerId", playerId);
+    vm.$router.navigate(['Game']);
+  };
+  vm.deletePerson = function (id) {
+    var s = cookies.getAll();
+    return Restangular.one('api/v1/persons/' + id).remove('', {
+      'X-CSRFToken': s.csrftoken
+    }).then(function (res) {
+      return vm.$onInit();
+    });
+  };
+  vm.help = function () {
+    return vm.modal = uibModal.open({
+      controller: 'modalHelpCtrl',
+      controllerAs: '$ctrl',
+      template: modalTpl()
+    });
+  };
+}
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+// import * as angular from "angular";
+// import {IModalServiceInstance} from "angular-ui-bootstrap";
+//
+angular.module('app').controller('ModalHelpCtrl', ModalHelpCtrl);
+
+ModalHelpCtrl.$inject = ['$uibModalInstance'];
+function ModalHelpCtrl($uibModalInstance) {
+  this.cancel = function () {
+    return uibModalInstance.close();
+  };
+};
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var newGameTpl = __webpack_require__(43);
+
+angular.module('app').component('newgame', {
+  bindings: {
+    $router: '<'
+  },
+  template: newGameTpl(),
+  controller: NewGameCtrl,
+  controllerAs: 'ctrl'
+});
+
+NewGameCtrl.$inject = ['Restangular', '$cookies'];
+function NewGameCtrl(Restangular, cookies) {
+  this.images = [];
+  this.gameName = "Экран выбора персонажа";
+  this.stats = {
+    items: [{
+      id: 1,
+      caption: "Активность",
+      value: 5,
+      max: 9,
+      min: 1,
+      name: 'activeness'
+    }, {
+      id: 2,
+      caption: "Связи",
+      value: 5,
+      max: 9,
+      min: 1,
+      name: 'network'
+    }, {
+      id: 3,
+      caption: "Психология",
+      value: 5,
+      max: 9,
+      min: 1,
+      name: 'psychology'
+    }, {
+      id: 4,
+      caption: "Интелект",
+      value: 5,
+      max: 9,
+      min: 1,
+      name: 'intellect'
+    }, {
+      id: 5,
+      caption: "Интроверсия - Экстроверсия",
+      value: 3,
+      max: 3,
+      min: 1,
+      name: 'introversion'
+    }]
+  };
+  this.specialties = {
+    items: [{
+      id: 2,
+      caption: "Любимец государства",
+      tooltip: "Хорошо получается работать с гос. сектором"
+    }, {
+      id: 3,
+      caption: "Прошаренный",
+      tooltip: "Знает технологию по которой работает компания"
+    }, {
+      id: 4,
+      caption: "Большой чек",
+      tooltip: "Получает дополнительную возможность успешно продать если чек большой"
+    }, {
+      id: 5,
+      caption: "Телефонный маньяк",
+      tooltip: "Может делать огромное количество звонков,но на личных встречах ведет себя не очень"
+    }]
+  };
+  this.perks = {
+    items: [{
+      id: 1,
+      caption: "Парень с заводского",
+      chosen: false
+    }, {
+      id: 2,
+      caption: "Белый воротничок",
+      chosen: false
+    }, {
+      id: 3,
+      caption: "Раздолбай",
+      chosen: false
+    }]
+  };
+  this.indusrty = {
+    items: [{
+      id: 1,
+      caption: "Строительство"
+    }, {
+      id: 2,
+      caption: "Сельское Хозяйство"
+    }, {
+      id: 3,
+      caption: "FMCG"
+    }, {
+      id: 4,
+      caption: "Государственный сектор"
+    }]
+  };
+  this.points = 5;
+
+  var vm = this;
+
+  vm.$onInit = function () {
+    Restangular.one('api/v1/persons').get().then(function (res) {
+      vm.players = res;
+    });
+    vm.current = {
+      stats: {
+        personality: {
+          activeness: 5,
+          network: 5,
+          psychology: 5,
+          intellect: 5,
+          introversion: 5
+        },
+        specialties: [this.specialties.items[0]],
+        knowProduct: 1,
+        minCalls: 7,
+        maxCalls: 14,
+        perks: [],
+        money: 15
+      },
+      image_path: '',
+      first_name: "Иван",
+      last_name: "Иванов",
+      company: "Абырвалг инкорпорейтед"
+    };
+    return vm.generateImages();
+  };
+
+  vm.plus = function (what) {
+    var r;
+    r = _.find(vm.stats.items, {
+      id: what
+    });
+    if (vm.current.stats.personality[r.name] < r.max && vm.points > 0) {
+      vm.current.stats.personality[r.name]++;
+      vm.points--;
+    }
+  };
+
+  vm.minus = function (what) {
+    var r;
+    r = _.find(this.stats.items, {
+      id: what
+    });
+    if (this.current.stats.personality[r.name] > r.min) {
+      this.current.stats.personality[r.name]--;
+      this.points++;
+    }
+  };
+
+  vm.toggle = function () {
+    this.showMenu = !this.showMenu;
+  };
+
+  vm.chooseSpecialty = function (id) {
+    this.current.specialties = [_.find(this.specialties.items, {
+      id: id
+    })];
+    if (this.current.specialties[0].id === 3) {
+      this.current.knowProduct = 5;
+    } else {
+      this.current.knowProduct = 1;
+    }
+    if (this.current.specialties[0].id === 5) {
+      return this.current.maxCalls = 25;
+    } else {
+      return this.current.maxCalls = 15;
+    }
+  };
+
+  vm.chooseIndustry = function (id) {
+    return this.current.industry = _.find(this.indusrty.items, {
+      id: id
+    });
+  };
+
+  vm.chooseAvatar = function (image_path) {
+    return this.current.image_path = image_path;
+  };
+
+  vm.startGame = function (id) {
+    return this.$router.navigate(['Game', {
+      playerAvatarId: id
+    }]);
+  };
+
+  vm.generateImages = function () {
+    var i, j, k, len, name, names;
+    names = ['manager', 'secretar'];
+    this.images = [];
+    for (j = 0, len = names.length; j < len; j++) {
+      name = names[j];
+      for (i = k = 1; k <= 11; i = ++k) {
+        vm.images.push(name + i + '.png');
+      }
+    }
+    console.log(vm.images);
+    return this.current.image_path = vm.images[0];
+  };
+
+  vm.create = function () {
+    var s;
+    s = cookies.getAll();
+    this.current.name = this.current.first_name + this.current.last_name;
+    this.current.related_companies = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    this.current.owner = localStorage.getItem("userId");
+    return Restangular.one('api/v1/persons').get().then(function (_this) {
+      return function (res) {
+        return res.post('', _this.current, '', {
+          'X-CSRFToken': s.csrftoken
+        }).then(function (res) {
+          _this.$router.navigate(['Menu']);
+        });
+      };
+    }(this));
+  };
+};
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+// import * as angular from "angular";
+// import * as _ from "lodash";
+// import {Player} from "../lib/player";
+// import IService = restangular.IService;
+// import * as restangular from "restangular";
+// import IQService = angular.IQService;
+// import {Npc} from "../lib/npc";
+// import IComponentOptions = angular.IComponentOptions;
+/**
+ * Created by user on 05.01.17.
+ */
+
+__webpack_require__(4);
+__webpack_require__(1);
+__webpack_require__(26);
+
+var talkTpl = __webpack_require__(44);
+
+angular.module('app').component('talk', {
+    bindings: {
+        $router: '<'
+    },
+    template: talkTpl(),
+    controller: TalkCtrl,
+    controllerAs: 'ctrl'
+});
+
+TalkCtrl.$inject = ['TalkService'];
+function TalkCtrl(service) {
+    this.gameName = "Окно переговоров";
+
+    this.player = service.getPlayer();
+    this.npc = service.getNpc();
+    this.getHistory = service.getHistory;
+    this.getPlayerQuestions = service.getPlayerQuestions;
+    this.update = service.update;
+    this.getNpcAnswers = service.getNpcAnswers;
+    this.getTime = service.getTime;
+
+    this.$routerOnActivate = function () {
+        service.init();
+    };
+
+    this.notTheEnd = function () {
+        return !(service.isStatus('failure') || service.isStatus('success'));
+    };
+
+    this.checkColor = function () {
+        var f;
+        f = "";
+        if (service.isStatus('failure')) {
+            f = "failure";
+        }
+        if (service.isStatus('success')) {
+            f = "success";
+        }
+        return f;
+    };
+};
+
+// ---
+// generated by coffee-script 1.9.2
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/**
+ * Created by user on 29.03.17.
+ */
+__webpack_require__(4);
+__webpack_require__(1);
+angular.module('app').service('TalkService', TalkService);
+
+TalkService.$inject = ['Restangular', 'Player', 'Npc', '$q'];
+function TalkService(Restangular, player, npc, q) {
+    var questionId;
+    var inited = false;
+    var state = {
+        time: undefined,
+        history: [],
+        result: {},
+        questions: [],
+        previousAnswer: {}
+    };
+    var service = {
+        init: init,
+        update: update,
+        getPlayer: getPlayer,
+        getNpc: getNpc,
+
+        getTime: getTime,
+        getHistory: getHistory,
+
+        getPlayerQuestions: getPlayerQuestions,
+        getNpcAnswers: getNpcAnswers,
+
+        isStatus: isStatus
+    };
+    return service;
+    function init() {
+        state.time = 100;
+        state.result = {
+            end: false,
+            type: ""
+        };
+
+        player.init().then(function () {
+            update();
+            inited = true;
+        });
+    }
+    function update(questionId) {
+        console.log(questionId);
+        questionId = questionId || '';
+        var params = {
+            questionId: questionId
+        };
+        Restangular.one('api/v1/update').get(params).then(function (res) {
+            return _.extend(state, res);
+        });
+        // fakeUpdateFromServer().then((res)=> {
+        //     _.extend(state, res);
+        //     console.log(state);
+        // });
+    }
+    function fakeUpdateFromServer() {
+        var defer = q.defer();
+        var test = {
+            is_fail: true,
+            is_success: true,
+            questions: [{ id: 4, text: "Хорошая погодка, не правда ли?" }, { id: 5, text: "А как вам так нравится?" }],
+            previousAnswer: { text: "Да идите вы" },
+            gameStats: {},
+            time: 50
+        };
+        defer.resolve(test);
+        return defer.promise;
+    }
+    function getPlayer() {
+        return player;
+    }
+    function getNpc() {
+        return npc.getCurrentNpc();
+    }
+    function getNpcAnswers() {
+        return state.previousAnswer;
+    }
+    function getTime() {
+        return state.time;
+    }
+    function getHistory() {
+        return state.history;
+    }
+    function getPlayerQuestions() {
+        return state.questions;
+    }
+
+    function isStatus(name) {
+        var itIs;
+        itIs = false;
+        if (state.result.type === name) {
+            itIs = true;
+        }
+        return itIs;
+    }
+
+    // function findNode(questionId){
+    //     var params = {filter:{"where":{"from_node_id":questionId}}};
+    //     Restangular.all('api/v1/links').getList(params).then((res)=>console.log(res));
+    // }
+    // function findInitNode(questionId){
+    //     var deferred = q.defer();
+    //     var params = {filter:{"where":{"is_start":"true"}}};
+    //     Restangular.all('api/v1/nodes').getList(params).then((res)=>{
+    //         deferred.resolve(res[0]['id']);
+    //     });
+    //     return deferred.promise;
+    //
+    // }
+    // function fillNextArrayOfQuestions () {
+    //     if (isStatus('failure')) {
+    //         npc.fail();
+    //         player.fail();
+    //         time = 0;
+    //     } else if (isStatus('success')) {
+    //         npc.succeed();
+    //         player.succeed();
+    //         time = 0;
+    //     }
+    //     player.findNode(npc.current.id);
+    // }
+    //
+    // function checkForSuccess () {
+    //     if (!npc.branch) {
+    //         result.end = true;
+    //         result.type = "failure";
+    //     }
+    //     if (npc.current) {
+    //         if ((npc.current.type === "failure") || time <= 0) {
+    //             result.end = true;
+    //             result.type = "failure";
+    //         }
+    //         if (npc.current.type === "success") {
+    //             result.end = true;
+    //             result.type = "success";
+    //         }
+    //     }
+    // }
+    //
+    // function writeHistory () {
+    //     var inHistory;
+    //     console.log(player);
+    //     if (player.current) {
+    //         inHistory = _.find(history, {
+    //             text: player.current.text
+    //         });
+    //     }
+    //     if (!inHistory) {
+    //         history.push(player.current);
+    //     }
+    //     inHistory = _.find(history, {
+    //         text: npc.current.text
+    //     });
+    //     if (!inHistory) {
+    //         history.push(npc.current);
+    //     }
+    // }
+}
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+// import * as angular from "angular";
+// import * as restangular from "restangular";
+// import {cookies} from "angular";
+// import {IModalServiceInstance} from "angular-ui-bootstrap";
+// import * as _ from "lodash";
+// import IComponentOptions = angular.IComponentOptions;
+/**
+ * Created by user on 05.01.17.
+ */
+
+var treeModalTpl = __webpack_require__(45);
+
+angular.module('app').component('modalComponent', {
+  bindings: {
+    resolve: '<',
+    close: '&',
+    dismiss: '&'
+  },
+  template: treeModalTpl(),
+  controller: TreeModalCtrl,
+  controllerAs: '$ctrl'
+});
+TreeModalCtrl.$inject = ['Restangular', '$cookies'];
+function TreeModalCtrl(Restangular, cookies) {
+  var vm = this;
+
+  this.$onInit = function () {
+    this.node = this.resolve.node;
+    this.toAdd = {
+      text: ""
+    };
+  };
+
+  this.cancel = function () {
+    return this.dismiss({
+      $value: 'cancel'
+    });
+  };
+
+  this.save = function () {
+    var _this = this;
+
+    Restangular.one('api/v1/nodes/', this.node.id).get().then(function (res) {
+      res.choice.push(_this.selected.id);
+      var s = cookies.getAll();
+      return res.customPUT('', '', '', {
+        'X-CSRFToken': s.csrftoken
+      }).then(function () {
+        _this.node.answers.push(_this.selected);
+      });
+    });
+  };
+
+  this.deleteNode = function (id) {
+    var _this2 = this;
+
+    Restangular.one('api/v1/nodes/', this.node.id).get().then(function (res) {
+      res.choice = _.pull(res.choice, id);
+      var s = cookies.getAll();
+      res.customPUT('', '', '', {
+        'X-CSRFToken': s.csrftoken
+      }).then(function () {
+        return _this2.node.answers = _.pullAllBy(_this2.node.answers, [{
+          'id': id
+        }], 'id');
+      });
+    });
+  };
+
+  this.close = function () {
+    return this.dismiss({ $value: 'cancel' });
+  };
+
+  this.create = function (text) {
+    var _this3 = this;
+
+    var obj, s, type;
+    if (this.node.category === 'npc') {
+      type = 'player';
+    } else {
+      type = 'npc';
+    }
+    console.log(this.toAdd);
+    obj = {
+      "category": type,
+      "text": this.toAdd.text,
+      "is_fail": null || this.toAdd.is_fail,
+      "is_success": null,
+      "is_start": null,
+      "type": null || this.toAdd.type,
+      "choice": []
+    };
+    s = cookies.getAll();
+    Restangular.one('api/v1/nodes/').get().then(function (res) {});
+    Restangular.one('api/v1/nodes/').post('', obj, '', {
+      'X-CSRFToken': s.csrftoken
+    }).then(function (res) {
+      _this3.selected = res;
+      _this3.save();
+    });
+  };
+
+  this.setFailure = function () {
+    this.toAdd.is_fail = true;
+    this.toAdd.is_success = null;
+    return this.toAdd.type = 'failure';
+  };
+
+  this.setSuccess = function () {
+    this.toAdd.is_fail = null;
+    this.toAdd.is_success = true;
+    return this.toAdd.type = 'success';
+  };
+
+  this.setDefault = function () {
+    this.toAdd.is_fail = null;
+    this.toAdd.is_success = null;
+    return this.toAdd.type = '';
+  };
+};
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+__webpack_require__(1);
+/**
+ * Created by user on 05.01.17.
+ */
+
+// Npc = require('../Class/npc.js');
+//
+// Player = require('../Class/player.ts');
+
+var treeTpl = __webpack_require__(46);
+
+__webpack_require__(27);
+
+angular.module('app').component('tree', {
+  bindings: {
+    $router: '<'
+  },
+  template: treeTpl(),
+  controller: TreeCtrl,
+  controllerAs: 'ctrl'
+});
+
+TreeCtrl.$inject = ['Player', 'Npc', 'Restangular', '$q', '$uibModal', '$cookies'];
+function TreeCtrl(player, Npc, Restangular, q, uibModal, cookies) {
+  this.player = player;
+
+  this.tree = [];
+  this.filterQ = false;
+
+  this.$onInit = function () {
+    this.player.init();
+    this.npc = Npc.initNew(Restangular, q);
+    return q.all([this.player.loadNodes(), this.player.loadTree(), this.npc.loadNodes(), this.npc.loadTree()]).then(function (_this) {
+      return function (res) {
+        return _this.makeTree(_this.player);
+      };
+    }(this));
+  };
+
+  this.deleteLeave = function (id) {
+    var _this2 = this;
+
+    var s = cookies.getAll();
+    return Restangular.one('api/v1/nodes/', id).get().then(function (res) {
+      return res.remove('', {
+        'X-CSRFToken': s.csrftoken
+      }).then(function () {
+        return _this2.$onInit();
+      });
+    });
+  };
+
+  this.openModal = function (question) {
+    var _this3 = this;
+
+    this.modal = uibModal.open({
+      size: 'md',
+      component: 'modalComponent',
+      resolve: {
+        node: function node() {
+          console.log(question);
+          return question;
+        },
+        tree: function tree() {
+          var tree;
+          if (question.category === 'npc') {
+            return tree = _this3.player.nodes;
+          } else {
+            return tree = _this3.npc.nodes;
+          };
+        }
+      }
+    });
+    return this.modal.result.then(function () {
+      return _this3.$onInit();
+    });
+  };
+
+  this.makeTree = function (person) {
+    var opponent;
+    if (person) {
+      if (person.type === 'player') {
+        this.treeType = "Редактор ответов для Игрока";
+        opponent = this.npc;
+      } else if (person.type === 'npc') {
+        this.treeType = "Редактор ответов для NPC";
+        opponent = this.player;
+      }
+      this.tree = [];
+      return _.forEach(opponent.nodes, function (_this) {
+        return function (node) {
+          var nodesArray, qNode;
+          nodesArray = [];
+          qNode = _.find(person.tree, {
+            id: node.id
+          });
+          if (qNode && qNode.choice.length > 0) {
+            node.hasSiblings = true;
+            _.forEach(qNode.choice, function (choice) {
+              var t;
+              t = _.find(person.nodes, {
+                id: choice
+              });
+              return nodesArray.push(t);
+            });
+          }
+          node.answers = nodesArray;
+          return _this.tree.push(node);
+        };
+      }(this));
+    }
+  };
+}
+
+angular.module('app').filter('HasNoAnswer', function () {
+  return function (data, filterQ) {
+    var out;
+    out = data;
+    if (filterQ === true) {
+      out = _.filter(data, function (_this) {
+        return function (element) {
+          var ret;
+          ret = element.hasSiblings !== true && element.is_failure !== true && element.is_success !== true;
+          return ret;
+        };
+      }(this));
+    }
+    return out;
+  };
+});
+
+/***/ }),
+/* 29 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 19 */
+/* 30 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, module) {var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -63302,10 +64133,10 @@ $provide.value("$locale", {
   }
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(36), __webpack_require__(37)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(50), __webpack_require__(51)(module)))
 
 /***/ }),
-/* 20 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -63314,7 +64145,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 21 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -63323,7 +64154,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 22 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -63332,7 +64163,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 23 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -63341,16 +64172,16 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 24 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
 
-function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"panel\" style=\"background-color:#C4D9D4;\"\u003E\u003Ch3\u003EСписок организаций\u003C\u002Fh3\u003E\u003Cdiv class=\"panel panel-default\" ng-repeat=\"lead in ctrl.service.companies\" style=\"background-color:#F8FBF4;\"\u003E\u003Cdiv class=\"panel-body\"\u003E\u003Cdiv class=\"media\"\u003E\u003Cdiv class=\"media-left media-middle\"\u003E\u003Cimg src=\"..\u002Fstatic\u002Fmanagers\u002Fimg\u002Fbuilding[[lead.id]].png\" width=\"100\" height=\"150\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"media-body\"\u003E\u003Ch1\u003E\u003Ca ng-link=\"['CompanyDetail',{companyId:lead.id}]\"\u003E[[lead.name]]\u003C\u002Fa\u003E\u003C\u002Fh1\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-md-6\"\u003E\u003Cp\u003EРазмер компании: [[lead.size]]\u003C\u002Fp\u003E\u003Cp\u003EИстория сделок:\u003Ci class=\"fa fa-dollar\" aria-hidden=\"true\" style=\"color:#A14E71;\"\u003E\u003C\u002Fi\u003E\u003C\u002Fp\u003E\u003Ca class=\"btn btn-success\" ng-click=\"ctrl.goToCompany(lead.id)\" style=\"background-color:#40423F;\"\u003EИнфо\u003C\u002Fa\u003E\u003C!--a.btn.btn-success(ng-click=\"ctrl.goToTalk(lead.id)\")(style=\"background-color:#40423F;\") Позвонить--\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
+function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"panel\" style=\"background-color:#C4D9D4;\"\u003E\u003Ch3\u003EСписок организаций\u003C\u002Fh3\u003E\u003Cdiv class=\"panel panel-default\" ng-repeat=\"lead in ctrl.service.companies\" style=\"background-color:#F8FBF4;\"\u003E\u003Cdiv class=\"panel-body\"\u003E\u003Cdiv class=\"media\"\u003E\u003Cdiv class=\"media-left media-middle\"\u003E\u003Cimg src=\"..\u002Fstatic\u002Fmanagers\u002Fimg\u002Fbuilding[[lead.id]].png\" width=\"100\" height=\"150\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"media-body\"\u003E\u003Ch1\u003E\u003Ca ng-link=\"['CompanyDetail',{companyId:lead.id}]\"\u003E[[lead.name]]\u003C\u002Fa\u003E\u003C\u002Fh1\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-md-6\"\u003E\u003Cp\u003EРазмер компании: [[lead.size]]\u003C\u002Fp\u003E\u003Cp\u003EИстория сделок:\u003Ci class=\"fa fa-dollar\" aria-hidden=\"true\" style=\"color:#A14E71;\"\u003E\u003C\u002Fi\u003E\u003C\u002Fp\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
 module.exports = template;
 
 /***/ }),
-/* 25 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -63359,7 +64190,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 26 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -63368,7 +64199,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 27 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -63377,7 +64208,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 28 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -63386,7 +64217,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 29 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -63395,16 +64226,16 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 30 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
 
-function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"centered\"\u003E\u003Ch3\u003E[[ctrl.gameName]]\u003C\u002Fh3\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"container\"\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-lg-4\"\u003E\u003Cdiv class=\"panel panel-default\" style=\"background-color:#C4D9D4;\"\u003E\u003Cdiv class=\"panel-body\"\u003E\u003C!--img(src=\"..\u002Fstatic\u002Fmanagers\u002Fimg\u002Fmanager.png\" width=100 height=150)--\u003E\u003Cdiv class=\"media\"\u003E\u003Cdiv class=\"media-left media-middle\"\u003E\u003Cimg ng-src=\"..\u002Fstatic\u002Fmanagers\u002Fimg\u002F[[ctrl.player.image_path]]\" width=\"100\" height=\"150\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"media-body\"\u003E\u003Cul\u003E\u003Cli\u003E[[ctrl.player.name]]\u003C\u002Fli\u003E\u003Cli\u003E\"[[ctrl.player.company]]\"\u003C\u002Fli\u003E\u003Cli\u003E[[ctrl.player.position]]\u003C\u002Fli\u003E\u003C\u002Ful\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"media\"\u003E\u003Cdiv class=\"media-left\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"media-body\"\u003E\u003Ca class=\"btn btn-default btn-lg btn-block\" ng-link=\"['Game']\"\u003EЗакончить разговор\u003C\u002Fa\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C!--p [[ctrl.next.question]]--\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-lg-4\"\u003E\u003Cdiv class=\"panel panel-default\" style=\"background-color:#C4D9D4;\"\u003E\u003Cdiv class=\"panel-body\" ng-class=\"ctrl.checkColor()\"\u003E\u003Cp\u003EОставшееся время\u003Cdiv class=\"progress\"\u003E\u003Cdiv class=\"progress-bar progress-bar-info\" role=\"progressbar\" aria-valuenow=\"[[ctrl.getTime()]]\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"width: [[ctrl.getTime()]]%;\"\u003E\u003C!--| [[ctrl.time]]--\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fp\u003E\u003C!--ol--\u003E\u003C!--    li(ng-repeat='item in ctrl.history') -[[item]]--\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-lg-4\"\u003E\u003Cdiv class=\"panel panel-default\" style=\"background-color:#C4D9D4;\"\u003E\u003Cdiv class=\"panel-body\"\u003E\u003Cdiv class=\"media\"\u003E\u003Cdiv class=\"media-left media-middle\"\u003E\u003Cimg class=\"media-object\" src=\"..\u002Fstatic\u002Fmanagers\u002Fimg\u002F[[ctrl.npc.image_path]]\" width=\"100\" height=\"150\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"media-body\"\u003E\u003Cul\u003E\u003Cli\u003E[[ctrl.npc.name]]\u003C\u002Fli\u003E\u003Cli\u003E\"[[ctrl.npc.company]]\"\u003C\u002Fli\u003E\u003Cli\u003E[[ctrl.npc.position]]\u003C\u002Fli\u003E\u003C\u002Ful\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-lg-6\"\u003E\u003Cdiv class=\"panel panel-default\" ng-show=\"!ctrl.notTheEnd()\"\u003E\u003Cdiv class=\"panel-body\"\u003E\u003Cp\u003E[[ctrl.player.current.text]]\u003C\u002Fp\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"panel panel-default\" ng-show=\"ctrl.notTheEnd()\" style=\"background-color:#C4D9D4;\"\u003E\u003Cdiv class=\"panel-header\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"panel-body\"\u003E\u003Ch5\u003E\u003Cb\u003EВыберите варианты ответа\u003C\u002Fb\u003E\u003C\u002Fh5\u003E\u003Cdiv class=\"list-group\"\u003E\u003Ca class=\"list-group-item\" href=\"\" ng-repeat=\"element in ctrl.getPlayerQuestions()\" ng-click=\"ctrl.update(element.id)\" style=\"background-color:#F8FBF4;\"\u003E-&nbsp;[[element.text]]\u003C\u002Fa\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-lg-6\"\u003E\u003Cdiv class=\"panel panel-default\" style=\"background-color:#C4D9D4;\"\u003E\u003Cdiv class=\"panel-body\"\u003E\u003Cp\u003E[[ctrl.getNpcAnswers()]]\u003C\u002Fp\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-lg-12\"\u003E\u003Cdiv class=\"panel panel-default\"\u003E\u003Cdiv class=\"panel-body\"\u003E\u003Cp\u003EИстория разговора\u003C\u002Fp\u003E\u003Col\u003E\u003Cli ng-repeat=\"item in ctrl.getHistory()\"\u003E-[[item.text]]\u003C\u002Fli\u003E\u003C\u002Fol\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
+function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"centered\"\u003E\u003Ch3\u003E[[ctrl.gameName]]\u003C\u002Fh3\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"container\"\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-lg-4\"\u003E\u003Cdiv class=\"panel panel-default\" style=\"background-color:#C4D9D4;\"\u003E\u003Cdiv class=\"panel-body\"\u003E\u003C!--img(src=\"..\u002Fstatic\u002Fmanagers\u002Fimg\u002Fmanager.png\" width=100 height=150)--\u003E\u003Cdiv class=\"media\"\u003E\u003Cdiv class=\"media-left media-middle\"\u003E\u003Cimg ng-src=\"..\u002Fstatic\u002Fmanagers\u002Fimg\u002F[[ctrl.player.image_path]]\" width=\"100\" height=\"150\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"media-body\"\u003E\u003Cul\u003E\u003Cli\u003E[[ctrl.player.name]]\u003C\u002Fli\u003E\u003Cli\u003E\"[[ctrl.player.company]]\"\u003C\u002Fli\u003E\u003Cli\u003E[[ctrl.player.position]]\u003C\u002Fli\u003E\u003C\u002Ful\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"media\"\u003E\u003Cdiv class=\"media-left\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"media-body\"\u003E\u003Ca class=\"btn btn-default btn-lg btn-block\" ng-link=\"['Game']\"\u003EЗакончить разговор\u003C\u002Fa\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C!--p [[ctrl.next.question]]--\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-lg-4\"\u003E\u003Cdiv class=\"panel panel-default\" style=\"background-color:#C4D9D4;\"\u003E\u003Cdiv class=\"panel-body\" ng-class=\"ctrl.checkColor()\"\u003E\u003Cp\u003EОставшееся время\u003Cdiv class=\"progress\"\u003E\u003Cdiv class=\"progress-bar progress-bar-info\" role=\"progressbar\" aria-valuenow=\"[[ctrl.getTime()]]\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"width: [[ctrl.getTime()]]%;\"\u003E\u003C!--| [[ctrl.time]]--\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fp\u003E\u003C!--ol--\u003E\u003C!--    li(ng-repeat='item in ctrl.history') -[[item]]--\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-lg-4\"\u003E\u003Cdiv class=\"panel panel-default\" style=\"background-color:#C4D9D4;\"\u003E\u003Cdiv class=\"panel-body\"\u003E\u003Cdiv class=\"media\"\u003E\u003Cdiv class=\"media-left media-middle\"\u003E\u003Cimg class=\"media-object\" src=\"..\u002Fstatic\u002Fmanagers\u002Fimg\u002F[[ctrl.npc.image_path]]\" width=\"100\" height=\"150\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"media-body\"\u003E\u003Cul\u003E\u003Cli\u003E[[ctrl.npc.name]]\u003C\u002Fli\u003E\u003Cli\u003E\"[[ctrl.npc.company]]\"\u003C\u002Fli\u003E\u003Cli\u003E[[ctrl.npc.position]]\u003C\u002Fli\u003E\u003C\u002Ful\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-lg-6\"\u003E\u003Cdiv class=\"panel panel-default\" ng-show=\"!ctrl.notTheEnd()\"\u003E\u003Cdiv class=\"panel-body\"\u003E\u003Cp\u003E[[ctrl.player.current.text]]\u003C\u002Fp\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"panel panel-default\" ng-show=\"ctrl.notTheEnd()\" style=\"background-color:#C4D9D4;\"\u003E\u003Cdiv class=\"panel-header\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"panel-body\"\u003E\u003Ch5\u003E\u003Cb\u003EВыберите варианты ответа\u003C\u002Fb\u003E\u003C\u002Fh5\u003E\u003Cdiv class=\"list-group\"\u003E\u003Ca class=\"list-group-item\" href=\"\" ng-repeat=\"element in ctrl.getPlayerQuestions()\" ng-click=\"ctrl.update(element.id)\" style=\"background-color:#F8FBF4;\"\u003E-&nbsp;[[element.text]]\u003C\u002Fa\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-lg-6\"\u003E\u003Cdiv class=\"panel panel-default\" style=\"background-color:#C4D9D4;\"\u003E\u003Cdiv class=\"panel-body\"\u003E\u003Cp\u003E[[ctrl.getNpcAnswers().text]]\u003C\u002Fp\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-lg-12\"\u003E\u003Cdiv class=\"panel panel-default\"\u003E\u003Cdiv class=\"panel-body\"\u003E\u003Cp\u003EИстория разговора\u003C\u002Fp\u003E\u003Col\u003E\u003Cli ng-repeat=\"item in ctrl.getHistory()\"\u003E-[[item.text]]\u003C\u002Fli\u003E\u003C\u002Fol\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
 module.exports = template;
 
 /***/ }),
-/* 31 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -63413,7 +64244,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 32 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -63422,7 +64253,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 33 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -63434,7 +64265,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   /* global define, require */
   // https://github.com/umdjs/umd/blob/master/templates/returnExports.js
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(19), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(33), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -64883,7 +65714,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 
 /***/ }),
-/* 34 */
+/* 48 */
 /***/ (function(module, exports) {
 
 /*!
@@ -67281,15 +68112,15 @@ $templateCache.put("selectize/select-multiple.tpl.html","<div class=\"ui-select-
 $templateCache.put("selectize/select.tpl.html","<div class=\"ui-select-container selectize-control single\" ng-class=\"{\'open\': $select.open}\"><div class=\"selectize-input\" ng-class=\"{\'focus\': $select.open, \'disabled\': $select.disabled, \'selectize-focus\' : $select.focus}\" ng-click=\"$select.open && !$select.searchEnabled ? $select.toggle($event) : $select.activate()\"><div class=\"ui-select-match\"></div><input type=\"search\" autocomplete=\"off\" tabindex=\"-1\" class=\"ui-select-search ui-select-toggle\" ng-class=\"{\'ui-select-search-hidden\':!$select.searchEnabled}\" ng-click=\"$select.toggle($event)\" placeholder=\"{{$select.placeholder}}\" ng-model=\"$select.search\" ng-hide=\"!$select.isEmpty() && !$select.open\" ng-disabled=\"$select.disabled\" aria-label=\"{{ $select.baseTitle }}\"></div><div class=\"ui-select-choices\"></div><div class=\"ui-select-no-choice\"></div></div>");}]);
 
 /***/ }),
-/* 35 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(34);
+__webpack_require__(48);
 module.exports = 'ui.select';
 
 
 /***/ }),
-/* 36 */
+/* 50 */
 /***/ (function(module, exports) {
 
 var g;
@@ -67316,7 +68147,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 37 */
+/* 51 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -67344,1175 +68175,6 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 38 */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-/**
- * Created by user on 05.01.17.
- */
-
-
-var NpcInfoTpl = __webpack_require__(20);
-__webpack_require__(1);
-
-
-angular.module('app').component('npcInfo',{
-  bindings:{
-    $router:'<',
-    id: '<'
-  },
-  template:NpcInfoTpl(),
-  controller:NpcInfoCtrl,
-  controllerAs:'ctrl'
-});
-
-NpcInfoCtrl.$inject = ['Restangular','Npc','$q'];
-function NpcInfoCtrl(Restangular,Npc,q){
-  var npc;
-
-  this.$onInit = function() {
-    Npc.getNpc(this.id).then(res=>this.npc = res);
-  }
-  this.talk = function () {
-      Npc.selectCurrent(this.id);
-      // console.log(this.$router);
-      this.$router.navigate(['/Talk']);
-  }
-};
-
-
-
-
-/***/ }),
-/* 39 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// import * as angular from "angular";
-// import IService = restangular.IService;
-// import * as restangular from "restangular";
-// import IComponentOptions = angular.IComponentOptions;
-/**
- * Created by user on 05.01.17.
- */
-
-var PlayerInfoTpl  = __webpack_require__(21);
-
-
-angular.module('app').component('playerInfo',{
-    bindings:{
-      $router:'<'
-  },
-  template:PlayerInfoTpl(),
-  controller :PlayerInfoCtrl,
-  controllerAs:'ctrl'
-});
-
-PlayerInfoCtrl.$inject =  ['Restangular','Player'];
-function PlayerInfoCtrl(Restangular,player) {
-  this.player = player;
-  console.log(this);
-};
-
-
-
-
-/***/ }),
-/* 40 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// import * as angular from "angular";
-// import {GameService} from "../gameService";
-// import {Company} from "../../lib/Company";
-// import IComponentOptions = angular.IComponentOptions;
-/**
- * Created by user on 05.01.17.
- */
-
-var companyDetailTpl = __webpack_require__(23);
-
-
-
-__webpack_require__(38);
-__webpack_require__(44);
-
-__webpack_require__(3);
-
-angular.module('app').component('companyDetail',{
-  bindings:{
-    $router:'<'
-  },
-  template:companyDetailTpl(),
-  controller :CompanyDetailCtrl,
-  controllerAs:'ctrl'
-});
-
-CompanyDetailCtrl.$inject= ['gameService','Company'];
-
-function CompanyDetailCtrl(service,company) {
-    this.gameName = "Экран информации о компании";
-    this.company = company;
-
-  this.$routerOnActivate = function(next) {
-    this.company.selectCurrent(next.params.companyId);
-  }
-
-  this.goToTalk=function(id) {
-    this.$router.navigate([
-      'Talk', {
-        npcId: id
-      }
-    ]);
-  }
-
-
-};
-
-
-
-
-
-/***/ }),
-/* 41 */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-var CompanyListTpl = __webpack_require__(24);
-
-angular.module('app').component('companyList',{
-    bindings:{$router:'<'},
-    template: CompanyListTpl(),
-    controller :CompanyListCtrl,
-    controllerAs:'ctrl'
-});
-
-CompanyListCtrl.$inject = ['gameService'];
-
-function CompanyListCtrl(service) {
-    this.service = service;
-
-};
-
-
-
-
-
-/***/ }),
-/* 42 */
-/***/ (function(module, exports, __webpack_require__) {
-
-/**
- * Created by user on 05.01.17.
- */
-// import * as angular from "angular";
-// import {GameService} from "./gameService";
-// import IComponentOptions = angular.IComponentOptions;
-var gameTpl = __webpack_require__(25);
-
-__webpack_require__(39);
-
-__webpack_require__(3);
-
-__webpack_require__(41);
-
-__webpack_require__(40);
-
-__webpack_require__(43);
-
-
-
-angular.module('app').component('game',{
-  bindings:{
-    $router:'<'
-  },
-  template:gameTpl(),
-  controller :GameCtrl,
-  controllerAs:'ctrl',
-  $routeConfig: [
-    {
-      path: '/',
-      name: 'CompanyList',
-      component: 'companyList',
-      useAsDefault: true
-    }, {
-      path: '/company-detail',
-      name: 'CompanyDetail',
-      component: 'companyDetail'
-    }, {
-      path: '/profile',
-      name: 'Profile',
-      component: 'profile'
-    }
-  ]
-});
-GameCtrl.$inject = ['gameService'];
-function GameCtrl(service)  {
-  this.gameName = "Основной экран";
-  this.$routerOnActivate =function() {
-    service.init();
-  }
-
-};
-
-
-
-
-
-
-
-/***/ }),
-/* 43 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// import * as angular from "angular";
-// import {GameService} from "../gameService";
-// import IService = restangular.IService;
-// import * as restangular from "restangular";
-// import IComponentOptions = angular.IComponentOptions;
-/**
- * Created by user on 05.01.17.
- */
-
-var profileTpl = __webpack_require__(26);
-
-__webpack_require__(3);
-
-
-angular.module('app').component('profile',{
-  bindings:{
-    $router:'<'
-  },
-  template:profileTpl(),
-  controller : ProfileCtrl,
-  controllerAs:'ctrl'
-});
-
-ProfileCtrl.$inject = ['gameService'];
-
-function ProfileCtrl(service)  {
-  this.service = service
-
-};
-
-
-
-/***/ }),
-/* 44 */
-/***/ (function(module, exports) {
-
-// import * as angular from "angular";
-// import IService = restangular.IService;
-// import * as restangular from "restangular";
-/**
- * Created by user on 05.01.17.
- */
-
-angular.module('app').service('Company', ['Restangular', Company]);
-
-function Company(Restangular){
-  // public current: {};
-  // public items: Array<any>;
-    var current = {},
-    items = [];
-    var service={
-        current:current,
-        items:items,
-
-        selectCurrent:selectCurrent
-    };
-    return service;
-
-    function selectCurrent(id) {
-        if (service.current.id != id) {
-        Restangular.one('api/v1/companies/', id).get().then((res)=>{
-            service.current = res;
-            Restangular.one('api/v1/companies/'+ id+'/npcs/').get().then((res)=>{
-                var s = [];
-                _.forEach(res,(npc)=>{
-                    s.push(npc.id);
-                })
-                service.current.npc_set = s;
-            });
-        });
-        
-    }
-    }
-
-};
-
-
-
-
-
-
-/***/ }),
-/* 45 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// import * as angular from "angular";
-// import IComponentController = angular.IComponentController;
-// import * as restangular from "restangular";
-// import IService = restangular.IService;
-// import {IModalService} from "angular-ui-bootstrap";
-// import {storage} from "angular";
-// import {cookies} from "angular";
-// import IComponentOptions = angular.IComponentOptions;
-
-
-var menuTpl = __webpack_require__(27);
-var  modalTpl = __webpack_require__(28);
-__webpack_require__(46);
-
-
-
-angular.module('app').component('menu',{
-  bindings:{
-    $router:'<'
-  },
-  template:menuTpl(),
-  controller: MenuCtrl,
-  controllerAs:'ctrl'
-}
-).value('$routerRootComponent', 'app');
-
-MenuCtrl.$inject = ['$uibModal', 'Restangular', '$cookies'];
-function  MenuCtrl(uibModal,Restangular,cookies)  {
-  // var  canSeeEditor,modal,players,$router;
-  var vm = this;
-  vm.canSeeEditor = false;
-  vm.$onInit = function(){
-    Restangular.one('api/v1/my/').get().then( function(res) {
-        localStorage.setItem("userId",res.user_id);
-        vm.canSeeEditor = res.see_editor;
-    });
-
-    Restangular.one('api/v1/persons').get().then(function (res){
-        vm.players = res;
-    });
-  }
-  vm.goToGame = function(playerId) {
-    localStorage.setItem("playerId",playerId );
-    vm.$router.navigate(['Game']);
-  }
-  vm.deletePerson = function(id) {
-    var s =  cookies.getAll();
-    return Restangular.one('api/v1/persons/' + id).remove('', {
-      'X-CSRFToken': s.csrftoken
-    }).then( function(res) { return vm.$onInit();});
-  }
-  vm.help = function() {
-    return vm.modal = uibModal.open({
-      controller: 'modalHelpCtrl',
-      controllerAs: '$ctrl',
-      template: modalTpl()
-    });
-  }
-
-}
-
-
-
-/***/ }),
-/* 46 */
-/***/ (function(module, exports) {
-
-
-
-
-
-// import * as angular from "angular";
-// import {IModalServiceInstance} from "angular-ui-bootstrap";
-//
-angular
-    .module('app').controller('ModalHelpCtrl',ModalHelpCtrl);
-
-ModalHelpCtrl.$inject = ['$uibModalInstance'];
-function ModalHelpCtrl($uibModalInstance)
-{
-  this.cancel=function() { return uibModalInstance.close(); };
-};
-
-
-
-
-/***/ }),
-/* 47 */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-var newGameTpl= __webpack_require__(29);
-
-
-angular.module('app').component('newgame',{
-   bindings:{
-    $router:'<'
-  },
-  template:newGameTpl(),
-  controller :  NewGameCtrl,
-  controllerAs: 'ctrl'
-    }
-);
-
-
-NewGameCtrl.$inject = ['Restangular', '$cookies'];
-function NewGameCtrl(Restangular,cookies){
-    this.images = [];
-    this.gameName = "Экран выбора персонажа";
-    this.stats = {
-      items: [
-        {
-          id: 1,
-          caption: "Активность",
-          value: 5,
-          max: 9,
-          min: 1,
-          name: 'activeness'
-        }, {
-          id: 2,
-          caption: "Связи",
-          value: 5,
-          max: 9,
-          min: 1,
-          name: 'network'
-        }, {
-          id: 3,
-          caption: "Психология",
-          value: 5,
-          max: 9,
-          min: 1,
-          name: 'psychology'
-        }, {
-          id: 4,
-          caption: "Интелект",
-          value: 5,
-          max: 9,
-          min: 1,
-          name: 'intellect'
-        }, {
-          id: 5,
-          caption: "Интроверсия - Экстроверсия",
-          value: 3,
-          max: 3,
-          min: 1,
-          name: 'introversion'
-        }
-      ]
-    };
-    this.specialties = {
-      items: [
-        {
-          id: 2,
-          caption: "Любимец государства",
-          tooltip: "Хорошо получается работать с гос. сектором"
-        }, {
-          id: 3,
-          caption: "Прошаренный",
-          tooltip: "Знает технологию по которой работает компания"
-        }, {
-          id: 4,
-          caption: "Большой чек",
-          tooltip: "Получает дополнительную возможность успешно продать если чек большой"
-        }, {
-          id: 5,
-          caption: "Телефонный маньяк",
-          tooltip: "Может делать огромное количество звонков,но на личных встречах ведет себя не очень"
-        }
-      ]
-    };
-    this.perks = {
-      items: [
-        {
-          id: 1,
-          caption: "Парень с заводского",
-          chosen: false
-        }, {
-          id: 2,
-          caption: "Белый воротничок",
-          chosen: false
-        }, {
-          id: 3,
-          caption: "Раздолбай",
-          chosen: false
-        }
-      ]
-    };
-    this.indusrty = {
-      items: [
-        {
-          id: 1,
-          caption: "Строительство"
-        }, {
-          id: 2,
-          caption: "Сельское Хозяйство"
-        }, {
-          id: 3,
-          caption: "FMCG"
-        }, {
-          id: 4,
-          caption: "Государственный сектор"
-        }
-      ]
-    };
-    this.points = 5;
-
-    var vm = this;
-
-  vm.$onInit = function() {
-    Restangular.one('api/v1/persons').get().then((res)=> {
-        vm.players = res;
-      });
-    vm.current = {
-      stats: {
-        personality: {
-          activeness: 5,
-          network: 5,
-          psychology: 5,
-          intellect: 5,
-          introversion: 5
-        },
-        specialties: [this.specialties.items[0]],
-        knowProduct: 1,
-        minCalls: 7,
-        maxCalls: 14,
-        perks: [],
-        money: 15
-      },
-      image_path: '',
-      first_name: "Иван",
-      last_name: "Иванов",
-      company: "Абырвалг инкорпорейтед"
-    };
-    return vm.generateImages();
-  }
-
-  vm.plus  = function(what) {
-    var r;
-    r = _.find(vm.stats.items, {
-      id: what
-    });
-    if (vm.current.stats.personality[r.name] < r.max && vm.points > 0) {
-      vm.current.stats.personality[r.name]++;
-      vm.points--;
-    }
-  }
-
-  vm.minus = function(what) {
-    var r;
-    r = _.find(this.stats.items, {
-      id: what
-    });
-    if (this.current.stats.personality[r.name] > r.min) {
-      this.current.stats.personality[r.name]--;
-      this.points++;
-    }
-  }
-
-  vm.toggle = function() {
-    this.showMenu = !this.showMenu;
-  }
-
-  vm.chooseSpecialty = function(id) {
-    this.current.specialties = [
-      _.find(this.specialties.items, {
-        id: id
-      })
-    ];
-    if (this.current.specialties[0].id === 3) {
-      this.current.knowProduct = 5;
-    } else {
-      this.current.knowProduct = 1;
-    }
-    if (this.current.specialties[0].id === 5) {
-      return this.current.maxCalls = 25;
-    } else {
-      return this.current.maxCalls = 15;
-    }
-  }
-
-  vm.chooseIndustry =function(id) {
-    return this.current.industry = _.find(this.indusrty.items, {
-      id: id
-    });
-  }
-
-  vm.chooseAvatar = function(image_path) {
-    return this.current.image_path = image_path;
-  }
-
-  vm.startGame = function (id) {
-    return this.$router.navigate([
-      'Game', {
-        playerAvatarId: id
-      }
-    ]);
-  }
-
-  vm.generateImages = function () {
-    var i, j, k, len, name, names;
-    names = ['manager', 'secretar'];
-    this.images = [];
-    for (j = 0, len = names.length; j < len; j++) {
-      name = names[j];
-      for (i = k = 1; k <= 11; i = ++k) {
-        vm.images.push(name + i + '.png');
-      }
-    }
-    console.log(vm.images);
-    return this.current.image_path = vm.images[0];
-  }
-
-  vm.create = function () {
-    var s;
-    s = cookies.getAll();
-    this.current.name = this.current.first_name + this.current.last_name;
-    this.current.related_companies = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    this.current.owner = localStorage.getItem("userId");
-    return Restangular.one('api/v1/persons').get().then((function(_this) {
-      return function(res) {
-        return res.post('', _this.current, '', {
-          'X-CSRFToken': s.csrftoken
-        }).then(function(res) {
-          _this.$router.navigate(['Menu']);
-        });
-      };
-    })(this));
-  }
-
-
-};
-
-
-
-
-/***/ }),
-/* 48 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// import * as angular from "angular";
-// import * as _ from "lodash";
-// import {Player} from "../lib/player";
-// import IService = restangular.IService;
-// import * as restangular from "restangular";
-// import IQService = angular.IQService;
-// import {Npc} from "../lib/npc";
-// import IComponentOptions = angular.IComponentOptions;
-/**
- * Created by user on 05.01.17.
- */
-
-
-__webpack_require__(4);
-__webpack_require__(1);
-__webpack_require__(49);
-
-var talkTpl = __webpack_require__(30);
-
-
-angular.module('app').component('talk',{
-  bindings:{
-    $router:'<'
-  },
-  template:talkTpl(),
-  controller :TalkCtrl,
-  controllerAs:'ctrl'
-});
-
-TalkCtrl.$inject = ['TalkService'];
-function TalkCtrl(service)
-{
-    this.gameName = "Окно переговоров";
-
-    var _this=this;
-    _this.player=service.getPlayer();
-    _this.npc=service.getNpc();
-    _this.getHistory = service.getHistory;
-    _this.getPlayerQuestions = service.getPlayerQuestions;
-    _this.update = service.update;
-    _this.getNpcAnswers = service.getNpcAnswers;
-    _this.getTime = service.getTime;
-
-    _this.$routerOnActivate = function() {
-        service.init();
-    };
-    
-    _this.notTheEnd  = function() {
-            var r;
-            r = true;
-            if (service.isStatus('failure') || service.isStatus('success')) {
-                r = false;
-            }
-            return r;
-        }
-
-    _this.checkColor=function () {
-        var f;
-        f = "";
-        if (service.isStatus('failure')) {
-            f = "failure";
-        }
-        if (service.isStatus('success')) {
-            f = "success";
-        }
-        return f;
-    };
-
-    
-
-
-
-
-
-};
-
-
-
-
-// ---
-// generated by coffee-script 1.9.2
-
-/***/ }),
-/* 49 */
-/***/ (function(module, exports, __webpack_require__) {
-
-/**
- * Created by user on 29.03.17.
- */
-__webpack_require__(4);
-__webpack_require__(1);
-angular.module('app').service('TalkService', TalkService);
-
-TalkService.$inject = ['Restangular', 'Player','Npc','$q'];
-function TalkService(Restangular,player,npc,q) {
-
-    var inited = false,
-    time,
-    history = [],
-    result = {
-
-    };
-
-    var service =  {
-        getPlayer:getPlayer,
-        getNpc:getNpc,
-        getTime:getTime,
-        getHistory:getHistory,
-        getPlayerQuestions:getPlayerQuestions,
-        init:init,
-        getNpcAnswers:getNpcAnswers,
-
-        isStatus:isStatus,
-        update:update
-    };
-    return service;
-    function getPlayer(){
-        return player;
-    }
-    function getNpc() {
-        return npc.getCurrentNpc();
-    }
-    function getNpcAnswers() {
-        return npc && npc.current && npc.current.text ? npc.current.text : '';
-
-    }
-    function getTime() {
-        return time;
-    }
-    function getHistory() {
-        return history;
-    }
-    function init() {
-        time = 100;
-        result = {
-            end: false,
-            type: ""
-        };
-        player.init();
-        // var npcId = next.params.npcId;
-        // npc.selectCurrent(npcId);
-
-        q.all([
-            player.loadNodes(),
-            player.loadTree(),
-            npc.loadNodes(),
-            npc.loadTree()])
-            .then((res)=>{
-                update();
-                inited = true;
-            });
-
-    }
-
-    function update (questionId){
-        console.log(questionId);
-        if (questionId > 1) {
-            time -= 30;
-        }
-        findAnswerForQuestion(questionId);
-        checkForSuccess();
-        writeHistory();
-        fillNextArrayOfQuestions();
-        writeHistory();
-    }
-    function getPlayerQuestions() {
-        return player.questionArray;
-    }
-    function isStatus (name) {
-        var itIs;
-        itIs = false;
-        if (result.type === name) {
-            itIs = true;
-        }
-        return itIs;
-    }
-
-    function findAnswerForQuestion (questionId) {
-        var startElement;
-        if (!questionId || questionId === 1) {
-            
-            startElement = _.find(npc.tree, 'is_start');
-            questionId = startElement.id;
-            
-        }
-        if (questionId) {
-            npc.findNode(questionId);
-            player.findCurrent(questionId);
-            npc.findCurrent();
-        }
-    }
-
-    function fillNextArrayOfQuestions () {
-        if (isStatus('failure')) {
-            npc.fail();
-            player.fail();
-            time = 0;
-        } else if (isStatus('success')) {
-            npc.succeed();
-            player.succeed();
-            time = 0;
-        }
-        player.findNode(npc.current.id);
-    }
-
-    function checkForSuccess () {
-        if (!npc.branch) {
-            result.end = true;
-            result.type = "failure";
-        }
-        if (npc.current) {
-            if ((npc.current.type === "failure") || time <= 0) {
-                result.end = true;
-                result.type = "failure";
-            }
-            if (npc.current.type === "success") {
-                result.end = true;
-                result.type = "success";
-            }
-        }
-    }
-
-    function writeHistory () {
-        var inHistory;
-        console.log(player);
-        if (player.current) {
-            inHistory = _.find(history, {
-                text: player.current.text
-            });
-        }
-        if (!inHistory) {
-            history.push(player.current);
-        }
-        inHistory = _.find(history, {
-            text: npc.current.text
-        });
-        if (!inHistory) {
-            history.push(npc.current);
-        }
-    }
-
-}
-
-
-
-
-
-/***/ }),
-/* 50 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// import * as angular from "angular";
-// import * as restangular from "restangular";
-// import {cookies} from "angular";
-// import {IModalServiceInstance} from "angular-ui-bootstrap";
-// import * as _ from "lodash";
-// import IComponentOptions = angular.IComponentOptions;
-/**
- * Created by user on 05.01.17.
- */
-
-var treeModalTpl = __webpack_require__(31);
-
-
-angular.module('app').component('modalComponent', {
-    bindings:{
-      resolve: '<',
-      close: '&',
-      dismiss: '&'
-  },
-  template:treeModalTpl(),
-  controller :  TreeModalCtrl,
-  controllerAs:'$ctrl'
-});
-TreeModalCtrl.$inject = ['Restangular', '$cookies'];
-function TreeModalCtrl(Restangular,cookies) {
-    var vm=this;
-
-  this.$onInit= function(){
-    this.node = this.resolve.node;
-    this.toAdd = {
-      text: ""
-    };
-  }
-
-  this.cancel = function(){
-    return this.dismiss({
-      $value: 'cancel'
-    });
-  }
-
-
-  this.save= function() {
-    Restangular.one('api/v1/nodes/', this.node.id).get().then((res)=> {
-        res.choice.push(this.selected.id);
-        var s = cookies.getAll();
-        return res.customPUT('', '', '', {
-          'X-CSRFToken': s.csrftoken
-        }).then(()=>{
-          this.node.answers.push(this.selected);
-        });
-    });
-  }
-
-  this.deleteNode= function(id) {
-    Restangular.one('api/v1/nodes/', this.node.id).get().then(
-      (res)=> {
-        res.choice = _.pull(res.choice, id);
-        var s = cookies.getAll();
-        res.customPUT('', '', '', {
-          'X-CSRFToken': s.csrftoken
-        }).then(()=> {
-          return this.node.answers = _.pullAllBy(this.node.answers, [
-            {
-              'id': id
-            }
-          ], 'id');
-        });
-
-      });
-
-  }
-
-  this.close= function() {
-    return this.dismiss({$value: 'cancel' });
-  }
-
-  this.create= function(text) {
-    var obj, s, type;
-    if (this.node.category === 'npc') {
-      type = 'player';
-    } else {
-      type = 'npc';
-    }
-    console.log(this.toAdd);
-    obj = {
-      "category": type,
-      "text": this.toAdd.text,
-      "is_fail": null || this.toAdd.is_fail,
-      "is_success": null,
-      "is_start": null,
-      "type": null || this.toAdd.type,
-      "choice": []
-    };
-    s = cookies.getAll();
-    Restangular.one('api/v1/nodes/').get().then((res)=>{
-        }
-    );
-    Restangular.one('api/v1/nodes/').post('', obj, '', {
-      'X-CSRFToken': s.csrftoken
-    }).then((res)=> {
-        this.selected = res;
-        this.save();
-      });
-  }
-
-  this.setFailure= function(){
-    this.toAdd.is_fail = true;
-    this.toAdd.is_success = null;
-    return this.toAdd.type = 'failure';
-  }
-
-  this.setSuccess= function(){
-    this.toAdd.is_fail = null;
-    this.toAdd.is_success = true;
-    return this.toAdd.type = 'success';
-  }
-
-  this.setDefault = function(){
-    this.toAdd.is_fail = null;
-    this.toAdd.is_success = null;
-    return this.toAdd.type = '';
-  }
-
-};
-
-
-
-
-
-/***/ }),
-/* 51 */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-
-__webpack_require__(1);
-/**
- * Created by user on 05.01.17.
- */
-
-
-// Npc = require('../Class/npc.js');
-//
-// Player = require('../Class/player.ts');
-
-var treeTpl = __webpack_require__(32);
-
-__webpack_require__(50);
-
-angular.module('app').component('tree',{
-    bindings:{
-    $router:'<'
-  },
-  template:treeTpl(),
-  controller : TreeCtrl,
-  controllerAs: 'ctrl'
-});
-
-TreeCtrl.$inject =['Player', 'Npc', 'Restangular', '$q', '$uibModal', '$cookies'];
-function TreeCtrl (player,Npc,Restangular,q,uibModal,cookies)
-{
-  this.player=player;
-
-    this.tree = [];
-    this.filterQ = false;
-
-
-  this.$onInit =function() {
-    this.player.init();
-    this.npc = Npc.initNew(Restangular,q);
-    return q.all([this.player.loadNodes(), this.player.loadTree(), this.npc.loadNodes(), this.npc.loadTree()]).then((function(_this) {
-      return function(res) {
-        return _this.makeTree(_this.player);
-      };
-    })(this));
-  }
-
-  this.deleteLeave = function (id) {
-    var s = cookies.getAll();
-    return Restangular.one('api/v1/nodes/', id).get().then((res)=> {
-        return res.remove('', {
-          'X-CSRFToken': s.csrftoken
-        }).then(()=> {
-          return this.$onInit();
-        });
-      });
-  }
-
-  this.openModal=function  (question) {
-    this.modal = uibModal.open({
-      size: 'md',
-      component: 'modalComponent',
-      resolve: {
-        node:()=> {
-          console.log(question);
-          return question;
-        },
-        tree:()=> {
-          var tree;
-          if (question.category === 'npc') {
-            return tree = this.player.nodes;
-          } else {
-            return tree = this.npc.nodes;
-          };
-        }
-      }
-    });
-    return this.modal.result.then(()=> {
-        return this.$onInit();
-      });
-
-  }
-
-  this.makeTree=function (person) {
-    var opponent;
-    if (person) {
-      if (person.type === 'player') {
-        this.treeType = "Редактор ответов для Игрока";
-        opponent = this.npc;
-      } else if (person.type === 'npc') {
-        this.treeType = "Редактор ответов для NPC";
-        opponent = this.player;
-      }
-      this.tree = [];
-      return _.forEach(opponent.nodes, (function(_this) {
-        return function(node) {
-          var nodesArray, qNode;
-          nodesArray = [];
-          qNode = _.find(person.tree, {
-            id: node.id
-          });
-          if (qNode && qNode.choice.length > 0) {
-            node.hasSiblings = true;
-            _.forEach(qNode.choice, function(choice) {
-              var t;
-              t = _.find(person.nodes, {
-                id: choice
-              });
-              return nodesArray.push(t);
-            });
-          }
-          node.answers = nodesArray;
-          return _this.tree.push(node);
-        };
-      })(this));
-    }
-  }
-
-}
-
-
-
-
-
-angular.module('app').filter('HasNoAnswer', function() {
-  return function(data, filterQ) {
-    var out;
-    out = data;
-    if (filterQ === true) {
-      out = _.filter(data, (function(_this) {
-        return function(element) {
-          var ret;
-          ret = (element.hasSiblings !== true) && (element.is_failure !== true) && (element.is_success !== true);
-          return ret;
-        };
-      })(this));
-    }
-    return out;
-  };
-});
-
-
-
-/***/ }),
 /* 52 */
 /***/ (function(module, exports) {
 
@@ -68529,15 +68191,10 @@ angular.module('app').filter('HasNoAnswer', function() {
 
 
 
-
 __webpack_require__(6);
 __webpack_require__(5);
 
-
-
 // angular.bootstrap(document, ['app']);
-
-
 
 /***/ })
 /******/ ]);

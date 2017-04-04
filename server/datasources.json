@@ -3,16 +3,7 @@
     "name": "db",
     "connector": "memory"
   },
-  "mongodb": {
-    "host": "localhost",
-    "port": 27017,
-    "url": "mongodb://@localhost:27017",
-    "database": "tetralab",
-    "password": "",
-    "name": "mongodb",
-    "user": "",
-    "connector": "mongodb"
-  },
+
   "postgres": {
     "host": "localhost",
     "port": 5432,
