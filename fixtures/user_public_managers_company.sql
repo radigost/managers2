@@ -1,0 +1,2 @@
+INSERT INTO public.managers_company (id, name, description, size, industry_id) VALUES (1, 'Новая Компания', 'компания занимается всем новым', 3, 1);
+INSERT INTO public.managers_company (id, name, description, size, industry_id) VALUES (2, 'Залежалые индюки', 'Оптовая торговля мясом', 2, 2);

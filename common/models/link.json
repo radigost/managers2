@@ -16,10 +16,19 @@
     },
     "to_node_id": {
       "type": "number"
+    },
+    "text": {
+      "type": "string"
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "node_to": {
+      "type": "belongsTo",
+      "model": "Node",
+      "foreignKey": "to_node_id"
+    }
+  },
   "acls": [],
   "methods": {}
 }
