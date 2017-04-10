@@ -1,3 +1,4 @@
+
 CREATE TABLE managers_company
 (
     id INTEGER DEFAULT nextval('managers_company_id_seq'::regclass) PRIMARY KEY NOT NULL,
@@ -15,7 +16,7 @@ CREATE TABLE managers_industry
 );
 CREATE TABLE managers_node
 (
-    id INTEGER DEFAULT nextval('managers_node_id_seq'::regclass) PRIMARY KEY NOT NULL,
+    id INTEGER DEFAULT SERIAL PRIMARY KEY NOT NULL,
     category VARCHAR(10) NOT NULL,
     text VARCHAR(250) NOT NULL,
     is_fail BOOLEAN,
@@ -25,19 +26,20 @@ CREATE TABLE managers_node
 );
 CREATE TABLE managers_node_choice
 (
-    id INTEGER DEFAULT nextval('managers_node_choice_id_seq'::regclass) PRIMARY KEY NOT NULL,
+    id INTEGER DEFAULT SERIAL PRIMARY KEY NOT NULL,
     from_node_id INTEGER NOT NULL,
     to_node_id INTEGER NOT NULL,
     text TEXT,
     CONSTRAINT managers_node_choice_from_node_id_178b415a_fk_managers_node_id FOREIGN KEY (from_node_id) REFERENCES managers_node (id),
     CONSTRAINT managers_node_choice_to_node_id_5865f372_fk_managers_node_id FOREIGN KEY (to_node_id) REFERENCES managers_node (id)
 );
+
 CREATE UNIQUE INDEX managers_node_choice_from_node_id_3e3f4b2f_uniq ON managers_node_choice (from_node_id, to_node_id);
 CREATE INDEX managers_node_choice_22d0d145 ON managers_node_choice (from_node_id);
 CREATE INDEX managers_node_choice_33b4eced ON managers_node_choice (to_node_id);
 CREATE TABLE managers_npc
 (
-    id INTEGER DEFAULT nextval('managers_npc_id_seq'::regclass) PRIMARY KEY NOT NULL,
+    id INTEGER DEFAULT SERIAL PRIMARY KEY NOT NULL,
     name VARCHAR(30) NOT NULL,
     image_path VARCHAR(150),
     stats JSONB NOT NULL,
@@ -50,7 +52,7 @@ CREATE INDEX managers_npc_447d3092 ON managers_npc (company_id);
 CREATE INDEX managers_npc_bce5bd07 ON managers_npc (position_id);
 CREATE TABLE managers_person
 (
-    id INTEGER DEFAULT nextval('managers_person_id_seq'::regclass) PRIMARY KEY NOT NULL,
+    id INTEGER DEFAULT SERIAL PRIMARY KEY NOT NULL,
     name VARCHAR(30) NOT NULL,
     company VARCHAR(250) NOT NULL,
     stats JSONB NOT NULL,
@@ -65,7 +67,7 @@ CREATE INDEX managers_person_bce5bd07 ON managers_person (position_id);
 CREATE INDEX managers_person_5e7b1936 ON managers_person (owner_id);
 CREATE TABLE managers_person_related_companies
 (
-    id INTEGER DEFAULT nextval('managers_person_related_companies_id_seq'::regclass) PRIMARY KEY NOT NULL,
+    id INTEGER DEFAULT SERIAL PRIMARY KEY NOT NULL,
     person_id INTEGER NOT NULL,
     company_id INTEGER NOT NULL,
     CONSTRAINT managers_person_relate_person_id_a307ca1a_fk_managers_person_id FOREIGN KEY (person_id) REFERENCES managers_person (id),
@@ -76,12 +78,12 @@ CREATE INDEX managers_person_related_companies_a8452ca7 ON managers_person_relat
 CREATE INDEX managers_person_related_companies_447d3092 ON managers_person_related_companies (company_id);
 CREATE TABLE managers_position
 (
-    id INTEGER DEFAULT nextval('managers_position_id_seq'::regclass) PRIMARY KEY NOT NULL,
+    id INTEGER DEFAULT serial PRIMARY KEY NOT NULL,
     name VARCHAR(150)
 );
 CREATE TABLE managers_users
 (
-    id INTEGER DEFAULT nextval('managers_users_id_seq'::regclass) PRIMARY KEY NOT NULL,
+    id INTEGER DEFAULT SERIAL PRIMARY KEY NOT NULL,
     login VARCHAR(30) NOT NULL,
     password VARCHAR(30) NOT NULL
 );
