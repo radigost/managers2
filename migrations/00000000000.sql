@@ -1,3 +1,8 @@
+CREATE TABLE managers_industry
+(
+  id SERIAL PRIMARY KEY NOT NULL,
+  name VARCHAR(30) NOT NULL
+);
 
 CREATE TABLE managers_company
 (
@@ -9,11 +14,7 @@ CREATE TABLE managers_company
     CONSTRAINT managers_company_industry_id_543bc473_fk_managers_industry_id FOREIGN KEY (industry_id) REFERENCES managers_industry (id)
 );
 CREATE INDEX managers_company_e7de220b ON managers_company (industry_id);
-CREATE TABLE managers_industry
-(
-    id SERIAL PRIMARY KEY NOT NULL,
-    name VARCHAR(30) NOT NULL
-);
+
 CREATE TABLE managers_node
 (
     id SERIAL PRIMARY KEY NOT NULL,
@@ -60,8 +61,7 @@ CREATE TABLE managers_person
     image_path VARCHAR(150),
     is_deleted BOOLEAN NOT NULL,
     owner_id INTEGER NOT NULL,
-    CONSTRAINT managers_person_position_id_282d4a01_fk_managers_position_id FOREIGN KEY (position_id) REFERENCES managers_position (id),
-    CONSTRAINT managers_person_owner_id_083dbfed_fk_auth_user_id FOREIGN KEY (owner_id) REFERENCES auth_user (id)
+    CONSTRAINT managers_person_position_id_282d4a01_fk_managers_position_id FOREIGN KEY (position_id) REFERENCES managers_position (id)
 );
 CREATE INDEX managers_person_bce5bd07 ON managers_person (position_id);
 CREATE INDEX managers_person_5e7b1936 ON managers_person (owner_id);

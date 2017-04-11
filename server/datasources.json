@@ -1,16 +1,7 @@
+
 {
   "db": {
     "name": "db",
     "connector": "memory"
-  },
-  "postgres": {
-    "host": "localhost",
-    "port": 5432,
-    "url": "postgresql://localhost:5432/user",
-    "database": "user",
-    "password": "",
-    "name": "postgres",
-    "user": "user",
-    "connector": "postgresql"
   }
 }
