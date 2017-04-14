@@ -1,0 +1,80 @@
+#top-image{
+  background: url(city.jpeg) no-repeat center;
+  height: 30em;
+  color: white;
+  text-align: center;
+  border-radius: 9px;
+
+}
+
+#about {
+}
+#about h1 {
+  text-align: center;
+}
+
+
+#benefits{
+  background: #2e6da4;
+  color:white;
+  margin-top: 3em;
+}
+
+#benefits h1{
+  text-align: center;
+  padding-bottom: 1em;
+  padding-top: 1em;
+}
+#benefits .icon{
+  height:1.5em;
+  text-align: center;
+  line-height: 1.5em;
+  font-size: 4em;
+}
+#benefits .icon-text {
+  text-align: center;
+  margin-bottom: 3em;
+}
+
+#feedback{
+ margin-top: 3em;
+  margin-bottom: 5em;
+}
+
+#feedback h1 {
+  text-align: center;
+  margin-bottom: 2em;
+}
+
+#feedback .icon {
+  height:4em;
+  text-align: center;
+  line-height: 4em;
+  font-size: 4em;
+  border : #2e6da4 0.5px solid;
+}
+
+#feedback .icon-text{}
+
+#feedback .icon-text .icon-text-caption {
+  font-style: italic;
+  text-align: center;
+  text-emphasis;
+  margin-top: 2em;
+}
+#feedback .icon-text p {
+  text-align: justify;
+}
+
+
+#classic-education{
+  background: #1b6d85;
+  color: white;
+}
+#classic-education h1{
+  text-align: center;
+}
+
+footer {
+  height: 10em;
+}

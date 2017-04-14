@@ -48,9 +48,16 @@
     }
   },
   "files": {
-    "loopback#static": {
-      "params": "$!../client"
-    }
+    "loopback#static": [
+      {
+        "params": "$!../client"
+      },
+      {
+        "name":"landing",
+        "paths":["/landing"],
+        "params": "$!../landing"
+      }
+    ]
   },
   "final": {
     "loopback#urlNotFound": {}
