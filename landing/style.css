@@ -1,10 +1,9 @@
 #top-image{
-  background: url(city.jpeg) no-repeat center;
+  background: url(city.jpeg) no-repeat center ;
   height: 30em;
   color: white;
   text-align: center;
   border-radius: 9px;
-
 }
 
 #about {
@@ -22,7 +21,7 @@
 
 #benefits h1{
   text-align: center;
-  padding-bottom: 1em;
+  padding-bottom: 2em;
   padding-top: 1em;
 }
 #benefits .icon{
@@ -52,6 +51,7 @@
   line-height: 4em;
   font-size: 4em;
   border : #2e6da4 0.5px solid;
+  border-radius: 10px;
 }
 
 #feedback .icon-text{}
