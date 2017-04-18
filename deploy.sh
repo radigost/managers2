@@ -1,10 +1,16 @@
 #!/usr/bin/env bash
 
 kill $(cat /tmp/my-app.pid)
+
+if [ ! -d ../backups ]; then
+  mkdir ../backups
+fi
+
+sudo -u postgres pg_dump > ../backups/$(date +%d-%m-%y_%H:%M).sql
+
+
 git pull
 npm install
-
-#sudo -u postgres psql < /home/srv/managers2/migrations/00000000000.sql
 
 nohup node . > /dev/null & echo $! >  /tmp/my-app.pid &
 
