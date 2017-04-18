@@ -1,14 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="app">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
   <!-- Latest compiled and minified CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
   <link rel="stylesheet" href="style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-resource.min.js"></script>
+  <script src="index.js"></script>
 
 </head>
-<body>
+<body ng-controller="BasicController as $ctrl">
 <div class="container-fluid">
   <div class="header clearfix">
     <nav>
@@ -29,14 +32,23 @@
       </div>
       <div class="col-md-4"></div>
       <div class="col-md-4">
-        <form class="form-inline">
+        <form class="form-inline" ng-submit="$ctrl.sendEmail()">
           <div class="form-group">
-            <label class="sr-only" for="exampleInputEmail3">Email address</label>
-            <input type="email" class="form-control" id="exampleInputEmail3" placeholder="Email">
+            <label class="sr-only" for="email">Email address</label>
+            <input type="email" class="form-control" ng-model="$ctrl.email" id="email" placeholder="Email" name="email">
           </div>
 
-          <button type="submit" class="btn btn-default">регистрация</button>
+          <button class="btn btn-default">регистрация</button>
         </form>
+
+        <!--<form class="form-inline" action="/api/v1/customers" method="post" ng-submit="$ctrl.sendEmail()">-->
+          <!--<div class="form-group">-->
+            <!--<label class="sr-only" for="email">Email address</label>-->
+            <!--<input type="email" class="form-control" ng-model="$ctrl.email" id="email" placeholder="Email" name="email">-->
+          <!--</div>-->
+
+          <!--<button class="btn btn-default">регистрация</button>-->
+        <!--</form>-->
       </div>
       <div class="col-md-4"></div>
     </div>
@@ -232,20 +244,20 @@
     </div>
   </div>
 
-  <div class="row" id="howt">
+  <div class="row" id="howto">
     <div class="col-md-12">
       <h1>Как работать в нашей системе</h1>
       <div class="row">
-        <div class="col-md-2">Зарегистрироваться</div>
-        <div class="col-md-1">
+        <div class="col-md-2 element-text">Зарегистрироваться</div>
+        <div class="col-md-1 element-arrow">
           <i class="fa fa-arrow-circle-right" aria-hidden="true"></i>
         </div>
         <div class="col-md-2">Выбрать категорию продаж</div>
-        <div class="col-md-1">
+        <div class="col-md-1 element-arrow">
           <i class="fa fa-arrow-circle-right" aria-hidden="true"></i>
         </div>
         <div class="col-md-2">Начать изучать теорию</div>
-        <div class="col-md-1">
+        <div class="col-md-1 element-arrow">
           <i class="fa fa-arrow-circle-right" aria-hidden="true"></i>
         </div>
         <div class="col-md-2">Проводить тренировочные звонки</div>

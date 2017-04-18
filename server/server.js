@@ -4,6 +4,7 @@ var loopback = require('loopback');
 var boot = require('loopback-boot');
 
 
+var DataSource = require('loopback-datasource-juggler').DataSource;
 
 var app = module.exports = loopback();
 
@@ -33,3 +34,9 @@ boot(app, __dirname, function(err) {
   if (require.main === module)
     app.start();
 });
+
+
+app.datasources['postgres'].autoupdate(['customer'], function(err) {
+  !!err ? console.log(err) :'';
+});
+

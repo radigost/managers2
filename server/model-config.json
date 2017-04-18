@@ -61,5 +61,12 @@
   "Link": {
     "dataSource": "postgres",
     "public": true
+  },
+  "customer": {
+    "dataSource": "postgres",
+    "public": true,
+    "options": {
+      "emailVerificationRequired": true
+    }
   }
 }

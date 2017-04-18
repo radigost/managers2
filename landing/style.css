@@ -75,6 +75,26 @@
   text-align: center;
 }
 
+#howto{}
+
+#howto h1{
+  text-align: center;
+}
+
+#howto .element-text{
+  height: 4em;
+  text-align: center;
+  line-height: 4em;
+  /*vertical-align: middle;*/
+  /*font-size: 10em;*/
+}
+#howto .element-arrow{
+  height:4em;
+  text-align: center;
+  line-height: 4em;
+  font-size: 4em;
+}
+
 footer {
   height: 10em;
 }
