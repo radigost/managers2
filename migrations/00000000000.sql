@@ -3,7 +3,11 @@ CREATE TABLE managers_industry
   id SERIAL PRIMARY KEY NOT NULL,
   name VARCHAR(30) NOT NULL
 );
-
+CREATE TABLE managers_position
+(
+    id serial PRIMARY KEY NOT NULL,
+    name VARCHAR(150)
+);
 CREATE TABLE managers_company
 (
     id SERIAL PRIMARY KEY NOT NULL,
@@ -76,11 +80,7 @@ CREATE TABLE managers_person_related_companies
 CREATE UNIQUE INDEX managers_person_related_companies_person_id_2e1f21d4_uniq ON managers_person_related_companies (person_id, company_id);
 CREATE INDEX managers_person_related_companies_a8452ca7 ON managers_person_related_companies (person_id);
 CREATE INDEX managers_person_related_companies_447d3092 ON managers_person_related_companies (company_id);
-CREATE TABLE managers_position
-(
-    id serial PRIMARY KEY NOT NULL,
-    name VARCHAR(150)
-);
+
 CREATE TABLE managers_users
 (
     id SERIAL PRIMARY KEY NOT NULL,

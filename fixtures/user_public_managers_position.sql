@@ -1,1 +1,0 @@
-INSERT INTO public.managers_position (id, name) VALUES (1, 'Главный секретарь');
