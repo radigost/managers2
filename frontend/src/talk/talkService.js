@@ -40,7 +40,6 @@ function TalkService(Restangular,player,npc,q) {
         });
     }
     function update (questionId){
-      console.log(questionId);
       questionId = questionId||'';
       var params = {
         questionId:questionId

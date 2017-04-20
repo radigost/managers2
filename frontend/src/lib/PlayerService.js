@@ -15,6 +15,7 @@ function Player(Restangular,q) {
   company = "",
   money = "",
   position = "";
+
   var service = {
       type:type,
       name:name,

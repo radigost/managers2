@@ -7,7 +7,7 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "start": "node .",
+    "start": "nodemon . --ignore 'frontend/*' --ignore 'client/*'",
     "posttest": "npm run lint && nsp check"
   },
   "dependencies": {
