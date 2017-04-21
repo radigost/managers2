@@ -46710,7 +46710,7 @@ function GraphService(Restangular, q) {
         var deferred = q.defer();
         Restangular.all('api/v1/nodes/').getList().then(function (res) {
             _.forEach(res, function (node) {
-                node.group = node.category;
+                node.color = node.category == 'npc' ? '#d9534f' : '#1b6d85';
             });
             nodes.add(res);
         });
@@ -46720,6 +46720,7 @@ function GraphService(Restangular, q) {
                 link.from = link.from_node_id;
                 link.to = link.to_node_id;
                 link.label = link.text;
+                link.color = { inherit: 'from' };
             });
             links.add(res);
         });
@@ -46736,18 +46737,21 @@ function GraphService(Restangular, q) {
         };
         var options = {
             layout: {
-                hierarchical: {
-                    direction: 'LR',
-                    sortMethod: 'hubsize'
-                }
+                // hierarchical: {
+                // direction: 'LR',
+                // sortMethod:'hubsize',
+                //     levelSeparation:50,
+                //     nodeSpacing:200
+                // }
             },
             edges: {
+
                 arrows: {
                     to: true
                 }
             },
             nodes: {
-                shape: 'box'
+                shape: 'dot'
             },
             physics: {
                 enabled: true,
@@ -46913,8 +46917,7 @@ angular.module('app').component('tree', {
     $router: '<'
   },
   template: template(),
-  controller: TreeCtrl,
-  controllerAs: 'ctrl'
+  controller: TreeCtrl
 });
 
 TreeCtrl.$inject = ['Player', 'Npc', 'Restangular', '$q', '$uibModal', '$cookies', 'GraphService'];
@@ -64156,7 +64159,7 @@ module.exports = template;
 
 var pug = __webpack_require__(0);
 
-function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"centered\"\u003E\u003Ch3\u003EРедактор диалога\u003C\u002Fh3\u003E\u003Ch5\u003E[[ctrl.treeType]]\u003C\u002Fh5\u003E\u003C\u002Fdiv\u003E\u003Cdiv\u003E\u003Cform class=\"form\"\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"group\"\u003EДля кого будет фраза:\u003C\u002Flabel\u003E\u003Cinput type=\"radio\" [(ngmodel)]=\"nodeToAdd.group\" name=\"group\" value=\"npc\"\u003EКомпьютер\u003Cinput type=\"radio\" [(ngmodel)]=\"nodeToAdd.group\" name=\"group\" value=\"player\"\u003EИгрок\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"phrase\"\u003EОтвет на какую фразу?:\u003C\u002Flabel\u003E\u003Cselect class=\"form-control\" id=\"phrase\" [(ngmodel)]=\"nodeToAdd.to\" name=\"to\"\u003E\u003Coption *ngfor=\"let state of test | groupFilter : nodeToAdd.group \" [value]=\"state.id\"\u003E{{ state.label }}\u003C\u002Foption\u003E\u003C\u002Fselect\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"text\"\u003EТекст ответа\u003C\u002Flabel\u003E\u003Cinput class=\"form-control\" id=\"text\" type=\"text\" placeholder=\"Введите наименование фразы\" value=\"Привет!\" [(ngmodel)]=\"nodeToAdd.label\" name=\"label\"\u003E\u003C\u002Fdiv\u003E\u003Cbutton class=\"btn btn-info\" (click)=\"addNode()\"\u003E\u003Ci class=\"fa fa-plus-circle\" aria-hidden=\"true\"\u003E\u003C\u002Fi\u003E                Добавить Реплику\u003C\u002Fbutton\u003E\u003C\u002Fform\u003E\u003Ch1 id=\"mynetwork\"\u003EThis is amind component\u003C\u002Fh1\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
+function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"centered\"\u003E\u003Ch3\u003EРедактор диалога\u003C\u002Fh3\u003E\u003Ch5\u003E[[ctrl.treeType]]\u003C\u002Fh5\u003E\u003C\u002Fdiv\u003E\u003Cdiv\u003E\u003Cform class=\"form\"\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"group\"\u003EДля кого будет фраза:\u003C\u002Flabel\u003E\u003Cinput type=\"radio\" ng-model=\"$ctrl.nodeToAdd.group\" name=\"group\" value=\"npc\"\u003EКомпьютер\u003Cinput type=\"radio\" ng-model=\"$ctrl.nodeToAdd.group\" name=\"group\" value=\"player\"\u003EИгрок\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"phrase\"\u003EОтвет на какую фразу?:\u003C\u002Flabel\u003E\u003Cselect class=\"form-control\" id=\"phrase\" ng-model=\"$ctrl.nodeToAdd.to\" name=\"to\"\u003E\u003Coption ng-repeat=\"state in test | filter : nodeToAdd.group \" [value]=\"state.id\"\u003E{{ state.label }}\u003C\u002Foption\u003E\u003C\u002Fselect\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"text\"\u003EТекст ответа\u003C\u002Flabel\u003E\u003Cinput class=\"form-control\" id=\"text\" type=\"text\" placeholder=\"Введите наименование фразы\" value=\"Привет!\" ng-model=\"$ctrl.nodeToAdd.label\" name=\"label\"\u003E\u003C\u002Fdiv\u003E\u003Cbutton class=\"btn btn-info\" ng-click=\"$ctrl.addNode()\"\u003E\u003Ci class=\"fa fa-plus-circle\" aria-hidden=\"true\"\u003E\u003C\u002Fi\u003E                Добавить Реплику\u003C\u002Fbutton\u003E\u003C\u002Fform\u003E\u003Ch1 id=\"mynetwork\"\u003EThis is amind component\u003C\u002Fh1\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
 module.exports = template;
 
 /***/ }),

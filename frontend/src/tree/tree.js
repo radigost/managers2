@@ -21,7 +21,6 @@ angular.module('app').component('tree',{
   },
   template:template(),
   controller : TreeCtrl,
-  controllerAs: 'ctrl'
 });
 
 TreeCtrl.$inject =['Player', 'Npc', 'Restangular', '$q', '$uibModal', '$cookies','GraphService'];

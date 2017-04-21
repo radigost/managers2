@@ -26,8 +26,8 @@ function GraphService(Restangular,q) {
         var deferred = q.defer();
         Restangular.all('api/v1/nodes/').getList().then((res)=>{
             _.forEach(res,(node)=>{
-                node.group = node.category;
-            })
+                node.color = node.category == 'npc'? '#d9534f':'#1b6d85';
+            });
             nodes.add(res);
         });
         Restangular.all('api/v1/links').getList().then((res)=>{
@@ -36,6 +36,7 @@ function GraphService(Restangular,q) {
                 link.from = link.from_node_id;
                 link.to = link.to_node_id;
                 link.label = link.text;
+                link.color = {inherit:'from'};
             });
             links.add(res);
         })
@@ -52,20 +53,21 @@ function GraphService(Restangular,q) {
         };
         var options = {
             layout: {
-                hierarchical: {
-                direction: 'LR',
-                sortMethod:'hubsize',
+                // hierarchical: {
+                // direction: 'LR',
+                // sortMethod:'hubsize',
                 //     levelSeparation:50,
                 //     nodeSpacing:200
-                }
+                // }
             },
             edges:{
+
                 arrows:{
                     to: true
                 }
             },
             nodes:{
-                shape:'box'
+                shape:'dot'
             },
             physics:{
                 enabled:true,
