@@ -16,10 +16,8 @@
     },
     "to_node_id": {
       "type": "number"
-    },
-    "text": {
-      "type": "string"
     }
+
   },
   "validations": [],
   "relations": {
@@ -27,6 +25,11 @@
       "type": "belongsTo",
       "model": "Node",
       "foreignKey": "to_node_id"
+    },
+    "node_from": {
+      "type": "belongsTo",
+      "model": "Node",
+      "foreignKey": "from_node_id"
     }
   },
   "acls": [],

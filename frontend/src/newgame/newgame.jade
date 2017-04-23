@@ -63,7 +63,7 @@
                     .panel.panel-default(style="background-color:#C4D9D4;")
                         .panel-body
                             h4 [[ctrl.current.first_name]] [[ctrl.current.last_name]]
-                            img(src="../../static/managers/img/[[ctrl.current.image_path]]" width=100 height=150)
+                            img(src="static/managers/img/[[ctrl.current.image_path]]" width=100 height=150)
                             .btn-group
                                 button.btn.btn-default.dropdown-toggle(type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
                                     | Выбрать Аватар
@@ -76,7 +76,7 @@
                                         style="background-color:#F8FBF4;"
                                         )
                                             img(
-                                            src="../static/managers/img/[[element]]"
+                                            src="static/managers/img/[[element]]"
                                             ng-click="ctrl.chooseAvatar(element)"
                                             width=50
                                             height=75

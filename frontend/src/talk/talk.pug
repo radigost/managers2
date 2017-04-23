@@ -6,10 +6,9 @@
         .col-lg-4
             .panel.panel-default(style="background-color:#C4D9D4;")
                 .panel-body
-                    //img(src="../static/managers/img/manager.png" width=100 height=150)
                     .media
                         .media-left.media-middle
-                            img(ng-src="../static/managers/img/[[ctrl.player.image_path]]" width=100 height=150)
+                            img(ng-src="static/managers/img/[[ctrl.player.image_path]]" width=100 height=150)
                         .media-body
                             ul
                                 li [[ctrl.player.name]]
@@ -42,7 +41,7 @@
                     .media
                         .media-left.media-middle
                             img.media-object(
-                            src="../static/managers/img/[[ctrl.npc.image_path]]"
+                            src="static/managers/img/[[ctrl.npc.image_path]]"
                             width=100 height=150)
                         .media-body
                             ul
@@ -72,7 +71,7 @@
                           ng-repeat='element in ctrl.getPlayerQuestions()'
                           ng-click='ctrl.update(element.to_node_id)'
                           style="background-color:#F8FBF4;"
-                          ) -&nbsp;[[element.text]]
+                          ) -&nbsp;[[element.node_to.text]]
         .col-lg-6
             .panel.panel-default(style="background-color:#C4D9D4;")
                 .panel-body

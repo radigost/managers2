@@ -5,21 +5,31 @@
 
 
 div
-  form.form
-    .form-group
-      label(for='group') Для кого будет фраза:
-      input(type='radio', ng-model='$ctrl.nodeToAdd.group', name='group', value='npc')
-      | Компьютер
-      input(type='radio', ng-model='$ctrl.nodeToAdd.group', name='group', value='player')
-      | Игрок
-    .form-group
-      label(for='phrase') Ответ на какую фразу?:
-      select#phrase.form-control(ng-model='$ctrl.nodeToAdd.to', name='to')
-        option(ng-repeat='state in test | filter : nodeToAdd.group ', [value]='state.id') {{ state.label }}
-    .form-group
-      label(for='text') Текст ответа
-      input#text.form-control(type='text', placeholder='Введите наименование фразы', value='Привет!', ng-model='$ctrl.nodeToAdd.label', name='label')
-    button.btn.btn-info(ng-click='$ctrl.addNode()')
-      i.fa.fa-plus-circle(aria-hidden='true')
-      |                 Добавить Реплику
-  h1#mynetwork This is amind component
+    form.form
+        .row
+            .col-md-4
+                .form-group
+                    label(for='group') Для кого будет фраза:
+                    input(type='radio', ng-model='$ctrl.groupToAdd', name='group', value='npc' ng-click="$ctrl.updateList()")
+                    | Компьютер
+                    input(type='radio', ng-model='$ctrl.groupToAdd', name='group', value='player' ng-click="$ctrl.updateList()")
+                    | Игрок
+
+                .form-group
+                    label(for='phrase') Ответ на какую фразу?:
+                    select#phrase.form-control(ng-model='$ctrl.fromNodeId', name='to' ng-change="$ctrl.onChange()")
+                        option(ng-repeat='state in $ctrl.nodes' ng-value="state.id") {{ state.label }}
+                    button(class="btn btn-danger" ng-click="$ctrl.deleteNode()")
+                        i(class="fa fa-window-close" aria-hidden="true")
+
+                .form-group
+                  label(for='text') Текст ответа
+                  input#text.form-control(type='text', placeholder='Введите наименование фразы', value='Привет!', ng-model='$ctrl.label', name='label')
+                button.btn.btn-info(ng-click='$ctrl.addNode()')
+                  i.fa.fa-plus-circle(aria-hidden='true')
+                  |                 Добавить Реплику
+                .form-group
+                    p(ng-repeat="phrase in $ctrl.phraseList") {{phrase.text}}
+
+            .col-md-8
+                div#mynetwork This is amind component

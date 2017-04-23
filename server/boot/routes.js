@@ -36,20 +36,25 @@ module.exports = function(app) {
     var Link = app.models.Link;
     var Node = app.models.Node;
     // console.log(Link);
-     var s = Link.find({where:{'from_node_id':questionId}},function (err,links) {
-       npcAnswer  = _.sample(links);
-       npcAnswer.node_to(function (err,nodeTo) {
-           Link.find({where:{'from_node_id':npcAnswer.to_node_id}},function (err,nodeChoices) {
-               content = {
-                   type:nodeTo.type,
-                   questions:nodeChoices,
-                   previousAnswer:{text:npcAnswer.text},
-                   gameStats:{},
-                   time:_.random(10,80)
-               };
-               res.json(content);
-           });
-       });
+     var s = Link.find({where:{'from_node_id':questionId},include:'node_to'},function (err,links) {
+        npcAnswer  = _.sample(links);
+        // console.log(npcAnswer);
+        Link.find({where:{'from_node_id':npcAnswer.to_node_id},include:'node_to'},function (err,nodeChoices) {
+
+            npcAnswer.node_to(function (err,node_to) {
+                console.log(node_to);
+                content = {
+                    type:node_to['type'],
+                    questions:nodeChoices,
+                    previousAnswer:{text:node_to.text },
+                    gameStats:{},
+                    time:_.random(10,80)
+                };
+                res.json(content);
+            });
+
+        });
+
 
 
      });

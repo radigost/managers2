@@ -1,0 +1,4 @@
+-- UPDATE managers_node mn set category=
+-- case when category ='player' THEN  'npc'
+-- when category ='npc' then 'player'
+-- end
