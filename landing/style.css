@@ -1,19 +1,27 @@
 #top-image{
-  background: url(city.jpeg) no-repeat center ;
-  height: 30em;
+  background: url(city.jpeg) no-repeat center/100% ;
+  height: 40em;
   color: white;
   text-align: center;
   border-radius: 9px;
 }
 
 #about {
+  height: 40em;
 }
 #about h1 {
   text-align: center;
+  position: relative;
+  top:1em;
 }
 
+#about .text {
+  position: relative;
+  top:5em;
+}
 
 #benefits{
+  height: 40em;
   background: #2e6da4;
   color:white;
   padding-top: 3em;
@@ -36,15 +44,14 @@
 }
 
 #feedback{
- margin-top: 3em;
-  margin-bottom: 5em;
+  height: 40em;
+  /*margin-top: 3em;*/
+  /*margin-bottom: 5em;*/
 }
-
 #feedback h1 {
   text-align: center;
   margin-bottom: 2em;
 }
-
 #feedback .icon {
   height:4em;
   text-align: center;
@@ -73,7 +80,6 @@
 
 }
 #feedback .icon-text{}
-
 #feedback .icon-text .icon-text-caption {
   font-style: italic;
   text-align: center;
@@ -86,7 +92,8 @@
 
 
 #classic-education{
-  background: #d9534f;
+  background: #A54013;
+  height: 40em;
   color: white;
 }
 #classic-education h1{
@@ -103,8 +110,9 @@
 }
 
 #howto{
-  background: #1b6d85;
+  background: #0F3F6B;
   color: white;
+  height: 48em;
 }
 
 #howto h1{
@@ -112,19 +120,54 @@
 }
 
 #howto .element-text{
-  height: 4em;
+  /*height: 4em;*/
   text-align: center;
-  line-height: 4em;
+  /*line-height: 4em;*/
+  border: 1px solid;
+  align-content: center;
   /*vertical-align: middle;*/
   /*font-size: 10em;*/
 }
+/*#howto .element-text div{*/
+  /*position: ;*/
+  /*left:50%;*/
+  /*width:30em;*/
+  /*border:1px solid;*/
+/*}*/
+
 #howto .element-arrow{
-  height:4em;
+  /*height:4em;*/
   text-align: center;
-  line-height: 4em;
+  /*line-height: 4em;*/
   font-size: 4em;
+  transform: rotate(90deg);
 }
 
+#foot_catch{
+  /*background: #2e6da4;*/
+  background: url(footer_catch.jpg) no-repeat center/100% ;
+  color: #609CD2;
+  height: 40em;
+}
+
+
+
+#foot_catch .form-email{
+  color: white;
+  top:40%;
+  height: 20em;
+  background: #609CD2;
+  text-align: end;
+  position: relative;
+}
+
+#foot_catch .form-email .form {
+  position: absolute;
+  bottom: 3em;
+}
+#foot_catch .lozung {
+  top:3em;
+}
 footer {
   height: 10em;
 }

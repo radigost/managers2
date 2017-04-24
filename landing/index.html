@@ -13,18 +13,18 @@
 </head>
 <body ng-controller="BasicController as $ctrl">
 <div class="container-fluid">
-  <div class="header clearfix">
-    <nav>
-      <ul class="nav nav-pills pull-right">
-        <li role="presentation" class="active"><a href="#">Home</a></li>
-        <li role="presentation"><a href="#">About</a></li>
-        <li role="presentation"><a href="#">Contact</a></li>
-      </ul>
-    </nav>
-    <!--<h3 class="text-muted">Project name</h3>-->
-  </div>
+  <!--<div class="header clearfix">-->
+    <!--<nav>-->
+      <!--<ul class="nav nav-pills pull-right">-->
+        <!--<li role="presentation" class="active"><a href="#">Home</a></li>-->
+        <!--<li role="presentation"><a href="#">About</a></li>-->
+        <!--<li role="presentation"><a href="#">Contact</a></li>-->
+      <!--</ul>-->
+    <!--</nav>-->
+    <!--&lt;!&ndash;<h3 class="text-muted">Project name</h3>&ndash;&gt;-->
+  <!--</div>-->
 
-  <div class="jumbotron" id="top-image" >
+  <div class="" id="top-image" >
     <div class="row">
       <div class="col-md-12">
         <h1>TETRA</h1>
@@ -57,7 +57,7 @@
   <div class="row" id="about">
     <div class="col-md-12">
       <h1>Что это за система</h1>
-      <div class="row">
+      <div class="row text">
         <div class="col-md-4">
           <div class="row">
             <div class="col-md-12">
@@ -250,21 +250,64 @@
     <div class="col-md-12">
       <h1>Как работать в нашей системе</h1>
       <div class="row">
-        <div class="col-md-2 element-text">Зарегистрироваться</div>
-        <div class="col-md-1 element-arrow">
+        <div class="col-md-12 ">
+          <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-4 element-text"><h2>Зарегистрироваться </h2></div>
+            <div class="col-md-4"></div>
+          </div>
+        </div>
+        <div class="col-md-12 element-arrow">
           <i class="fa fa-arrow-circle-right" aria-hidden="true"></i>
         </div>
-        <div class="col-md-2">Выбрать категорию продаж</div>
-        <div class="col-md-1 element-arrow">
+        <div class="col-md-12">
+          <div class="col-md-4"></div>
+          <div class="col-md-4 element-text"><h2> Выбрать категорию продаж</h2></div>
+          <div class="col-md-4"></div>
+
+        </div>
+        <div class="col-md-12 element-arrow">
           <i class="fa fa-arrow-circle-right" aria-hidden="true"></i>
         </div>
-        <div class="col-md-2">Начать изучать теорию</div>
-        <div class="col-md-1 element-arrow">
+        <div class="col-md-12">
+          <div class="col-md-4"></div>
+          <div class="col-md-4 element-text"><h2>Начать изучать теорию</h2></div>
+          <div class="col-md-4"></div>
+
+        </div>
+        <div class="col-md-12 element-arrow">
           <i class="fa fa-arrow-circle-right" aria-hidden="true"></i>
         </div>
-        <div class="col-md-2">Проводить тренировочные звонки</div>
+        <div class="col-md-12 ">
+          <div class="col-md-4"></div>
+          <div class="col-md-4 element-text"><h2>Проводить тренировочные звонки</h2></div>
+          <div class="col-md-4"></div>
+
+        </div>
       </div>
     </div>
+  </div>
+
+  <div class="row" id="foot_catch">
+
+
+    <div class="col-md-4 form-email jumbotron">
+    <h3>Зарегистрироваться сейчас</h3>
+      <p>Укажите свой email чтобы мы могли включить вас в список доступа</p>
+      <form class=" form form-inline" ng-submit="$ctrl.sendEmail()">
+
+        <div class="form-group">
+          <label class="sr-only" for="email">Email address</label>
+          <input type="email" class="form-control" ng-model="$ctrl.email" id="email" placeholder="Email" name="email">
+        </div>
+        <button class="btn btn-default">регистрация</button>
+      </form>
+
+    </div>
+    <div class="col-md-6 lozung">
+      <h1>Начните продавать уже на следующией неделе!</h1>
+    </div>
+    <div class="col-md-2"></div>
   </div>
 
 
