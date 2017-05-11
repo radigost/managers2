@@ -49,6 +49,7 @@ require('./talk/talk');
 require('./tree/tree');
 require('./game/game');
 require('./newgame/newgame');
+require('./signup/signup');
 
 
 
@@ -62,7 +63,8 @@ angular
             {path: '/talk/', name: 'Talk', component: 'talk'},
             {path: '/tree/', name: 'Tree', component: 'tree'},
             {path: '/newgame/', name: 'NewGame', component: 'newgame'},
-            {path: '/game/...', name: 'Game', component: 'game'}
+            {path: '/game/...', name: 'Game', component: 'game'},
+            {path: '/signup', name: 'SignUp', component: 'signup'}
         ]
         })
         .value('$routerRootComponent', 'app');
