@@ -1,32 +1,26 @@
-// import * as angular from "angular";
-// import IComponentController = angular.IComponentController;
-// import * as restangular from "restangular";
-// import IService = restangular.IService;
-// import {IModalService} from "angular-ui-bootstrap";
-// import {storage} from "angular";
-// import {cookies} from "angular";
-// import IComponentOptions = angular.IComponentOptions;
-
-
 var menuTpl = require('./menu.jade');
 var  modalTpl = require('./modal.jade');
 require('./modal');
+require('../lib/AuthService');
 
 
 
-angular.module('app').component('menu',{
-  bindings:{
-    $router:'<'
-  },
-  template:menuTpl(),
-  controller: MenuCtrl,
-  controllerAs:'ctrl'
-}
-).value('$routerRootComponent', 'app');
+angular.module('app')
+  .component('menu',{
+    bindings:{
+      $router:'<'
+    },
+    template:menuTpl(),
+    controller: MenuCtrl,
+    controllerAs:'ctrl'
+  })
+  .value('$routerRootComponent', 'app');
 
-MenuCtrl.$inject = ['$uibModal', 'Restangular', '$cookies'];
-function  MenuCtrl(uibModal,Restangular,cookies)  {
-  // var  canSeeEditor,modal,players,$router;
+MenuCtrl.$inject = ['$uibModal', 'Restangular', '$cookies','AuthService'];
+
+function  MenuCtrl(uibModal,Restangular,cookies,AuthService)  {
+  this.isLoggedIn = AuthService.isLoggedIn;
+  this.logout = AuthService.logout;
   var vm = this;
   vm.canSeeEditor = false;
   vm.$onInit = function(){
@@ -56,6 +50,7 @@ function  MenuCtrl(uibModal,Restangular,cookies)  {
       template: modalTpl()
     });
   }
+
 
 }
 

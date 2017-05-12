@@ -19,6 +19,11 @@ function SignUpCtrl(Restangular,cookies){
     var _this = this;
     _this.signup = function(credentials){
         console.log(this.user);
+        Restangular.one('api/v1').post('customers',this.user).then((res)=>{
+          console.log(res);
+
+
+        });
     }
 
 

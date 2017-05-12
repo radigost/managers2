@@ -10,6 +10,15 @@
     },
     "password":{
       "required":false
+    },
+    "phone":{
+      "type":"String"
+    },
+    "first_name":{
+      "type":"String"
+    },
+    "last_name":{
+      "type":"String"
     }
   },
   "validations": [],
