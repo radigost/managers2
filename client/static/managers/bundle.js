@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 58);
+/******/ 	return __webpack_require__(__webpack_require__.s = 61);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -301,7 +301,7 @@ function pug_rethrow(err, filename, lineno, str){
     throw err;
   }
   try {
-    str = str || __webpack_require__(57).readFileSync(filename, 'utf8')
+    str = str || __webpack_require__(60).readFileSync(filename, 'utf8')
   } catch (ex) {
     pug_rethrow(err, null, lineno)
   }
@@ -381,7 +381,7 @@ function Npc(Restangular, q) {
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(15);
+__webpack_require__(16);
 module.exports = angular;
 
 
@@ -490,6 +490,64 @@ function Player(Restangular, q) {
 
 /***/ }),
 /* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/**
+ * Created by user on 05.01.17.
+ */
+
+angular.module('app').service('AuthService', AuthService);
+
+AuthService.$inject = ['Restangular', '$q'];
+
+function AuthService(Restangular, q) {
+  var inited = false;
+  var token = null;
+  var loggedIn = false;
+
+  var authService = {
+    init: init,
+    login: login,
+    logout: logout,
+    isLoggedIn: isLoggedIn
+  };
+  return authService;
+
+  function init() {
+    var d = q.defer();
+    id = localStorage.getItem("playerId");
+    if (!inited) {
+      inited = true;
+      d.resolve();
+    } else {
+      d.resolve();
+    }
+    return d.promise;
+  }
+
+  function login(credentials) {
+    return Restangular.one('api/v1').post('customers/login', credentials).then(function (res) {
+      token = res.id;
+      loggedIn = true;
+    });
+  }
+
+  function logout() {
+    return Restangular.one('api/v1').post('customers/logout', { access_token: token }).then(function (res) {
+      token = null;
+      loggedIn = false;
+    });
+  }
+  function isLoggedIn() {
+    return loggedIn;
+  }
+};
+
+/***/ }),
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -52834,29 +52892,29 @@ return /******/ (function(modules) { // webpackBootstrap
 ;
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 //styles and fonts
-__webpack_require__(35);
+__webpack_require__(37);
 
 //modules
 __webpack_require__(2);
-__webpack_require__(52);
-__webpack_require__(8);
+__webpack_require__(55);
+__webpack_require__(9);
 // import "@angular/upgrade/upgrade";
-__webpack_require__(14);
-__webpack_require__(10);
-__webpack_require__(12);
-__webpack_require__(54);
-__webpack_require__(33);
-__webpack_require__(32);
+__webpack_require__(15);
+__webpack_require__(11);
+__webpack_require__(13);
+__webpack_require__(57);
+__webpack_require__(35);
 __webpack_require__(34);
+__webpack_require__(36);
 
-var appTpl = __webpack_require__(40);
+var appTpl = __webpack_require__(42);
 __webpack_require__(2);
 angular.module('app', ['restangular', 'ngComponentRouter', 'ui.bootstrap', 'ngCookies', 'ngSanitize', 'ui.select']).config(function ($interpolateProvider) {
     $interpolateProvider.startSymbol('[[');
@@ -52867,13 +52925,13 @@ angular.module('app', ['restangular', 'ngComponentRouter', 'ui.bootstrap', 'ngCo
     return $locationProvider.html5Mode(false);
 });
 
-__webpack_require__(23);
-__webpack_require__(27);
-__webpack_require__(31);
-__webpack_require__(20);
-__webpack_require__(25);
+__webpack_require__(24);
+__webpack_require__(29);
+__webpack_require__(33);
+__webpack_require__(21);
 __webpack_require__(26);
-__webpack_require__(81);
+__webpack_require__(28);
+__webpack_require__(27);
 
 angular.module('app').component('app', {
     template: appTpl(),
@@ -52885,14 +52943,14 @@ angular.element(document).ready(function () {
 });
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports) {
 
 (function(){
@@ -55987,7 +56045,7 @@ function canActivateOne(nextInstruction, prevInstruction) {
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports) {
 
 /**
@@ -56324,15 +56382,15 @@ angular.module('ngCookies').provider('$$cookieWriter', /** @this */ function $$C
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(9);
+__webpack_require__(10);
 module.exports = 'ngCookies';
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports) {
 
 /**
@@ -57094,15 +57152,15 @@ angular.module('ngSanitize').filter('linky', ['$sanitize', function($sanitize) {
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(11);
+__webpack_require__(12);
 module.exports = 'ngSanitize';
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports) {
 
 /*
@@ -64883,16 +64941,16 @@ angular.module('ui.bootstrap.timepicker').run(function() {!angular.$$csp().noInl
 angular.module('ui.bootstrap.typeahead').run(function() {!angular.$$csp().noInlineStyle && !angular.$$uibTypeaheadCss && angular.element(document).find('head').prepend('<style type="text/css">[uib-typeahead-popup].dropdown-menu{display:block;}</style>'); angular.$$uibTypeaheadCss = true; });
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(13);
+__webpack_require__(14);
 
 module.exports = 'ui.bootstrap';
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports) {
 
 /**
@@ -98269,7 +98327,7 @@ $provide.value("$locale", {
 !window.angular.$$csp().noInlineStyle && window.angular.element(document.head).prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>');
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -98279,7 +98337,7 @@ $provide.value("$locale", {
  * Created by user on 05.01.17.
  */
 
-var NpcInfoTpl = __webpack_require__(38);
+var NpcInfoTpl = __webpack_require__(40);
 __webpack_require__(1);
 
 angular.module('app').component('npcInfo', {
@@ -98311,7 +98369,7 @@ function NpcInfoCtrl(Restangular, Npc, q) {
 };
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -98325,7 +98383,7 @@ function NpcInfoCtrl(Restangular, Npc, q) {
  * Created by user on 05.01.17.
  */
 
-var PlayerInfoTpl = __webpack_require__(39);
+var PlayerInfoTpl = __webpack_require__(41);
 
 angular.module('app').component('playerInfo', {
   bindings: {
@@ -98343,7 +98401,7 @@ function PlayerInfoCtrl(Restangular, player) {
 };
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -98357,10 +98415,10 @@ function PlayerInfoCtrl(Restangular, player) {
  * Created by user on 05.01.17.
  */
 
-var companyDetailTpl = __webpack_require__(41);
+var companyDetailTpl = __webpack_require__(43);
 
-__webpack_require__(16);
-__webpack_require__(22);
+__webpack_require__(17);
+__webpack_require__(23);
 
 __webpack_require__(3);
 
@@ -98391,13 +98449,13 @@ function CompanyDetailCtrl(service, company) {
 };
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var CompanyListTpl = __webpack_require__(42);
+var CompanyListTpl = __webpack_require__(44);
 
 angular.module('app').component('companyList', {
     bindings: { $router: '<' },
@@ -98413,7 +98471,7 @@ function CompanyListCtrl(service) {
 };
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -98425,17 +98483,17 @@ function CompanyListCtrl(service) {
 // import * as angular from "angular";
 // import {GameService} from "./gameService";
 // import IComponentOptions = angular.IComponentOptions;
-var gameTpl = __webpack_require__(43);
-
-__webpack_require__(17);
-
-__webpack_require__(3);
-
-__webpack_require__(19);
+var gameTpl = __webpack_require__(45);
 
 __webpack_require__(18);
 
-__webpack_require__(21);
+__webpack_require__(3);
+
+__webpack_require__(20);
+
+__webpack_require__(19);
+
+__webpack_require__(22);
 
 angular.module('app').component('game', {
   bindings: {
@@ -98468,7 +98526,7 @@ function GameCtrl(service) {
 };
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -98483,7 +98541,7 @@ function GameCtrl(service) {
  * Created by user on 05.01.17.
  */
 
-var profileTpl = __webpack_require__(44);
+var profileTpl = __webpack_require__(46);
 
 __webpack_require__(3);
 
@@ -98503,7 +98561,7 @@ function ProfileCtrl(service) {
 };
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -98548,16 +98606,16 @@ function Company(Restangular) {
 };
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var menuTpl = __webpack_require__(45);
-var modalTpl = __webpack_require__(46);
-__webpack_require__(24);
-__webpack_require__(83);
+var menuTpl = __webpack_require__(47);
+var modalTpl = __webpack_require__(48);
+__webpack_require__(25);
+__webpack_require__(5);
 
 angular.module('app').component('menu', {
   bindings: {
@@ -98607,7 +98665,7 @@ function MenuCtrl(uibModal, Restangular, cookies, AuthService) {
 }
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -98626,13 +98684,13 @@ function ModalHelpCtrl($uibModalInstance) {
 };
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var newGameTpl = __webpack_require__(47);
+var newGameTpl = __webpack_require__(49);
 
 angular.module('app').component('newgame', {
   bindings: {
@@ -98857,13 +98915,46 @@ function NewGameCtrl(Restangular, cookies) {
 };
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var template = __webpack_require__(48);
+var template = __webpack_require__(50);
+
+__webpack_require__(5);
+
+angular.module('app').component('signin', {
+    bindings: {
+        $router: '<'
+    },
+    template: template(),
+    controller: SignInCtrl
+});
+
+SignInCtrl.$inject = ['Restangular', '$cookies', 'AuthService'];
+
+function SignInCtrl(Restangular, cookies, AuthService) {
+    this.user = {};
+    var _this = this;
+    _this.signin = function () {
+        console.log(this.user);
+        AuthService.login(this.user).then(function (res) {
+            console.log("login successfull");
+            _this.$router.navigate(['Menu']);
+        });
+    };
+};
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var template = __webpack_require__(51);
 
 angular.module('app').component('signup', {
     bindings: {
@@ -98887,7 +98978,7 @@ function SignUpCtrl(Restangular, cookies) {
 };
 
 /***/ }),
-/* 27 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -98907,9 +98998,9 @@ function SignUpCtrl(Restangular, cookies) {
 
 __webpack_require__(4);
 __webpack_require__(1);
-__webpack_require__(28);
+__webpack_require__(30);
 
-var talkTpl = __webpack_require__(49);
+var talkTpl = __webpack_require__(52);
 
 angular.module('app').component('talk', {
     bindings: {
@@ -98959,7 +99050,7 @@ function TalkCtrl(service) {
 // generated by coffee-script 1.9.2
 
 /***/ }),
-/* 28 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -99046,7 +99137,7 @@ function TalkService(Restangular, player, npc, q) {
 }
 
 /***/ }),
-/* 29 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -99055,7 +99146,7 @@ function TalkService(Restangular, player, npc, q) {
 /**
  * Created by user on 20.04.17.
  */
-var vis = __webpack_require__(5);
+var vis = __webpack_require__(6);
 
 angular.module('app').service('GraphService', GraphService);
 
@@ -99179,7 +99270,7 @@ function GraphService(Restangular, q) {
 };
 
 /***/ }),
-/* 30 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -99195,7 +99286,7 @@ function GraphService(Restangular, q) {
  * Created by user on 05.01.17.
  */
 
-var treeModalTpl = __webpack_require__(50);
+var treeModalTpl = __webpack_require__(53);
 
 angular.module('app').component('modalComponent', {
   bindings: {
@@ -99307,13 +99398,13 @@ function TreeModalCtrl(Restangular, cookies) {
 };
 
 /***/ }),
-/* 31 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var vis = __webpack_require__(5);
+var vis = __webpack_require__(6);
 __webpack_require__(1);
 /**
  * Created by user on 05.01.17.
@@ -99323,10 +99414,10 @@ __webpack_require__(1);
 //
 // Player = require('../Class/player.ts');
 
-var template = __webpack_require__(51);
-__webpack_require__(36);
-__webpack_require__(30);
-__webpack_require__(29);
+var template = __webpack_require__(54);
+__webpack_require__(38);
+__webpack_require__(32);
+__webpack_require__(31);
 
 angular.module('app').component('tree', {
     bindings: {
@@ -99408,18 +99499,6 @@ function TreeCtrl(player, Npc, Restangular, $q, uibModal, cookies, GraphService,
 }
 
 /***/ }),
-/* 32 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 33 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
 /* 34 */
 /***/ (function(module, exports) {
 
@@ -99439,6 +99518,18 @@ function TreeCtrl(player, Npc, Restangular, $q, uibModal, cookies, GraphService,
 
 /***/ }),
 /* 37 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 38 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, module) {var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -116527,10 +116618,10 @@ function TreeCtrl(player, Npc, Restangular, $q, uibModal, cookies, GraphService,
   }
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(55), __webpack_require__(56)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(58), __webpack_require__(59)(module)))
 
 /***/ }),
-/* 38 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -116539,7 +116630,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 39 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -116548,7 +116639,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 40 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -116557,7 +116648,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 41 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -116566,7 +116657,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 42 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -116575,7 +116666,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 43 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -116584,7 +116675,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 44 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -116593,7 +116684,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 45 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -116602,7 +116693,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 46 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -116611,7 +116702,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 47 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -116620,30 +116711,12 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 48 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var pug = __webpack_require__(0);
-
-function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-md-4\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-md-4\"\u003E\u003Cform\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel\u003EEmail*\u003C\u002Flabel\u003E\u003Cinput class=\"form-control\" type=\"email\" placeholder=\"Email\" ng-model=\"$ctrl.user.email\" required=\"true\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel\u003EPassword*\u003C\u002Flabel\u003E\u003Cinput class=\"form-control\" type=\"password\" placeholder=\"Password\" ng-model=\"$ctrl.user.password\" required=\"true\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel\u003EPhone Number*\u003C\u002Flabel\u003E\u003Cinput class=\"form-control\" type=\"tel\" placeholder=\"Phone\" ng-model=\"$ctrl.user.phone\" required=\"true\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel\u003EFirst Name\u003C\u002Flabel\u003E\u003Cinput class=\"form-control\" type=\"text\" placeholder=\"First Name\" ng-model=\"$ctrl.user.first_name\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel\u003ELast Name\u003C\u002Flabel\u003E\u003Cinput class=\"form-control\" type=\"text\" placeholder=\"Last Name\" ng-model=\"$ctrl.user.last_name\"\u003E\u003C\u002Fdiv\u003E\u003Cbutton class=\"btn btn-warning\" ng-click=\"$ctrl.signup()\" style=\"align:'center';\"\u003EРегистрация\u003C\u002Fbutton\u003E\u003C\u002Fform\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-md-4\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
-module.exports = template;
-
-/***/ }),
-/* 49 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var pug = __webpack_require__(0);
-
-function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"centered\"\u003E\u003Ch3\u003E[[ctrl.gameName]]\u003C\u002Fh3\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"container\"\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-lg-4\"\u003E\u003Cdiv class=\"panel panel-default\" style=\"background-color:#C4D9D4;\"\u003E\u003Cdiv class=\"panel-body\"\u003E\u003Cdiv class=\"media\"\u003E\u003Cdiv class=\"media-left media-middle\"\u003E\u003Cimg ng-src=\"static\u002Fmanagers\u002Fimg\u002F[[ctrl.player.image_path]]\" width=\"100\" height=\"150\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"media-body\"\u003E\u003Cul\u003E\u003Cli\u003E[[ctrl.player.name]]\u003C\u002Fli\u003E\u003Cli\u003E\"[[ctrl.player.company]]\"\u003C\u002Fli\u003E\u003Cli\u003E[[ctrl.player.position]]\u003C\u002Fli\u003E\u003C\u002Ful\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"media\"\u003E\u003Cdiv class=\"media-left\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"media-body\"\u003E\u003Ca class=\"btn btn-default btn-lg btn-block\" ng-link=\"['Game']\"\u003EЗакончить разговор\u003C\u002Fa\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C!--p [[ctrl.next.question]]--\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-lg-4\"\u003E\u003Cdiv class=\"panel panel-default\" style=\"background-color:#C4D9D4;\"\u003E\u003Cdiv class=\"panel-body\" ng-class=\"ctrl.checkColor()\"\u003E\u003Cp\u003EОставшееся время\u003Cdiv class=\"progress\"\u003E\u003Cdiv class=\"progress-bar progress-bar-info\" role=\"progressbar\" aria-valuenow=\"[[ctrl.getTime()]]\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"width: [[ctrl.getTime()]]%;\"\u003E\u003C!--| [[ctrl.time]]--\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fp\u003E\u003C!--ol--\u003E\u003C!--    li(ng-repeat='item in ctrl.history') -[[item]]--\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-lg-4\"\u003E\u003Cdiv class=\"panel panel-default\" style=\"background-color:#C4D9D4;\"\u003E\u003Cdiv class=\"panel-body\"\u003E\u003Cdiv class=\"media\"\u003E\u003Cdiv class=\"media-left media-middle\"\u003E\u003Cimg class=\"media-object\" src=\"static\u002Fmanagers\u002Fimg\u002F[[ctrl.npc.image_path]]\" width=\"100\" height=\"150\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"media-body\"\u003E\u003Cul\u003E\u003Cli\u003E[[ctrl.npc.name]]\u003C\u002Fli\u003E\u003Cli\u003E\"[[ctrl.npc.company]]\"\u003C\u002Fli\u003E\u003Cli\u003E[[ctrl.npc.position]]\u003C\u002Fli\u003E\u003C\u002Ful\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-lg-6\"\u003E\u003Cdiv class=\"panel panel-default\" ng-show=\"!ctrl.notTheEnd()\"\u003E\u003Cdiv class=\"panel-body\"\u003E\u003Cp\u003E[[ctrl.player.current.text]]\u003C\u002Fp\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"panel panel-default\" ng-show=\"ctrl.notTheEnd()\" style=\"background-color:#C4D9D4;\"\u003E\u003Cdiv class=\"panel-header\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"panel-body\"\u003E\u003Ch5\u003E\u003Cb\u003EВыберите варианты ответа\u003C\u002Fb\u003E\u003C\u002Fh5\u003E\u003Cdiv class=\"list-group\"\u003E\u003Ca class=\"list-group-item\" href=\"\" ng-repeat=\"element in ctrl.getPlayerQuestions()\" ng-click=\"ctrl.update(element.to_node_id)\" style=\"background-color:#F8FBF4;\"\u003E-&nbsp;[[element.node_to.text]]\u003C\u002Fa\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-lg-6\"\u003E\u003Cdiv class=\"panel panel-default\" style=\"background-color:#C4D9D4;\"\u003E\u003Cdiv class=\"panel-body\"\u003E\u003Cp\u003E[[ctrl.getNpcAnswers().text]]\u003C\u002Fp\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-lg-12\"\u003E\u003Cdiv class=\"panel panel-default\"\u003E\u003Cdiv class=\"panel-body\"\u003E\u003Cp\u003EИстория разговора\u003C\u002Fp\u003E\u003Col\u003E\u003Cli ng-repeat=\"item in ctrl.getHistory()\"\u003E-[[item.text]]\u003C\u002Fli\u003E\u003C\u002Fol\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
-module.exports = template;
-
-/***/ }),
 /* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
 
-function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"modal-header\"\u003E\u003Cbutton class=\"close\" ng-click=\"$ctrl.cancel()\"\u003E\u003Cspan aria-hidden=\"true\"\u003E×\u003C\u002Fspan\u003E\u003C\u002Fbutton\u003E\u003Cdiv class=\"modal-title\"\u003E\u003Ch4\u003E\u003Cb\u003EДобавление вариантов ответа\u003C\u002Fb\u003E\u003C\u002Fh4\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"modal-body\"\u003E\u003Cp\u003E\u003Csmall\u003Eid - [[$ctrl.node.id]]\u003C\u002Fsmall\u003E\u003C\u002Fp\u003E\u003Cp\u003E\u003Csmall\u003Ecategory - [[$ctrl.node.category]]\u003C\u002Fsmall\u003E\u003C\u002Fp\u003E\u003Cp\u003E   [[$ctrl.node.text]]\u003C\u002Fp\u003E\u003Cul\u003E\u003Cli ng-repeat=\"element in $ctrl.node.answers\"\u003E\u003Ca\u003E[[element.id]]. [[element.text]]\u003Cspan class=\"label label-primary\" ng-if=\"element.type\"\u003E[[element.type]]\u003C\u002Fspan\u003E\u003C\u002Fa\u003E\u003Cbutton class=\"btn btn-danger\" ng-click=\"$ctrl.deleteNode(element.id)\"\u003Ex\u003C\u002Fbutton\u003E\u003C\u002Fli\u003E\u003C\u002Ful\u003E\u003Cdiv\u003E\u003Cuib-tabset active=\"active\"\u003E\u003Cuib-tab index=\"0\" heading=\"Добавить\"\u003E\u003Cform\u003E\u003Cui-select ng-model=\"$ctrl.selected\" on-select=\"\"\u003E\u003Cui-select-match\u003E\u003Cspan ng-bind=\"$select.selected.text\"\u003E\u003C\u002Fspan\u003E\u003C\u002Fui-select-match\u003E\u003Cui-select-choices repeat=\"item in $ctrl.resolve.tree\"\u003E\u003Cspan ng-bind=\"item.text\"\u003E\u003C\u002Fspan\u003E\u003C\u002Fui-select-choices\u003E\u003C\u002Fui-select\u003E\u003Cbutton class=\"btn btn-primary\" ng-click=\"$ctrl.save()\"\u003E\u003Cspan\u003EДобавить\u003C\u002Fspan\u003E\u003C\u002Fbutton\u003E\u003C\u002Fform\u003E\u003C\u002Fuib-tab\u003E\u003Cuib-tab index=\"1\" heading=\"Создать новую\"\u003E\u003Cform\u003E\u003Ctextarea class=\"form-control\" rows=\"3\" ng-model=\"$ctrl.toAdd.text\"\u003E\u003C\u002Ftextarea\u003E\u003Cdiv class=\"btn-group\" role=\"group\" aria-label=\"...\"\u003E\u003Cbutton class=\"btn btn-danger\" type=\"button\" ng-click=\"$ctrl.setFailure()\"\u003E\u003Ci class=\"fa fa-frown-o\"\u003E\u003C\u002Fi\u003E\u003C\u002Fbutton\u003E\u003Cbutton class=\"btn btn-default\" type=\"button\" ng-click=\"$ctrl.setDefault()\"\u003E\u003Ci class=\"fa fa-frown-o\"\u003E\u003C\u002Fi\u003E\u003C\u002Fbutton\u003E\u003Cbutton class=\"btn btn-success\" type=\"button\" ng-click=\"$ctrl.setSuccess()\"\u003E\u003Ci class=\"fa fa-smile-o\"\u003E\u003C\u002Fi\u003E\u003C\u002Fbutton\u003E\u003C\u002Fdiv\u003E\u003Cbutton class=\"btn btn-primary\" ng-click=\"$ctrl.create($ctrl.textToSave)\"\u003E\u003Cspan\u003EСоздать\u003C\u002Fspan\u003E\u003C\u002Fbutton\u003E\u003C\u002Fform\u003E\u003C\u002Fuib-tab\u003E\u003C\u002Fuib-tabset\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"modal-footer\"\u003E\u003C!--button.btn(ng-click=\"$ctrl.cancel()\") Отменить--\u003E\u003Cbutton class=\"btn\" ng-disabled=\"addEntityForm.$invalid \" ng-click=\"$ctrl.close()\"\u003EЗакрыть\u003C\u002Fbutton\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
+function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-md-4\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-md-4\"\u003E\u003Cform\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel\u003EEmail*\u003C\u002Flabel\u003E\u003Cinput class=\"form-control\" type=\"email\" placeholder=\"Email\" ng-model=\"$ctrl.user.email\" required=\"true\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel\u003EPassword*\u003C\u002Flabel\u003E\u003Cinput class=\"form-control\" type=\"password\" placeholder=\"Password\" ng-model=\"$ctrl.user.password\" required=\"true\"\u003E\u003C\u002Fdiv\u003E\u003Cbutton class=\"btn btn-warning\" ng-click=\"$ctrl.signin()\" style=\"align:'center';\"\u003EВход\u003C\u002Fbutton\u003E\u003C\u002Fform\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-md-4\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
 module.exports = template;
 
 /***/ }),
@@ -116652,11 +116725,38 @@ module.exports = template;
 
 var pug = __webpack_require__(0);
 
-function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"centered\"\u003E\u003Ch3\u003EРедактор диалога\u003C\u002Fh3\u003E\u003Ch5\u003E[[ctrl.treeType]]\u003C\u002Fh5\u003E\u003C\u002Fdiv\u003E\u003Cdiv\u003E\u003Cform class=\"form\"\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-md-4\"\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"group\"\u003EДля кого будет фраза:\u003C\u002Flabel\u003E\u003Cinput type=\"radio\" ng-model=\"$ctrl.groupToAdd\" name=\"group\" value=\"npc\" ng-click=\"$ctrl.updateList()\"\u003EКомпьютер\u003Cinput type=\"radio\" ng-model=\"$ctrl.groupToAdd\" name=\"group\" value=\"player\" ng-click=\"$ctrl.updateList()\"\u003EИгрок\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"phrase\"\u003EОтвет на какую фразу?:\u003C\u002Flabel\u003E\u003Cselect class=\"form-control\" id=\"phrase\" ng-model=\"$ctrl.fromNodeId\" name=\"to\" ng-change=\"$ctrl.onChange()\"\u003E\u003Coption ng-repeat=\"state in $ctrl.nodes\" ng-value=\"state.id\"\u003E{{ state.label }}\u003C\u002Foption\u003E\u003C\u002Fselect\u003E\u003Cbutton class=\"btn btn-danger\" ng-click=\"$ctrl.deleteNode()\"\u003E\u003Ci class=\"fa fa-window-close\" aria-hidden=\"true\"\u003E\u003C\u002Fi\u003E\u003C\u002Fbutton\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"text\"\u003EТекст ответа\u003C\u002Flabel\u003E\u003Cinput class=\"form-control\" id=\"text\" type=\"text\" placeholder=\"Введите наименование фразы\" value=\"Привет!\" ng-model=\"$ctrl.label\" name=\"label\"\u003E\u003C\u002Fdiv\u003E\u003Cbutton class=\"btn btn-info\" ng-click=\"$ctrl.addNode()\"\u003E\u003Ci class=\"fa fa-plus-circle\" aria-hidden=\"true\"\u003E\u003C\u002Fi\u003E                Добавить Реплику\u003C\u002Fbutton\u003E\u003Cdiv class=\"form-group\"\u003E\u003Cp ng-repeat=\"phrase in $ctrl.phraseList\"\u003E{{phrase.text}}\u003C\u002Fp\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-md-8\"\u003E\u003Cdiv id=\"mynetwork\"\u003EThis is amind component\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fform\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
+function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-md-4\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-md-4\"\u003E\u003Cform\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel\u003EEmail*\u003C\u002Flabel\u003E\u003Cinput class=\"form-control\" type=\"email\" placeholder=\"Email\" ng-model=\"$ctrl.user.email\" required=\"true\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel\u003EPassword*\u003C\u002Flabel\u003E\u003Cinput class=\"form-control\" type=\"password\" placeholder=\"Password\" ng-model=\"$ctrl.user.password\" required=\"true\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel\u003EPhone Number*\u003C\u002Flabel\u003E\u003Cinput class=\"form-control\" type=\"tel\" placeholder=\"Phone\" ng-model=\"$ctrl.user.phone\" required=\"true\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel\u003EFirst Name\u003C\u002Flabel\u003E\u003Cinput class=\"form-control\" type=\"text\" placeholder=\"First Name\" ng-model=\"$ctrl.user.first_name\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel\u003ELast Name\u003C\u002Flabel\u003E\u003Cinput class=\"form-control\" type=\"text\" placeholder=\"Last Name\" ng-model=\"$ctrl.user.last_name\"\u003E\u003C\u002Fdiv\u003E\u003Cbutton class=\"btn btn-warning\" ng-click=\"$ctrl.signup()\" style=\"align:'center';\"\u003EРегистрация\u003C\u002Fbutton\u003E\u003C\u002Fform\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-md-4\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
 module.exports = template;
 
 /***/ }),
 /* 52 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var pug = __webpack_require__(0);
+
+function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"centered\"\u003E\u003Ch3\u003E[[ctrl.gameName]]\u003C\u002Fh3\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"container\"\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-lg-4\"\u003E\u003Cdiv class=\"panel panel-default\" style=\"background-color:#C4D9D4;\"\u003E\u003Cdiv class=\"panel-body\"\u003E\u003Cdiv class=\"media\"\u003E\u003Cdiv class=\"media-left media-middle\"\u003E\u003Cimg ng-src=\"static\u002Fmanagers\u002Fimg\u002F[[ctrl.player.image_path]]\" width=\"100\" height=\"150\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"media-body\"\u003E\u003Cul\u003E\u003Cli\u003E[[ctrl.player.name]]\u003C\u002Fli\u003E\u003Cli\u003E\"[[ctrl.player.company]]\"\u003C\u002Fli\u003E\u003Cli\u003E[[ctrl.player.position]]\u003C\u002Fli\u003E\u003C\u002Ful\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"media\"\u003E\u003Cdiv class=\"media-left\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"media-body\"\u003E\u003Ca class=\"btn btn-default btn-lg btn-block\" ng-link=\"['Game']\"\u003EЗакончить разговор\u003C\u002Fa\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C!--p [[ctrl.next.question]]--\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-lg-4\"\u003E\u003Cdiv class=\"panel panel-default\" style=\"background-color:#C4D9D4;\"\u003E\u003Cdiv class=\"panel-body\" ng-class=\"ctrl.checkColor()\"\u003E\u003Cp\u003EОставшееся время\u003Cdiv class=\"progress\"\u003E\u003Cdiv class=\"progress-bar progress-bar-info\" role=\"progressbar\" aria-valuenow=\"[[ctrl.getTime()]]\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"width: [[ctrl.getTime()]]%;\"\u003E\u003C!--| [[ctrl.time]]--\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fp\u003E\u003C!--ol--\u003E\u003C!--    li(ng-repeat='item in ctrl.history') -[[item]]--\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-lg-4\"\u003E\u003Cdiv class=\"panel panel-default\" style=\"background-color:#C4D9D4;\"\u003E\u003Cdiv class=\"panel-body\"\u003E\u003Cdiv class=\"media\"\u003E\u003Cdiv class=\"media-left media-middle\"\u003E\u003Cimg class=\"media-object\" src=\"static\u002Fmanagers\u002Fimg\u002F[[ctrl.npc.image_path]]\" width=\"100\" height=\"150\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"media-body\"\u003E\u003Cul\u003E\u003Cli\u003E[[ctrl.npc.name]]\u003C\u002Fli\u003E\u003Cli\u003E\"[[ctrl.npc.company]]\"\u003C\u002Fli\u003E\u003Cli\u003E[[ctrl.npc.position]]\u003C\u002Fli\u003E\u003C\u002Ful\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-lg-6\"\u003E\u003Cdiv class=\"panel panel-default\" ng-show=\"!ctrl.notTheEnd()\"\u003E\u003Cdiv class=\"panel-body\"\u003E\u003Cp\u003E[[ctrl.player.current.text]]\u003C\u002Fp\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"panel panel-default\" ng-show=\"ctrl.notTheEnd()\" style=\"background-color:#C4D9D4;\"\u003E\u003Cdiv class=\"panel-header\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"panel-body\"\u003E\u003Ch5\u003E\u003Cb\u003EВыберите варианты ответа\u003C\u002Fb\u003E\u003C\u002Fh5\u003E\u003Cdiv class=\"list-group\"\u003E\u003Ca class=\"list-group-item\" href=\"\" ng-repeat=\"element in ctrl.getPlayerQuestions()\" ng-click=\"ctrl.update(element.to_node_id)\" style=\"background-color:#F8FBF4;\"\u003E-&nbsp;[[element.node_to.text]]\u003C\u002Fa\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-lg-6\"\u003E\u003Cdiv class=\"panel panel-default\" style=\"background-color:#C4D9D4;\"\u003E\u003Cdiv class=\"panel-body\"\u003E\u003Cp\u003E[[ctrl.getNpcAnswers().text]]\u003C\u002Fp\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-lg-12\"\u003E\u003Cdiv class=\"panel panel-default\"\u003E\u003Cdiv class=\"panel-body\"\u003E\u003Cp\u003EИстория разговора\u003C\u002Fp\u003E\u003Col\u003E\u003Cli ng-repeat=\"item in ctrl.getHistory()\"\u003E-[[item.text]]\u003C\u002Fli\u003E\u003C\u002Fol\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
+module.exports = template;
+
+/***/ }),
+/* 53 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var pug = __webpack_require__(0);
+
+function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"modal-header\"\u003E\u003Cbutton class=\"close\" ng-click=\"$ctrl.cancel()\"\u003E\u003Cspan aria-hidden=\"true\"\u003E×\u003C\u002Fspan\u003E\u003C\u002Fbutton\u003E\u003Cdiv class=\"modal-title\"\u003E\u003Ch4\u003E\u003Cb\u003EДобавление вариантов ответа\u003C\u002Fb\u003E\u003C\u002Fh4\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"modal-body\"\u003E\u003Cp\u003E\u003Csmall\u003Eid - [[$ctrl.node.id]]\u003C\u002Fsmall\u003E\u003C\u002Fp\u003E\u003Cp\u003E\u003Csmall\u003Ecategory - [[$ctrl.node.category]]\u003C\u002Fsmall\u003E\u003C\u002Fp\u003E\u003Cp\u003E   [[$ctrl.node.text]]\u003C\u002Fp\u003E\u003Cul\u003E\u003Cli ng-repeat=\"element in $ctrl.node.answers\"\u003E\u003Ca\u003E[[element.id]]. [[element.text]]\u003Cspan class=\"label label-primary\" ng-if=\"element.type\"\u003E[[element.type]]\u003C\u002Fspan\u003E\u003C\u002Fa\u003E\u003Cbutton class=\"btn btn-danger\" ng-click=\"$ctrl.deleteNode(element.id)\"\u003Ex\u003C\u002Fbutton\u003E\u003C\u002Fli\u003E\u003C\u002Ful\u003E\u003Cdiv\u003E\u003Cuib-tabset active=\"active\"\u003E\u003Cuib-tab index=\"0\" heading=\"Добавить\"\u003E\u003Cform\u003E\u003Cui-select ng-model=\"$ctrl.selected\" on-select=\"\"\u003E\u003Cui-select-match\u003E\u003Cspan ng-bind=\"$select.selected.text\"\u003E\u003C\u002Fspan\u003E\u003C\u002Fui-select-match\u003E\u003Cui-select-choices repeat=\"item in $ctrl.resolve.tree\"\u003E\u003Cspan ng-bind=\"item.text\"\u003E\u003C\u002Fspan\u003E\u003C\u002Fui-select-choices\u003E\u003C\u002Fui-select\u003E\u003Cbutton class=\"btn btn-primary\" ng-click=\"$ctrl.save()\"\u003E\u003Cspan\u003EДобавить\u003C\u002Fspan\u003E\u003C\u002Fbutton\u003E\u003C\u002Fform\u003E\u003C\u002Fuib-tab\u003E\u003Cuib-tab index=\"1\" heading=\"Создать новую\"\u003E\u003Cform\u003E\u003Ctextarea class=\"form-control\" rows=\"3\" ng-model=\"$ctrl.toAdd.text\"\u003E\u003C\u002Ftextarea\u003E\u003Cdiv class=\"btn-group\" role=\"group\" aria-label=\"...\"\u003E\u003Cbutton class=\"btn btn-danger\" type=\"button\" ng-click=\"$ctrl.setFailure()\"\u003E\u003Ci class=\"fa fa-frown-o\"\u003E\u003C\u002Fi\u003E\u003C\u002Fbutton\u003E\u003Cbutton class=\"btn btn-default\" type=\"button\" ng-click=\"$ctrl.setDefault()\"\u003E\u003Ci class=\"fa fa-frown-o\"\u003E\u003C\u002Fi\u003E\u003C\u002Fbutton\u003E\u003Cbutton class=\"btn btn-success\" type=\"button\" ng-click=\"$ctrl.setSuccess()\"\u003E\u003Ci class=\"fa fa-smile-o\"\u003E\u003C\u002Fi\u003E\u003C\u002Fbutton\u003E\u003C\u002Fdiv\u003E\u003Cbutton class=\"btn btn-primary\" ng-click=\"$ctrl.create($ctrl.textToSave)\"\u003E\u003Cspan\u003EСоздать\u003C\u002Fspan\u003E\u003C\u002Fbutton\u003E\u003C\u002Fform\u003E\u003C\u002Fuib-tab\u003E\u003C\u002Fuib-tabset\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"modal-footer\"\u003E\u003C!--button.btn(ng-click=\"$ctrl.cancel()\") Отменить--\u003E\u003Cbutton class=\"btn\" ng-disabled=\"addEntityForm.$invalid \" ng-click=\"$ctrl.close()\"\u003EЗакрыть\u003C\u002Fbutton\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
+module.exports = template;
+
+/***/ }),
+/* 54 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var pug = __webpack_require__(0);
+
+function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"centered\"\u003E\u003Ch3\u003EРедактор диалога\u003C\u002Fh3\u003E\u003Ch5\u003E[[ctrl.treeType]]\u003C\u002Fh5\u003E\u003C\u002Fdiv\u003E\u003Cdiv\u003E\u003Cform class=\"form\"\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-md-4\"\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"group\"\u003EДля кого будет фраза:\u003C\u002Flabel\u003E\u003Cinput type=\"radio\" ng-model=\"$ctrl.groupToAdd\" name=\"group\" value=\"npc\" ng-click=\"$ctrl.updateList()\"\u003EКомпьютер\u003Cinput type=\"radio\" ng-model=\"$ctrl.groupToAdd\" name=\"group\" value=\"player\" ng-click=\"$ctrl.updateList()\"\u003EИгрок\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"phrase\"\u003EОтвет на какую фразу?:\u003C\u002Flabel\u003E\u003Cselect class=\"form-control\" id=\"phrase\" ng-model=\"$ctrl.fromNodeId\" name=\"to\" ng-change=\"$ctrl.onChange()\"\u003E\u003Coption ng-repeat=\"state in $ctrl.nodes\" ng-value=\"state.id\"\u003E{{ state.label }}\u003C\u002Foption\u003E\u003C\u002Fselect\u003E\u003Cbutton class=\"btn btn-danger\" ng-click=\"$ctrl.deleteNode()\"\u003E\u003Ci class=\"fa fa-window-close\" aria-hidden=\"true\"\u003E\u003C\u002Fi\u003E\u003C\u002Fbutton\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"text\"\u003EТекст ответа\u003C\u002Flabel\u003E\u003Cinput class=\"form-control\" id=\"text\" type=\"text\" placeholder=\"Введите наименование фразы\" value=\"Привет!\" ng-model=\"$ctrl.label\" name=\"label\"\u003E\u003C\u002Fdiv\u003E\u003Cbutton class=\"btn btn-info\" ng-click=\"$ctrl.addNode()\"\u003E\u003Ci class=\"fa fa-plus-circle\" aria-hidden=\"true\"\u003E\u003C\u002Fi\u003E                Добавить Реплику\u003C\u002Fbutton\u003E\u003Cdiv class=\"form-group\"\u003E\u003Cp ng-repeat=\"phrase in $ctrl.phraseList\"\u003E{{phrase.text}}\u003C\u002Fp\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-md-8\"\u003E\u003Cdiv id=\"mynetwork\"\u003EThis is amind component\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fform\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
+module.exports = template;
+
+/***/ }),
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -116668,7 +116768,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   /* global define, require */
   // https://github.com/umdjs/umd/blob/master/templates/returnExports.js
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(37), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(39), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -118117,7 +118217,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 
 /***/ }),
-/* 53 */
+/* 56 */
 /***/ (function(module, exports) {
 
 /*!
@@ -120515,15 +120615,15 @@ $templateCache.put("selectize/select-multiple.tpl.html","<div class=\"ui-select-
 $templateCache.put("selectize/select.tpl.html","<div class=\"ui-select-container selectize-control single\" ng-class=\"{\'open\': $select.open}\"><div class=\"selectize-input\" ng-class=\"{\'focus\': $select.open, \'disabled\': $select.disabled, \'selectize-focus\' : $select.focus}\" ng-click=\"$select.open && !$select.searchEnabled ? $select.toggle($event) : $select.activate()\"><div class=\"ui-select-match\"></div><input type=\"search\" autocomplete=\"off\" tabindex=\"-1\" class=\"ui-select-search ui-select-toggle\" ng-class=\"{\'ui-select-search-hidden\':!$select.searchEnabled}\" ng-click=\"$select.toggle($event)\" placeholder=\"{{$select.placeholder}}\" ng-model=\"$select.search\" ng-hide=\"!$select.isEmpty() && !$select.open\" ng-disabled=\"$select.disabled\" aria-label=\"{{ $select.baseTitle }}\"></div><div class=\"ui-select-choices\"></div><div class=\"ui-select-no-choice\"></div></div>");}]);
 
 /***/ }),
-/* 54 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(53);
+__webpack_require__(56);
 module.exports = 'ui.select';
 
 
 /***/ }),
-/* 55 */
+/* 58 */
 /***/ (function(module, exports) {
 
 var g;
@@ -120550,7 +120650,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 56 */
+/* 59 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -120578,13 +120678,13 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 57 */
+/* 60 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-/* 58 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -120594,132 +120694,10 @@ module.exports = function(module) {
 
 
 
+__webpack_require__(8);
 __webpack_require__(7);
-__webpack_require__(6);
 
 // angular.bootstrap(document, ['app']);
-
-/***/ }),
-/* 59 */,
-/* 60 */,
-/* 61 */,
-/* 62 */,
-/* 63 */,
-/* 64 */,
-/* 65 */,
-/* 66 */,
-/* 67 */,
-/* 68 */,
-/* 69 */,
-/* 70 */,
-/* 71 */,
-/* 72 */,
-/* 73 */,
-/* 74 */,
-/* 75 */,
-/* 76 */,
-/* 77 */,
-/* 78 */,
-/* 79 */,
-/* 80 */,
-/* 81 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var template = __webpack_require__(82);
-
-__webpack_require__(83);
-
-angular.module('app').component('signin', {
-    bindings: {
-        $router: '<'
-    },
-    template: template(),
-    controller: SignInCtrl
-});
-
-SignInCtrl.$inject = ['Restangular', '$cookies', 'AuthService'];
-
-function SignInCtrl(Restangular, cookies, AuthService) {
-    this.user = {};
-    var _this = this;
-    _this.signin = function () {
-        console.log(this.user);
-        AuthService.login(this.user).then(function (res) {
-            console.log("login successfull");
-            _this.$router.navigate(['Menu']);
-        });
-    };
-};
-
-/***/ }),
-/* 82 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var pug = __webpack_require__(0);
-
-function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-md-4\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-md-4\"\u003E\u003Cform\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel\u003EEmail*\u003C\u002Flabel\u003E\u003Cinput class=\"form-control\" type=\"email\" placeholder=\"Email\" ng-model=\"$ctrl.user.email\" required=\"true\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel\u003EPassword*\u003C\u002Flabel\u003E\u003Cinput class=\"form-control\" type=\"password\" placeholder=\"Password\" ng-model=\"$ctrl.user.password\" required=\"true\"\u003E\u003C\u002Fdiv\u003E\u003Cbutton class=\"btn btn-warning\" ng-click=\"$ctrl.signin()\" style=\"align:'center';\"\u003EВход\u003C\u002Fbutton\u003E\u003C\u002Fform\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-md-4\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
-module.exports = template;
-
-/***/ }),
-/* 83 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * Created by user on 05.01.17.
- */
-
-angular.module('app').service('AuthService', AuthService);
-
-AuthService.$inject = ['Restangular', '$q'];
-
-function AuthService(Restangular, q) {
-  var inited = false;
-  var token = null;
-  var loggedIn = false;
-
-  var authService = {
-    init: init,
-    login: login,
-    logout: logout,
-    isLoggedIn: isLoggedIn
-  };
-  return authService;
-
-  function init() {
-    var d = q.defer();
-    id = localStorage.getItem("playerId");
-    if (!inited) {
-      inited = true;
-      d.resolve();
-    } else {
-      d.resolve();
-    }
-    return d.promise;
-  }
-
-  function login(credentials) {
-    return Restangular.one('api/v1').post('customers/login', credentials).then(function (res) {
-      token = res.id;
-      loggedIn = true;
-    });
-  }
-
-  function logout() {
-    return Restangular.one('api/v1').post('customers/logout', { access_token: token }).then(function (res) {
-      token = null;
-      loggedIn = false;
-    });
-  }
-  function isLoggedIn() {
-    return loggedIn;
-  }
-};
 
 /***/ })
 /******/ ]);
