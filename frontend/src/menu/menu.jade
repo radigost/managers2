@@ -3,10 +3,12 @@
         .col-sm-8.col-lg-4.col-sm-offset-2.col-lg-offset-4
                 .thumbnail(style="background-color:#FFF7EC;")
                     img(src="static/managers/img/winner.jpg" height="250px" width="250px" align="middle").img-responsive
-                    a(ng-link="['SignUp']").btn.btn-default.btn-lg.btn-block  Регистрация 
-                    a(ng-link="['SignIn']").btn.btn-default.btn-lg.btn-block  Вход
-                    a(ng-click="ctrl.logout()").btn.btn-default.btn-lg.btn-block  Выход
+
+                    a(ng-link="['SignUp']" ng-hide="ctrl.isLoggedIn()").btn.btn-default.btn-lg.btn-block  Регистрация 
+                    a(ng-link="['SignIn']" ng-hide="ctrl.isLoggedIn()").btn.btn-default.btn-lg.btn-block  Вход
+                    a(ng-click="ctrl.logout()" ng-show="ctrl.isLoggedIn()").btn.btn-default.btn-lg.btn-block  Выход
                     a(ng-link="['NewGame']" ng-show="ctrl.isLoggedIn()").btn.btn-default.btn-lg.btn-block  Новая игра
+                    
                     a(ng-link="['Tree']" ng-if="ctrl.canSeeEditor" ng-show="ctrl.isLoggedIn()").btn.btn-default.btn-lg.btn-block Редактор диалогов
                     a(ng-click="ctrl.help()").btn.btn-default.btn-lg.btn-block Помощь
                 .thumbnail(style="background-color:#FFF7EC;" ng-show="ctrl.isLoggedIn()")

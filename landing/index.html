@@ -27,28 +27,33 @@
   <div class="" id="top-image" >
     <div class="row">
       <div class="col-md-12">
-        <h1>TETRA</h1>
-        <p class="lead">Уникальная программа, которая развивает навыки продаж</p>
-      </div>
-      <div class="col-md-4"></div>
-      <div class="col-md-4">
-        <form class="form-inline" ng-submit="$ctrl.sendEmail()">
-          <div class="form-group">
-            <label class="sr-only" for="email">Email address</label>
-            <input type="email" class="form-control" ng-model="$ctrl.email" id="email" placeholder="Email" name="email">
+        <h1><b><i class="fa fa-flask" aria-hidden="true"></i> TETRA SALES</b></h1>
+        <div class="">
+          <div class="col-md-4"></div>
+          <div class="col-md-4"></div>
+          <div class="col-md-4">
+            <h3>Уникальная программа для развития навыков продаж через диалоги</h3>
+            <p class="lead"> Учимся через практику для быстрого результата</p>
           </div>
+        </div>
+        
+      </div>
+      <div class="col-md-4">
+        <div class="form-email">
+              <form class="form-inline" ng-submit="$ctrl.sendEmail()">
+                <h3> Зарегистрироваться</h1>
+                <div class="form-group">
+                  <label class="sr-only" for="email">Email address</label>
+                  <input type="email" class="form-control" ng-model="$ctrl.email" id="email" placeholder="Email" name="email">
+                  <button class="btn btn-default">регистрация</button>
+                </div>
+                
+              </form>
+          </div>
+      </div>
+      <div class="col-md-4">
+          
 
-          <button class="btn btn-default">регистрация</button>
-        </form>
-
-        <!--<form class="form-inline" action="/api/v1/customers" method="post" ng-submit="$ctrl.sendEmail()">-->
-          <!--<div class="form-group">-->
-            <!--<label class="sr-only" for="email">Email address</label>-->
-            <!--<input type="email" class="form-control" ng-model="$ctrl.email" id="email" placeholder="Email" name="email">-->
-          <!--</div>-->
-
-          <!--<button class="btn btn-default">регистрация</button>-->
-        <!--</form>-->
       </div>
       <div class="col-md-4"></div>
     </div>
@@ -314,7 +319,7 @@
 
   <footer class="footer row">
     <div class="col-md-12">
-      <p>© 2017 Тетра Лаб</p>
+      <p>© 2017 <i class="fa fa-flask" aria-hidden="true"></i> Тетра Лаб</p>
     </div>
   </footer>
 
