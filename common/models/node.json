@@ -19,8 +19,8 @@
     "type": {
       "type": "string"
     },
-    "text":{
-      "type":"string"
+    "text": {
+      "type": "string"
     }
   },
   "validations": [],

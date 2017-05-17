@@ -17,7 +17,6 @@
     "to_node_id": {
       "type": "number"
     }
-
   },
   "validations": [],
   "relations": {

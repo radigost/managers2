@@ -50,12 +50,12 @@
   "files": {
     "loopback#static": [
       {
-        "name":"app",
-        "paths":["/app"],
+        "paths": [
+          "/app"
+        ],
         "params": "$!../client"
       },
       {
-        "name":"landing",
         "params": "$!../landing"
       }
     ]

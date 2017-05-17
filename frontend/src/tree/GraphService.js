@@ -92,7 +92,9 @@ function GraphService(Restangular,q) {
                 // }
             },
             edges:{
+                physics:false,
                 length:300,
+                smooth:false,
                 // "smooth": {
                 //     "type": "cubicBezier",
                 //     "forceDirection": "vertical",
@@ -105,14 +107,14 @@ function GraphService(Restangular,q) {
             nodes:{
                 shape:'box'
             },
-            // "physics": {
+            "physics": {
             //     "hierarchicalRepulsion": {
             //         "centralGravity": 1,
             //         "nodeDistance": 145
             //     },
             //     "minVelocity": 0.75,
-            //     "solver": "repulsion"
-            // }
+                "solver": "repulsion"
+            }
         };
         network = new vis.Network(container, data,options);
 

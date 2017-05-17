@@ -15,26 +15,27 @@ module.exports = function(customer) {
 
 
   // //send verification email after registration
-  customer.afterRemote('create', function(context, user, next) {
+  customer.afterRemote('create', function(context, customerInstanse, next) {
     console.log('> user.afterRemote triggered');
 
-    // var options = {
-    //   type: 'email',
-    //   to: user.email,
-    //   from: 'noreply@loopback.com',
-    //   subject: 'Thanks for registering.',
-    //   template: path.resolve(__dirname, '../../server/views/verify.ejs'),
-      // redirect: '/verified',
-      // user: user
-    // };
+    var options = {
+      type: 'email',
+      to: customerInstanse.email,
+      from: 'noreply@loopback.com',
+      subject: 'Thanks for registering.',
+      template: path.resolve(__dirname, '../../server/views/verify.ejs'),
+      redirect: '/verified',
+      user: customer
+    };
+    // console.log(options);
 
-    // user.verify(options, function(err, response) {
-    //   if (err) {
-    //     User.deleteById(user.id);
-    //     return next(err);
-    //   }
-    //
-    //   console.log('> verification email sent:', response);
+    customerInstanse.verify(options, function(err, response) {
+      if (err) {
+        customer.deleteById(customerInstanse.id);
+        return next(err);
+      }
+    
+      console.log('> verification email sent:', response);
 
       // context.res.render('response', {
       //   title: 'Signed up successfully',
@@ -45,6 +46,7 @@ module.exports = function(customer) {
       // });
     // });
     next();
+  });
   });
   //
   // //send password reset link when requested

@@ -68,5 +68,8 @@
     "options": {
       "emailVerificationRequired": true
     }
+  },
+  "Email": {
+    "dataSource": "gmail"
   }
 }

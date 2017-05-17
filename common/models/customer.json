@@ -8,28 +8,30 @@
       "required": true,
       "length": 40
     },
-    "password":{
-      "required":false
+    "password": {
+      "type": {
+        "required": false
+      }
     },
-    "phone":{
-      "type":"String"
+    "phone": {
+      "type": "String"
     },
-    "first_name":{
-      "type":"String"
+    "first_name": {
+      "type": "String"
     },
-    "last_name":{
-      "type":"String"
+    "last_name": {
+      "type": "String"
     }
   },
   "validations": [],
   "relations": {},
   "acls": [
     {
+      "accessType": "READ",
       "principalType": "ROLE",
       "principalId": "$everyone",
-      "accessType": "READ",
       "permission": "ALLOW"
     }
   ],
-  "methods": []
+  "methods": {}
 }
