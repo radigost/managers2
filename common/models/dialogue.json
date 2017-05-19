@@ -1,0 +1,33 @@
+{
+  "name": "Dialogue",
+  "plural": "dialogues",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true,
+    "postgresql": {
+      "table": "dialogues"
+    }
+  },
+  "properties": {
+    "name": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {
+    "nodes": {
+      "type": "hasMany",
+      "model": "Node",
+      "foreignKey": "dialogue_id"
+    },
+    "links": {
+      "type": "hasMany",
+      "model": "Link",
+      "foreignKey": "dialogue_id"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

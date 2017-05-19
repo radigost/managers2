@@ -29,6 +29,11 @@
       "type": "belongsTo",
       "model": "Node",
       "foreignKey": "from_node_id"
+    },
+    "dialogue": {
+      "type": "belongsTo",
+      "model": "Dialogue",
+      "foreignKey": "dialogue_id"
     }
   },
   "acls": [],
