@@ -6,6 +6,12 @@
 
 div
     form.form
+        
+        label Выберите Диалог:
+            input(list="dialogues" name="dial" ng-model="$ctrl.selectedDialogue")
+        datalist(id="dialogues")
+            option(ng-repeat = "dialogue in $ctrl.DialogueService.getDialogues()" value="{{dialogue}}") dialogue.name
+  
         .row
             .col-md-4
                 .form-group

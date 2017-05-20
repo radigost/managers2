@@ -99414,8 +99414,18 @@ function TreeModalCtrl(Restangular, cookies) {
 "use strict";
 
 
-var vis = __webpack_require__(6);
-__webpack_require__(1);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+__webpack_require__(38);
+
+__webpack_require__(32);
+
+__webpack_require__(31);
+
+__webpack_require__(84);
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 /**
  * Created by user on 05.01.17.
  */
@@ -99423,11 +99433,110 @@ __webpack_require__(1);
 // Npc = require('../Class/npc.js');
 //
 // Player = require('../Class/player.ts');
+var vis = __webpack_require__(6);
 
 var template = __webpack_require__(54);
-__webpack_require__(38);
-__webpack_require__(32);
-__webpack_require__(31);
+
+__webpack_require__(1);
+
+var TreeCtrl = function () {
+    function TreeCtrl(player, Npc, Restangular, $q, uibModal, cookies, GraphService, $scope, DialogueService) {
+        var _this = this;
+
+        _classCallCheck(this, TreeCtrl);
+
+        this.GraphService = GraphService;
+
+        this.groupToAdd = 'player';
+        this.phraseList = [];
+        this.$q = $q;
+
+        this.nodesDataSet = new vis.DataView(GraphService.nodes);
+        this.nodesDataSet.on('*', function (event, properties, senderId) {
+            _this.updateList();
+        });
+
+        this.DialogueService = DialogueService;
+        this.DialogueService.init();
+    }
+
+    _createClass(TreeCtrl, [{
+        key: '$routerOnActivate',
+        value: function $routerOnActivate() {
+            var _this2 = this;
+
+            this.$q.all([this.GraphService.init()]).then(function () {
+                _this2.network = _this2.GraphService.getNetwork();
+                _this2.network.on("selectNode", function (params) {
+                    var sel = _this2.nodesDataSet.get(params.nodes[0]);
+                    _this2.groupToAdd = sel['group'] == 'player' ? 'npc' : 'player';
+                    _this2.fromNodeId = params.nodes[0];
+                    _this2.updateList();
+                });
+            });
+        }
+    }, {
+        key: 'onChange',
+        value: function onChange() {
+            this.showNodeOnNetwork();
+            this.getLinkedToNodes();
+        }
+    }, {
+        key: 'addNode',
+        value: function addNode() {
+            var toAdd = {
+                group: this.groupToAdd,
+                fromNodeId: this.fromNodeId,
+                text: this.label
+            };
+            this.GraphService.addNode(toAdd);
+        }
+    }, {
+        key: 'deleteNode',
+        value: function deleteNode() {
+            this.GraphService.deleteNode(this.fromNodeId);
+        }
+    }, {
+        key: 'updateList',
+        value: function updateList() {
+            var _this3 = this;
+
+            console.log(this.selectedDialogue);
+            this.nodes = this.nodesDataSet.get({
+                filter: function filter(item) {
+                    return item.group != _this3.groupToAdd && item.type != 'failure' && item.type != 'success';
+                }
+            });
+        }
+    }, {
+        key: 'showNodeOnNetwork',
+        value: function showNodeOnNetwork() {
+            this.network.focus(this.fromNodeId, { scale: 1, animation: { // animation object, can also be Boolean
+                    duration: 1000, // animation duration in milliseconds (Number)
+                    easingFunction: "easeInOutQuad" // Animation easing function, available are:
+                } });
+            this.network.selectNodes([this.fromNodeId]);
+        }
+    }, {
+        key: 'getLinkedToNodes',
+        value: function getLinkedToNodes() {
+            var _this4 = this;
+
+            var nodeIds = [];
+            var nodesFromLinks = this.GraphService.links.get({
+                filter: function filter(link) {
+                    link.from == _this4.fromNodeId ? nodeIds.push(link.to) : '';
+                    return link.from == _this4.fromNodeId;
+                }
+            });
+            this.phraseList = this.GraphService.nodes.get(nodeIds);
+        }
+    }]);
+
+    return TreeCtrl;
+}();
+
+TreeCtrl.$inject = ['Player', 'Npc', 'Restangular', '$q', '$uibModal', '$cookies', 'GraphService', '$scope', 'DialogueService'];
 
 angular.module('app').component('tree', {
     bindings: {
@@ -99436,77 +99545,6 @@ angular.module('app').component('tree', {
     template: template(),
     controller: TreeCtrl
 });
-
-TreeCtrl.$inject = ['Player', 'Npc', 'Restangular', '$q', '$uibModal', '$cookies', 'GraphService', '$scope'];
-function TreeCtrl(player, Npc, Restangular, $q, uibModal, cookies, GraphService, $scope) {
-    var _this = this;
-    var network;
-
-    var nodesDataSet = new vis.DataView(GraphService.nodes);
-    _this.groupToAdd = 'player';
-    _this.updateList = updateList;
-    _this.phraseList = [];
-
-    nodesDataSet.on('*', function (event, properties, senderId) {
-        updateList();
-    });
-
-    this.$routerOnActivate = function () {
-        $q.all([GraphService.init()]).then(function () {
-            network = GraphService.getNetwork();
-            network.on("selectNode", function (params) {
-                var sel = nodesDataSet.get(params.nodes[0]);
-                _this.groupToAdd = sel['group'] == 'player' ? 'npc' : 'player';
-                _this.fromNodeId = params.nodes[0];
-                updateList();
-                // console.log(_this);
-            });
-        });
-    };
-
-    this.onChange = function () {
-        showNodeOnNetwork();
-        getLinkedToNodes();
-    };
-
-    this.addNode = function () {
-        var toAdd = {
-            group: _this.groupToAdd,
-            fromNodeId: _this.fromNodeId,
-            text: _this.label
-        };
-        GraphService.addNode(toAdd);
-    };
-
-    this.deleteNode = function () {
-        GraphService.deleteNode(_this.fromNodeId);
-    };
-
-    function updateList() {
-        _this.nodes = nodesDataSet.get({
-            filter: function filter(item) {
-                return item.group != _this.groupToAdd && item.type != 'failure' && item.type != 'success';
-            }
-        });
-    }
-    function showNodeOnNetwork() {
-        network.focus(_this.fromNodeId, { scale: 1, animation: { // animation object, can also be Boolean
-                duration: 1000, // animation duration in milliseconds (Number)
-                easingFunction: "easeInOutQuad" // Animation easing function, available are:
-            } });
-        network.selectNodes([_this.fromNodeId]);
-    }
-    function getLinkedToNodes() {
-        var nodeIds = [];
-        var nodesFromLinks = GraphService.links.get({
-            filter: function filter(link) {
-                link.from == _this.fromNodeId ? nodeIds.push(link.to) : '';
-                return link.from == _this.fromNodeId;
-            }
-        });
-        _this.phraseList = GraphService.nodes.get(nodeIds);
-    }
-}
 
 /***/ }),
 /* 34 */
@@ -116762,7 +116800,7 @@ module.exports = template;
 
 var pug = __webpack_require__(0);
 
-function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"centered\"\u003E\u003Ch3\u003EРедактор диалога\u003C\u002Fh3\u003E\u003Ch5\u003E[[ctrl.treeType]]\u003C\u002Fh5\u003E\u003C\u002Fdiv\u003E\u003Cdiv\u003E\u003Cform class=\"form\"\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-md-4\"\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"group\"\u003EДля кого будет фраза:\u003C\u002Flabel\u003E\u003Cinput type=\"radio\" ng-model=\"$ctrl.groupToAdd\" name=\"group\" value=\"npc\" ng-click=\"$ctrl.updateList()\"\u003EКомпьютер\u003Cinput type=\"radio\" ng-model=\"$ctrl.groupToAdd\" name=\"group\" value=\"player\" ng-click=\"$ctrl.updateList()\"\u003EИгрок\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"phrase\"\u003EОтвет на какую фразу?:\u003C\u002Flabel\u003E\u003Cselect class=\"form-control\" id=\"phrase\" ng-model=\"$ctrl.fromNodeId\" name=\"to\" ng-change=\"$ctrl.onChange()\"\u003E\u003Coption ng-repeat=\"state in $ctrl.nodes\" ng-value=\"state.id\"\u003E{{ state.label }}\u003C\u002Foption\u003E\u003C\u002Fselect\u003E\u003Cbutton class=\"btn btn-danger\" ng-click=\"$ctrl.deleteNode()\"\u003E\u003Ci class=\"fa fa-window-close\" aria-hidden=\"true\"\u003E\u003C\u002Fi\u003E\u003C\u002Fbutton\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"text\"\u003EТекст ответа\u003C\u002Flabel\u003E\u003Cinput class=\"form-control\" id=\"text\" type=\"text\" placeholder=\"Введите наименование фразы\" value=\"Привет!\" ng-model=\"$ctrl.label\" name=\"label\"\u003E\u003C\u002Fdiv\u003E\u003Cbutton class=\"btn btn-info\" ng-click=\"$ctrl.addNode()\"\u003E\u003Ci class=\"fa fa-plus-circle\" aria-hidden=\"true\"\u003E\u003C\u002Fi\u003E                Добавить Реплику\u003C\u002Fbutton\u003E\u003Cdiv class=\"form-group\"\u003E\u003Cp ng-repeat=\"phrase in $ctrl.phraseList\"\u003E{{phrase.text}}\u003C\u002Fp\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-md-8\"\u003E\u003Cdiv id=\"mynetwork\"\u003EThis is amind component\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fform\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
+function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"centered\"\u003E\u003Ch3\u003EРедактор диалога\u003C\u002Fh3\u003E\u003Ch5\u003E[[ctrl.treeType]]\u003C\u002Fh5\u003E\u003C\u002Fdiv\u003E\u003Cdiv\u003E\u003Cform class=\"form\"\u003E\u003Clabel\u003EВыберите Диалог:\u003Cinput list=\"dialogues\" name=\"dial\" ng-model=\"$ctrl.selectedDialogue\"\u003E\u003C\u002Flabel\u003E\u003Cdatalist id=\"dialogues\"\u003E\u003Coption ng-repeat=\"dialogue in $ctrl.DialogueService.getDialogues()\" value=\"{{dialogue}}\"\u003Edialogue.name\u003C\u002Foption\u003E\u003C\u002Fdatalist\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-md-4\"\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"group\"\u003EДля кого будет фраза:\u003C\u002Flabel\u003E\u003Cinput type=\"radio\" ng-model=\"$ctrl.groupToAdd\" name=\"group\" value=\"npc\" ng-click=\"$ctrl.updateList()\"\u003EКомпьютер\u003Cinput type=\"radio\" ng-model=\"$ctrl.groupToAdd\" name=\"group\" value=\"player\" ng-click=\"$ctrl.updateList()\"\u003EИгрок\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"phrase\"\u003EОтвет на какую фразу?:\u003C\u002Flabel\u003E\u003Cselect class=\"form-control\" id=\"phrase\" ng-model=\"$ctrl.fromNodeId\" name=\"to\" ng-change=\"$ctrl.onChange()\"\u003E\u003Coption ng-repeat=\"state in $ctrl.nodes\" ng-value=\"state.id\"\u003E{{ state.label }}\u003C\u002Foption\u003E\u003C\u002Fselect\u003E\u003Cbutton class=\"btn btn-danger\" ng-click=\"$ctrl.deleteNode()\"\u003E\u003Ci class=\"fa fa-window-close\" aria-hidden=\"true\"\u003E\u003C\u002Fi\u003E\u003C\u002Fbutton\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"text\"\u003EТекст ответа\u003C\u002Flabel\u003E\u003Cinput class=\"form-control\" id=\"text\" type=\"text\" placeholder=\"Введите наименование фразы\" value=\"Привет!\" ng-model=\"$ctrl.label\" name=\"label\"\u003E\u003C\u002Fdiv\u003E\u003Cbutton class=\"btn btn-info\" ng-click=\"$ctrl.addNode()\"\u003E\u003Ci class=\"fa fa-plus-circle\" aria-hidden=\"true\"\u003E\u003C\u002Fi\u003E                Добавить Реплику\u003C\u002Fbutton\u003E\u003Cdiv class=\"form-group\"\u003E\u003Cp ng-repeat=\"phrase in $ctrl.phraseList\"\u003E{{phrase.text}}\u003C\u002Fp\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-md-8\"\u003E\u003Cdiv id=\"mynetwork\"\u003EThis is amind component\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fform\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
 module.exports = template;
 
 /***/ }),
@@ -120708,6 +120746,78 @@ __webpack_require__(8);
 __webpack_require__(7);
 
 // angular.bootstrap(document, ['app']);
+
+/***/ }),
+/* 62 */,
+/* 63 */,
+/* 64 */,
+/* 65 */,
+/* 66 */,
+/* 67 */,
+/* 68 */,
+/* 69 */,
+/* 70 */,
+/* 71 */,
+/* 72 */,
+/* 73 */,
+/* 74 */,
+/* 75 */,
+/* 76 */,
+/* 77 */,
+/* 78 */,
+/* 79 */,
+/* 80 */,
+/* 81 */,
+/* 82 */,
+/* 83 */,
+/* 84 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var DialogueService = function () {
+    function DialogueService(Restangular, q) {
+        _classCallCheck(this, DialogueService);
+
+        this.inited = false;
+        this.dialogues = [];
+        this.q = q;
+        this.Restangular = Restangular;
+    }
+
+    _createClass(DialogueService, [{
+        key: 'init',
+        value: function init() {
+            var _this = this;
+
+            var deferred = this.q.defer();
+            this.Restangular.all('api/v1/dialogues/').getList().then(function (res) {
+                res.forEach(function (dialogue) {
+                    return _this.dialogues.push(dialogue);
+                });
+                _this.inited = true;
+                return deferred.resolve(res);
+            });
+            return deferred.promise;
+        }
+    }, {
+        key: 'getDialogues',
+        value: function getDialogues() {
+            return this.dialogues;
+        }
+    }]);
+
+    return DialogueService;
+}();
+
+DialogueService.$inject = ['Restangular', '$q'];
+
+angular.module('app').service('DialogueService', DialogueService);
 
 /***/ })
 /******/ ]);
