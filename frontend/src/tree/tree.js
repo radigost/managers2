@@ -32,12 +32,15 @@ class TreeCtrl {
         });
 
         this.DialogueService=DialogueService;
-        this.DialogueService.init();
+        
         
     }
 
     $routerOnActivate() {
-        this.$q.all([this.GraphService.init()]).then(()=>{
+        this.$q.all([
+            this.GraphService.init(),
+            this.DialogueService.init()
+            ]).then(()=>{
             this.network = this.GraphService.getNetwork();
             this.network.on("selectNode",  (params)=> {
                 let sel = this.nodesDataSet.get(params.nodes[0]);
@@ -90,6 +93,16 @@ class TreeCtrl {
             }
         });
         this.phraseList = this.GraphService.nodes.get(nodeIds);
+    }
+    // dialogue
+    createNewDialogue(name){
+        this.DialogueService.createNewDialogue(name).then(()=>this.DialogueService.init());
+        this.newDialogueName = '';
+    }
+
+    deleteDialogue(dialogue){
+        this.DialogueService.deleteDialogue(dialogue).then(()=>this.DialogueService.init());
+        
     }
 }
 

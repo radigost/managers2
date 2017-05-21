@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 61);
+/******/ 	return __webpack_require__(__webpack_require__.s = 62);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -301,7 +301,7 @@ function pug_rethrow(err, filename, lineno, str){
     throw err;
   }
   try {
-    str = str || __webpack_require__(60).readFileSync(filename, 'utf8')
+    str = str || __webpack_require__(61).readFileSync(filename, 'utf8')
   } catch (ex) {
     pug_rethrow(err, null, lineno)
   }
@@ -52899,22 +52899,22 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 //styles and fonts
-__webpack_require__(37);
+__webpack_require__(38);
 
 //modules
 __webpack_require__(2);
-__webpack_require__(55);
+__webpack_require__(56);
 __webpack_require__(9);
 // import "@angular/upgrade/upgrade";
 __webpack_require__(15);
 __webpack_require__(11);
 __webpack_require__(13);
-__webpack_require__(57);
-__webpack_require__(35);
-__webpack_require__(34);
+__webpack_require__(58);
 __webpack_require__(36);
+__webpack_require__(35);
+__webpack_require__(37);
 
-var appTpl = __webpack_require__(42);
+var appTpl = __webpack_require__(43);
 __webpack_require__(2);
 angular.module('app', ['restangular', 'ngComponentRouter', 'ui.bootstrap', 'ngCookies', 'ngSanitize', 'ui.select']).config(function ($interpolateProvider) {
     $interpolateProvider.startSymbol('[[');
@@ -52927,7 +52927,7 @@ angular.module('app', ['restangular', 'ngComponentRouter', 'ui.bootstrap', 'ngCo
 
 __webpack_require__(24);
 __webpack_require__(29);
-__webpack_require__(33);
+__webpack_require__(34);
 __webpack_require__(21);
 __webpack_require__(26);
 __webpack_require__(28);
@@ -98337,7 +98337,7 @@ $provide.value("$locale", {
  * Created by user on 05.01.17.
  */
 
-var NpcInfoTpl = __webpack_require__(40);
+var NpcInfoTpl = __webpack_require__(41);
 __webpack_require__(1);
 
 angular.module('app').component('npcInfo', {
@@ -98383,7 +98383,7 @@ function NpcInfoCtrl(Restangular, Npc, q) {
  * Created by user on 05.01.17.
  */
 
-var PlayerInfoTpl = __webpack_require__(41);
+var PlayerInfoTpl = __webpack_require__(42);
 
 angular.module('app').component('playerInfo', {
   bindings: {
@@ -98415,7 +98415,7 @@ function PlayerInfoCtrl(Restangular, player) {
  * Created by user on 05.01.17.
  */
 
-var companyDetailTpl = __webpack_require__(43);
+var companyDetailTpl = __webpack_require__(44);
 
 __webpack_require__(17);
 __webpack_require__(23);
@@ -98455,7 +98455,7 @@ function CompanyDetailCtrl(service, company) {
 "use strict";
 
 
-var CompanyListTpl = __webpack_require__(44);
+var CompanyListTpl = __webpack_require__(45);
 
 angular.module('app').component('companyList', {
     bindings: { $router: '<' },
@@ -98483,7 +98483,7 @@ function CompanyListCtrl(service) {
 // import * as angular from "angular";
 // import {GameService} from "./gameService";
 // import IComponentOptions = angular.IComponentOptions;
-var gameTpl = __webpack_require__(45);
+var gameTpl = __webpack_require__(46);
 
 __webpack_require__(18);
 
@@ -98541,7 +98541,7 @@ function GameCtrl(service) {
  * Created by user on 05.01.17.
  */
 
-var profileTpl = __webpack_require__(46);
+var profileTpl = __webpack_require__(47);
 
 __webpack_require__(3);
 
@@ -98612,8 +98612,8 @@ function Company(Restangular) {
 "use strict";
 
 
-var menuTpl = __webpack_require__(47);
-var modalTpl = __webpack_require__(48);
+var menuTpl = __webpack_require__(48);
+var modalTpl = __webpack_require__(49);
 __webpack_require__(25);
 __webpack_require__(5);
 
@@ -98690,7 +98690,7 @@ function ModalHelpCtrl($uibModalInstance) {
 "use strict";
 
 
-var newGameTpl = __webpack_require__(49);
+var newGameTpl = __webpack_require__(50);
 
 angular.module('app').component('newgame', {
   bindings: {
@@ -98921,7 +98921,7 @@ function NewGameCtrl(Restangular, cookies) {
 "use strict";
 
 
-var template = __webpack_require__(50);
+var template = __webpack_require__(51);
 
 __webpack_require__(5);
 
@@ -98954,7 +98954,7 @@ function SignInCtrl(Restangular, cookies, AuthService) {
 "use strict";
 
 
-var template = __webpack_require__(51);
+var template = __webpack_require__(52);
 
 angular.module('app').component('signup', {
     bindings: {
@@ -99000,7 +99000,7 @@ __webpack_require__(4);
 __webpack_require__(1);
 __webpack_require__(30);
 
-var talkTpl = __webpack_require__(52);
+var talkTpl = __webpack_require__(53);
 
 angular.module('app').component('talk', {
     bindings: {
@@ -99143,6 +99143,72 @@ function TalkService(Restangular, player, npc, q) {
 "use strict";
 
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var DialogueService = function () {
+    function DialogueService(Restangular, q) {
+        _classCallCheck(this, DialogueService);
+
+        this.inited = false;
+        this.dialogues = [];
+        this.q = q;
+        this.Restangular = Restangular;
+    }
+
+    _createClass(DialogueService, [{
+        key: 'init',
+        value: function init() {
+            var _this = this;
+
+            var deferred = this.q.defer();
+
+            this.Restangular.all('api/v1/dialogues/').getList().then(function (res) {
+                _this.dialogues = [];
+                res.forEach(function (dialogue) {
+                    return _this.dialogues.push(dialogue);
+                });
+                _this.inited = true;
+                return deferred.resolve(res);
+            });
+            return deferred.promise;
+        }
+    }, {
+        key: 'getDialogues',
+        value: function getDialogues() {
+            return this.dialogues;
+        }
+    }, {
+        key: 'createNewDialogue',
+        value: function createNewDialogue(name) {
+            return this.Restangular.all('api/v1/dialogues').post({ name: name });
+        }
+    }, {
+        key: 'deleteDialogue',
+        value: function deleteDialogue(dialogue) {
+            var del = JSON.parse(dialogue);
+            var toDelete = this.dialogues.find(function (d) {
+                return d.id === del.id;
+            });
+            return toDelete.remove();
+        }
+    }]);
+
+    return DialogueService;
+}();
+
+DialogueService.$inject = ['Restangular', '$q'];
+
+angular.module('app').service('DialogueService', DialogueService);
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 /**
  * Created by user on 20.04.17.
  */
@@ -99280,7 +99346,7 @@ function GraphService(Restangular, q) {
 };
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -99296,7 +99362,7 @@ function GraphService(Restangular, q) {
  * Created by user on 05.01.17.
  */
 
-var treeModalTpl = __webpack_require__(53);
+var treeModalTpl = __webpack_require__(54);
 
 angular.module('app').component('modalComponent', {
   bindings: {
@@ -99408,7 +99474,7 @@ function TreeModalCtrl(Restangular, cookies) {
 };
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -99416,13 +99482,13 @@ function TreeModalCtrl(Restangular, cookies) {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-__webpack_require__(38);
+__webpack_require__(39);
+
+__webpack_require__(33);
 
 __webpack_require__(32);
 
 __webpack_require__(31);
-
-__webpack_require__(84);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -99435,7 +99501,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 // Player = require('../Class/player.ts');
 var vis = __webpack_require__(6);
 
-var template = __webpack_require__(54);
+var template = __webpack_require__(55);
 
 __webpack_require__(1);
 
@@ -99457,7 +99523,6 @@ var TreeCtrl = function () {
         });
 
         this.DialogueService = DialogueService;
-        this.DialogueService.init();
     }
 
     _createClass(TreeCtrl, [{
@@ -99465,7 +99530,7 @@ var TreeCtrl = function () {
         value: function $routerOnActivate() {
             var _this2 = this;
 
-            this.$q.all([this.GraphService.init()]).then(function () {
+            this.$q.all([this.GraphService.init(), this.DialogueService.init()]).then(function () {
                 _this2.network = _this2.GraphService.getNetwork();
                 _this2.network.on("selectNode", function (params) {
                     var sel = _this2.nodesDataSet.get(params.nodes[0]);
@@ -99531,6 +99596,27 @@ var TreeCtrl = function () {
             });
             this.phraseList = this.GraphService.nodes.get(nodeIds);
         }
+        // dialogue
+
+    }, {
+        key: 'createNewDialogue',
+        value: function createNewDialogue(name) {
+            var _this5 = this;
+
+            this.DialogueService.createNewDialogue(name).then(function () {
+                return _this5.DialogueService.init();
+            });
+            this.newDialogueName = '';
+        }
+    }, {
+        key: 'deleteDialogue',
+        value: function deleteDialogue(dialogue) {
+            var _this6 = this;
+
+            this.DialogueService.deleteDialogue(dialogue).then(function () {
+                return _this6.DialogueService.init();
+            });
+        }
     }]);
 
     return TreeCtrl;
@@ -99545,12 +99631,6 @@ angular.module('app').component('tree', {
     template: template(),
     controller: TreeCtrl
 });
-
-/***/ }),
-/* 34 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
 
 /***/ }),
 /* 35 */
@@ -99578,6 +99658,12 @@ angular.module('app').component('tree', {
 
 /***/ }),
 /* 39 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, module) {var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -116666,10 +116752,10 @@ angular.module('app').component('tree', {
   }
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(58), __webpack_require__(59)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59), __webpack_require__(60)(module)))
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -116678,7 +116764,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -116687,7 +116773,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -116696,7 +116782,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -116705,7 +116791,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -116714,7 +116800,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -116723,7 +116809,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -116732,7 +116818,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -116741,7 +116827,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -116750,7 +116836,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -116759,7 +116845,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -116768,7 +116854,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -116777,7 +116863,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -116786,7 +116872,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -116795,16 +116881,16 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
 
-function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"centered\"\u003E\u003Ch3\u003EРедактор диалога\u003C\u002Fh3\u003E\u003Ch5\u003E[[ctrl.treeType]]\u003C\u002Fh5\u003E\u003C\u002Fdiv\u003E\u003Cdiv\u003E\u003Cform class=\"form\"\u003E\u003Clabel\u003EВыберите Диалог:\u003Cinput list=\"dialogues\" name=\"dial\" ng-model=\"$ctrl.selectedDialogue\"\u003E\u003C\u002Flabel\u003E\u003Cdatalist id=\"dialogues\"\u003E\u003Coption ng-repeat=\"dialogue in $ctrl.DialogueService.getDialogues()\" value=\"{{dialogue}}\"\u003Edialogue.name\u003C\u002Foption\u003E\u003C\u002Fdatalist\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-md-4\"\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"group\"\u003EДля кого будет фраза:\u003C\u002Flabel\u003E\u003Cinput type=\"radio\" ng-model=\"$ctrl.groupToAdd\" name=\"group\" value=\"npc\" ng-click=\"$ctrl.updateList()\"\u003EКомпьютер\u003Cinput type=\"radio\" ng-model=\"$ctrl.groupToAdd\" name=\"group\" value=\"player\" ng-click=\"$ctrl.updateList()\"\u003EИгрок\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"phrase\"\u003EОтвет на какую фразу?:\u003C\u002Flabel\u003E\u003Cselect class=\"form-control\" id=\"phrase\" ng-model=\"$ctrl.fromNodeId\" name=\"to\" ng-change=\"$ctrl.onChange()\"\u003E\u003Coption ng-repeat=\"state in $ctrl.nodes\" ng-value=\"state.id\"\u003E{{ state.label }}\u003C\u002Foption\u003E\u003C\u002Fselect\u003E\u003Cbutton class=\"btn btn-danger\" ng-click=\"$ctrl.deleteNode()\"\u003E\u003Ci class=\"fa fa-window-close\" aria-hidden=\"true\"\u003E\u003C\u002Fi\u003E\u003C\u002Fbutton\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"text\"\u003EТекст ответа\u003C\u002Flabel\u003E\u003Cinput class=\"form-control\" id=\"text\" type=\"text\" placeholder=\"Введите наименование фразы\" value=\"Привет!\" ng-model=\"$ctrl.label\" name=\"label\"\u003E\u003C\u002Fdiv\u003E\u003Cbutton class=\"btn btn-info\" ng-click=\"$ctrl.addNode()\"\u003E\u003Ci class=\"fa fa-plus-circle\" aria-hidden=\"true\"\u003E\u003C\u002Fi\u003E                Добавить Реплику\u003C\u002Fbutton\u003E\u003Cdiv class=\"form-group\"\u003E\u003Cp ng-repeat=\"phrase in $ctrl.phraseList\"\u003E{{phrase.text}}\u003C\u002Fp\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-md-8\"\u003E\u003Cdiv id=\"mynetwork\"\u003EThis is amind component\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fform\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
+function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"centered\"\u003E\u003Ch3\u003EРедактор диалога\u003C\u002Fh3\u003E\u003Ch5\u003E[[ctrl.treeType]]\u003C\u002Fh5\u003E\u003C\u002Fdiv\u003E\u003Cdiv\u003E\u003Cform class=\"form\"\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-md-4\"\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-md-12\"\u003E\u003Clabel\u003EВыберите Диалог:\u003C\u002Flabel\u003E\u003Cselect name=\"singleSelect\" id=\"dialogues\" ng-model=\"$ctrl.selectedDialogue\"\u003E\u003Coption ng-repeat=\"dialogue in $ctrl.DialogueService.getDialogues() track by $index\" value=\"{{dialogue}}\"\u003E{{dialogue.name}}\u003C\u002Foption\u003E\u003C\u002Fselect\u003E\u003Cbutton class=\"btn btn-danger\" ng-click=\"$ctrl.deleteDialogue($ctrl.selectedDialogue)\"\u003EУдалить\u003C\u002Fbutton\u003E\u003Cbr\u003E\u003Clabel\u003EИли создайте новый\u003C\u002Flabel\u003E\u003Cinput type=\"text\" ng-model=\"$ctrl.newDialogueName\"\u003E\u003Cbutton class=\"btn btn-info\" ng-click=\"$ctrl.createNewDialogue($ctrl.newDialogueName)\"\u003EСоздать\u003C\u002Fbutton\u003E\u003Chr\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"group\"\u003EДля кого будет фраза:\u003C\u002Flabel\u003E\u003Cinput type=\"radio\" ng-model=\"$ctrl.groupToAdd\" name=\"group\" value=\"npc\" ng-click=\"$ctrl.updateList()\"\u003EКомпьютер\u003Cinput type=\"radio\" ng-model=\"$ctrl.groupToAdd\" name=\"group\" value=\"player\" ng-click=\"$ctrl.updateList()\"\u003EИгрок\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"phrase\"\u003EОтвет на какую фразу?:\u003C\u002Flabel\u003E\u003Cselect class=\"form-control\" id=\"phrase\" ng-model=\"$ctrl.fromNodeId\" name=\"to\" ng-change=\"$ctrl.onChange()\"\u003E\u003Coption ng-repeat=\"state in $ctrl.nodes\" ng-value=\"state.id\"\u003E{{ state.label }}\u003C\u002Foption\u003E\u003C\u002Fselect\u003E\u003Cbutton class=\"btn btn-danger\" ng-click=\"$ctrl.deleteNode()\"\u003E\u003Ci class=\"fa fa-window-close\" aria-hidden=\"true\"\u003E\u003C\u002Fi\u003E\u003C\u002Fbutton\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"text\"\u003EТекст ответа\u003C\u002Flabel\u003E\u003Cinput class=\"form-control\" id=\"text\" type=\"text\" placeholder=\"Введите наименование фразы\" value=\"Привет!\" ng-model=\"$ctrl.label\" name=\"label\"\u003E\u003C\u002Fdiv\u003E\u003Cbutton class=\"btn btn-info\" ng-click=\"$ctrl.addNode()\"\u003E\u003Ci class=\"fa fa-plus-circle\" aria-hidden=\"true\"\u003E\u003C\u002Fi\u003E                Добавить Реплику\u003C\u002Fbutton\u003E\u003Cdiv class=\"form-group\"\u003E\u003Cp ng-repeat=\"phrase in $ctrl.phraseList\"\u003E{{phrase.text}}\u003C\u002Fp\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-md-8\"\u003E\u003Cdiv id=\"mynetwork\"\u003EThis is amind component\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fform\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
 module.exports = template;
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -116816,7 +116902,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   /* global define, require */
   // https://github.com/umdjs/umd/blob/master/templates/returnExports.js
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(39), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(40), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -118265,7 +118351,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports) {
 
 /*!
@@ -120663,15 +120749,15 @@ $templateCache.put("selectize/select-multiple.tpl.html","<div class=\"ui-select-
 $templateCache.put("selectize/select.tpl.html","<div class=\"ui-select-container selectize-control single\" ng-class=\"{\'open\': $select.open}\"><div class=\"selectize-input\" ng-class=\"{\'focus\': $select.open, \'disabled\': $select.disabled, \'selectize-focus\' : $select.focus}\" ng-click=\"$select.open && !$select.searchEnabled ? $select.toggle($event) : $select.activate()\"><div class=\"ui-select-match\"></div><input type=\"search\" autocomplete=\"off\" tabindex=\"-1\" class=\"ui-select-search ui-select-toggle\" ng-class=\"{\'ui-select-search-hidden\':!$select.searchEnabled}\" ng-click=\"$select.toggle($event)\" placeholder=\"{{$select.placeholder}}\" ng-model=\"$select.search\" ng-hide=\"!$select.isEmpty() && !$select.open\" ng-disabled=\"$select.disabled\" aria-label=\"{{ $select.baseTitle }}\"></div><div class=\"ui-select-choices\"></div><div class=\"ui-select-no-choice\"></div></div>");}]);
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(56);
+__webpack_require__(57);
 module.exports = 'ui.select';
 
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports) {
 
 var g;
@@ -120698,7 +120784,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -120726,13 +120812,13 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -120746,78 +120832,6 @@ __webpack_require__(8);
 __webpack_require__(7);
 
 // angular.bootstrap(document, ['app']);
-
-/***/ }),
-/* 62 */,
-/* 63 */,
-/* 64 */,
-/* 65 */,
-/* 66 */,
-/* 67 */,
-/* 68 */,
-/* 69 */,
-/* 70 */,
-/* 71 */,
-/* 72 */,
-/* 73 */,
-/* 74 */,
-/* 75 */,
-/* 76 */,
-/* 77 */,
-/* 78 */,
-/* 79 */,
-/* 80 */,
-/* 81 */,
-/* 82 */,
-/* 83 */,
-/* 84 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var DialogueService = function () {
-    function DialogueService(Restangular, q) {
-        _classCallCheck(this, DialogueService);
-
-        this.inited = false;
-        this.dialogues = [];
-        this.q = q;
-        this.Restangular = Restangular;
-    }
-
-    _createClass(DialogueService, [{
-        key: 'init',
-        value: function init() {
-            var _this = this;
-
-            var deferred = this.q.defer();
-            this.Restangular.all('api/v1/dialogues/').getList().then(function (res) {
-                res.forEach(function (dialogue) {
-                    return _this.dialogues.push(dialogue);
-                });
-                _this.inited = true;
-                return deferred.resolve(res);
-            });
-            return deferred.promise;
-        }
-    }, {
-        key: 'getDialogues',
-        value: function getDialogues() {
-            return this.dialogues;
-        }
-    }]);
-
-    return DialogueService;
-}();
-
-DialogueService.$inject = ['Restangular', '$q'];
-
-angular.module('app').service('DialogueService', DialogueService);
 
 /***/ })
 /******/ ]);

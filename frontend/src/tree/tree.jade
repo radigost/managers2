@@ -7,13 +7,21 @@
 div
     form.form
         
-        label Выберите Диалог:
-            input(list="dialogues" name="dial" ng-model="$ctrl.selectedDialogue")
-        datalist(id="dialogues")
-            option(ng-repeat = "dialogue in $ctrl.DialogueService.getDialogues()" value="{{dialogue}}") dialogue.name
+        
   
         .row
             .col-md-4
+                .row
+                    .col-md-12
+                        label Выберите Диалог:
+                        select(name="singleSelect" id="dialogues" ng-model="$ctrl.selectedDialogue")
+                            option(ng-repeat = "dialogue in $ctrl.DialogueService.getDialogues() track by $index" value="{{dialogue}}") {{dialogue.name}}
+                        button.btn.btn-danger(ng-click="$ctrl.deleteDialogue($ctrl.selectedDialogue)") Удалить
+                        br
+                        label Или создайте новый
+                        input(type="text" ng-model="$ctrl.newDialogueName")
+                        button.btn.btn-info(ng-click="$ctrl.createNewDialogue($ctrl.newDialogueName)") Создать
+                        hr
                 .form-group
                     label(for='group') Для кого будет фраза:
                     input(type='radio', ng-model='$ctrl.groupToAdd', name='group', value='npc' ng-click="$ctrl.updateList()")
