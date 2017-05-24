@@ -99163,7 +99163,6 @@ var DialogueService = function () {
             var _this = this;
 
             var deferred = this.q.defer();
-
             this.Restangular.all('api/v1/dialogues/').getList().then(function (res) {
                 _this.dialogues = [];
                 res.forEach(function (dialogue) {
@@ -99209,141 +99208,175 @@ angular.module('app').service('DialogueService', DialogueService);
 "use strict";
 
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 /**
  * Created by user on 20.04.17.
  */
 var vis = __webpack_require__(6);
 
-angular.module('app').service('GraphService', GraphService);
+var GraphService = function () {
+    function GraphService(Restangular, q) {
+        _classCallCheck(this, GraphService);
+
+        this.inited = false;
+        this.Restangular = Restangular;
+        this.q = q;
+
+        this.nodes = new vis.DataSet();
+        this.links = new vis.DataSet();
+        this.network = null;
+    }
+
+    _createClass(GraphService, [{
+        key: 'init',
+        value: function init(dialogueId) {
+            var _this = this;
+
+            this.dialogueId = dialogueId;
+            this.inited = false;
+            var deferred = this.q.defer();
+
+            this.fetchNodes(dialogueId).then(function (res) {
+                _.forEach(res, function (node) {
+                    node.label = _this.formatText(node.text);
+                    node.group = node.category;
+                });
+                console.log(res);
+                _this.setNodes(res);
+            });
+
+            this.fetchLinks(dialogueId).then(function (res) {
+                _.forEach(res, function (link) {
+                    link.from = link.from_node_id;
+                    link.to = link.to_node_id;
+                    link.color = { inherit: 'to' };
+                });
+                _this.setLinks(res);
+            });;
+
+            this.inited = true;
+            deferred.resolve();
+            return deferred.promise;
+        }
+    }, {
+        key: 'fetchNodes',
+        value: function fetchNodes(dialogueId) {
+            var deferred = this.q.defer();
+            var where = !!dialogueId ? '/?filter[where][dialogue_id]=' + dialogueId : null;
+            fetch('/api/v1/nodes' + where).then(function (res) {
+                return res.json();
+            }).then(function (res) {
+                return deferred.resolve(res);
+            });
+            return deferred.promise;
+        }
+    }, {
+        key: 'setNodes',
+        value: function setNodes(nodes) {
+            this.nodes.clear();
+            this.nodes.add(nodes);
+        }
+    }, {
+        key: 'fetchLinks',
+        value: function fetchLinks(dialogueId) {
+            var deferred = this.q.defer();
+            var where = !!dialogueId ? '/?filter[where][dialogue_id]=' + dialogueId : null;
+            fetch('/api/v1/links' + where).then(function (res) {
+                return res.json();
+            }).then(function (res) {
+                return deferred.resolve(res);
+            });
+            return deferred.promise;
+        }
+    }, {
+        key: 'setLinks',
+        value: function setLinks(links) {
+            this.links.clear();
+            this.links.add(links);
+        }
+    }, {
+        key: 'formatText',
+        value: function formatText(text) {
+            var outText = "";
+            if (!text) {
+                return '';
+            } else {
+                var textArray = text.split(' ');
+                textArray.forEach(function (element, index) {
+                    index % 3 == 0 ? outText += " " + element + "\n " : outText += " " + element + " ";
+                });
+            }
+            return outText;
+        }
+    }, {
+        key: 'getNetwork',
+        value: function getNetwork() {
+            var container = document.getElementById('mynetwork');
+            var data = {
+                nodes: this.nodes,
+                edges: this.links
+            };
+            var options = {
+                layout: {},
+                edges: {
+                    physics: false,
+                    length: 300,
+                    smooth: false,
+                    arrows: {
+                        to: true
+                    }
+                },
+                nodes: {
+                    shape: 'box'
+                },
+                "physics": {
+                    "solver": "repulsion"
+                }
+            };
+            this.network = new vis.Network(container, data, options);
+
+            return this.network;
+        }
+    }, {
+        key: 'addNode',
+        value: function addNode(toAdd) {
+            var _this2 = this;
+
+            this.Restangular.one('api/v1/').post('nodes', { "category": toAdd.group, "text": toAdd.text, "dialogue_id": this.dialogueId }).then(function (node) {
+                node.label = node.text;
+                node.group = node.category;
+                _this2.nodes.add(node);
+
+                _this2.Restangular.one('api/v1').post('links', { 'from_node_id': toAdd.fromNodeId, 'to_node_id': node.id, "dialogue_id": _this2.dialogueId }).then(function (link) {
+                    link.from = link.from_node_id;
+                    link.to = link.to_node_id;
+                    link.color = { inherit: 'to' };
+                    _this2.links.add(link);
+                });
+            });
+        }
+    }, {
+        key: 'deleteNode',
+        value: function deleteNode(id) {
+            var _this3 = this;
+
+            this.Restangular.one('api/v1/nodes', id).remove().then(function (node) {
+                _this3.nodes.remove(id);
+            });
+        }
+    }]);
+
+    return GraphService;
+}();
+
+;
 
 GraphService.$inject = ['Restangular', '$q'];
 
-function GraphService(Restangular, q) {
-    var inited = false;
-    // console.log(vis);
-    var nodes = new vis.DataSet();
-    var links = new vis.DataSet();
-    var network;
-    var _this = this;
-
-    var graphService = {
-        init: init,
-        getNetwork: getNetwork,
-        addNode: addNode,
-        deleteNode: deleteNode
-    };
-    Object.defineProperty(graphService, 'nodes', { get: function get() {
-            return nodes;
-        } });
-    Object.defineProperty(graphService, 'network', { get: function get() {
-            return network;
-        } });
-    Object.defineProperty(graphService, 'links', { get: function get() {
-            return links;
-        } });
-
-    return graphService;
-
-    function init() {
-        var deferred = q.defer();
-        Restangular.all('api/v1/nodes/').getList().then(function (res) {
-            _.forEach(res, function (node) {
-                // node.color = node.category == 'npc'? '#d9534f':'#1b6d85';
-                node.label = formatText(node.text);
-                node.group = node.category;
-            });
-            nodes.add(res);
-        });
-        Restangular.all('api/v1/links').getList().then(function (res) {
-            _.forEach(res, function (link) {
-                link.from = link.from_node_id;
-                link.to = link.to_node_id;
-                link.color = { inherit: 'to' };
-            });
-            links.add(res);
-        });
-        inited = true;
-        deferred.resolve();
-        return deferred.promise;
-    }
-    function formatText(text) {
-        var outText = "";
-        if (!text) {
-            return '';
-        } else {
-            var textArray = text.split(' ');
-            textArray.forEach(function (element, index) {
-                index % 3 == 0 ? outText += " " + element + "\n " : outText += " " + element + " ";
-            });
-        }
-        return outText;
-    }
-    function getNetwork() {
-        var container = document.getElementById('mynetwork');
-        var data = {
-            nodes: nodes,
-            edges: links
-        };
-        var options = {
-            layout: {
-                // hierarchical: {
-                //     direction: 'LR',
-                // // sortMethod:'hubsize',
-                //     levelSeparation:215,
-                //     nodeSpacing:85,
-                //     edgeMinimization:true,
-                //     blockShifting:true
-                // }
-            },
-            edges: {
-                physics: false,
-                length: 300,
-                smooth: false,
-                // "smooth": {
-                //     "type": "cubicBezier",
-                //     "forceDirection": "vertical",
-                //     "roundness": 0.6
-                // },
-                arrows: {
-                    to: true
-                }
-            },
-            nodes: {
-                shape: 'box'
-            },
-            "physics": {
-                //     "hierarchicalRepulsion": {
-                //         "centralGravity": 1,
-                //         "nodeDistance": 145
-                //     },
-                //     "minVelocity": 0.75,
-                "solver": "repulsion"
-            }
-        };
-        network = new vis.Network(container, data, options);
-
-        return network;
-    }
-    function addNode(toAdd) {
-        Restangular.one('api/v1/').post('nodes', { "category": toAdd.group, "text": toAdd.text }).then(function (node) {
-            node.label = node.text;
-            node.group = node.category;
-            nodes.add(node);
-            Restangular.one('api/v1').post('links', { 'from_node_id': toAdd.fromNodeId, 'to_node_id': node.id }).then(function (link) {
-                link.from = link.from_node_id;
-                link.to = link.to_node_id;
-                link.color = { inherit: 'to' };
-                links.add(link);
-            });
-        });
-    }
-    function deleteNode(id) {
-        Restangular.one('api/v1/nodes', id).remove().then(function (node) {
-            console.log(node);
-            nodes.remove(id);
-        });
-    }
-};
+angular.module('app').service('GraphService', GraphService);
 
 /***/ }),
 /* 33 */
@@ -99566,7 +99599,6 @@ var TreeCtrl = function () {
         value: function updateList() {
             var _this3 = this;
 
-            console.log(this.selectedDialogue);
             this.nodes = this.nodesDataSet.get({
                 filter: function filter(item) {
                     return item.group != _this3.groupToAdd && item.type != 'failure' && item.type != 'success';
@@ -99616,6 +99648,12 @@ var TreeCtrl = function () {
             this.DialogueService.deleteDialogue(dialogue).then(function () {
                 return _this6.DialogueService.init();
             });
+        }
+    }, {
+        key: 'chooseDialogue',
+        value: function chooseDialogue(dialogue) {
+            var chosenDialogue = JSON.parse(dialogue);
+            this.GraphService.init(chosenDialogue.id);
         }
     }]);
 
@@ -116886,7 +116924,7 @@ module.exports = template;
 
 var pug = __webpack_require__(0);
 
-function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"centered\"\u003E\u003Ch3\u003EРедактор диалога\u003C\u002Fh3\u003E\u003Ch5\u003E[[ctrl.treeType]]\u003C\u002Fh5\u003E\u003C\u002Fdiv\u003E\u003Cdiv\u003E\u003Cform class=\"form\"\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-md-4\"\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-md-12\"\u003E\u003Clabel\u003EВыберите Диалог:\u003C\u002Flabel\u003E\u003Cselect name=\"singleSelect\" id=\"dialogues\" ng-model=\"$ctrl.selectedDialogue\"\u003E\u003Coption ng-repeat=\"dialogue in $ctrl.DialogueService.getDialogues() track by $index\" value=\"{{dialogue}}\"\u003E{{dialogue.name}}\u003C\u002Foption\u003E\u003C\u002Fselect\u003E\u003Cbutton class=\"btn btn-danger\" ng-click=\"$ctrl.deleteDialogue($ctrl.selectedDialogue)\"\u003EУдалить\u003C\u002Fbutton\u003E\u003Cbr\u003E\u003Clabel\u003EИли создайте новый\u003C\u002Flabel\u003E\u003Cinput type=\"text\" ng-model=\"$ctrl.newDialogueName\"\u003E\u003Cbutton class=\"btn btn-info\" ng-click=\"$ctrl.createNewDialogue($ctrl.newDialogueName)\"\u003EСоздать\u003C\u002Fbutton\u003E\u003Chr\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"group\"\u003EДля кого будет фраза:\u003C\u002Flabel\u003E\u003Cinput type=\"radio\" ng-model=\"$ctrl.groupToAdd\" name=\"group\" value=\"npc\" ng-click=\"$ctrl.updateList()\"\u003EКомпьютер\u003Cinput type=\"radio\" ng-model=\"$ctrl.groupToAdd\" name=\"group\" value=\"player\" ng-click=\"$ctrl.updateList()\"\u003EИгрок\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"phrase\"\u003EОтвет на какую фразу?:\u003C\u002Flabel\u003E\u003Cselect class=\"form-control\" id=\"phrase\" ng-model=\"$ctrl.fromNodeId\" name=\"to\" ng-change=\"$ctrl.onChange()\"\u003E\u003Coption ng-repeat=\"state in $ctrl.nodes\" ng-value=\"state.id\"\u003E{{ state.label }}\u003C\u002Foption\u003E\u003C\u002Fselect\u003E\u003Cbutton class=\"btn btn-danger\" ng-click=\"$ctrl.deleteNode()\"\u003E\u003Ci class=\"fa fa-window-close\" aria-hidden=\"true\"\u003E\u003C\u002Fi\u003E\u003C\u002Fbutton\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"text\"\u003EТекст ответа\u003C\u002Flabel\u003E\u003Cinput class=\"form-control\" id=\"text\" type=\"text\" placeholder=\"Введите наименование фразы\" value=\"Привет!\" ng-model=\"$ctrl.label\" name=\"label\"\u003E\u003C\u002Fdiv\u003E\u003Cbutton class=\"btn btn-info\" ng-click=\"$ctrl.addNode()\"\u003E\u003Ci class=\"fa fa-plus-circle\" aria-hidden=\"true\"\u003E\u003C\u002Fi\u003E                Добавить Реплику\u003C\u002Fbutton\u003E\u003Cdiv class=\"form-group\"\u003E\u003Cp ng-repeat=\"phrase in $ctrl.phraseList\"\u003E{{phrase.text}}\u003C\u002Fp\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-md-8\"\u003E\u003Cdiv id=\"mynetwork\"\u003EThis is amind component\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fform\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
+function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"centered\"\u003E\u003Ch3\u003EРедактор диалога\u003C\u002Fh3\u003E\u003Ch5\u003E[[ctrl.treeType]]\u003C\u002Fh5\u003E\u003C\u002Fdiv\u003E\u003Cdiv\u003E\u003Cform class=\"form\"\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-md-4\"\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-md-12\"\u003E\u003Clabel\u003EВыберите Диалог:\u003C\u002Flabel\u003E\u003Cselect name=\"singleSelect\" id=\"dialogues\" ng-model=\"$ctrl.selectedDialogue\" ng-change=\"$ctrl.chooseDialogue($ctrl.selectedDialogue)\"\u003E\u003Coption ng-repeat=\"dialogue in $ctrl.DialogueService.getDialogues() track by $index\" value=\"{{dialogue}}\"\u003E{{dialogue.name}}\u003C\u002Foption\u003E\u003C\u002Fselect\u003E\u003Cbutton class=\"btn btn-danger\" ng-click=\"$ctrl.deleteDialogue($ctrl.selectedDialogue)\"\u003EУдалить\u003C\u002Fbutton\u003E\u003Cbr\u003E\u003Clabel\u003EИли создайте новый\u003C\u002Flabel\u003E\u003Cinput type=\"text\" ng-model=\"$ctrl.newDialogueName\"\u003E\u003Cbutton class=\"btn btn-info\" ng-click=\"$ctrl.createNewDialogue($ctrl.newDialogueName)\"\u003EСоздать\u003C\u002Fbutton\u003E\u003Chr\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"group\"\u003EДля кого будет фраза:\u003C\u002Flabel\u003E\u003Cinput type=\"radio\" ng-model=\"$ctrl.groupToAdd\" name=\"group\" value=\"npc\" ng-click=\"$ctrl.updateList()\"\u003EКомпьютер\u003Cinput type=\"radio\" ng-model=\"$ctrl.groupToAdd\" name=\"group\" value=\"player\" ng-click=\"$ctrl.updateList()\"\u003EИгрок\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"phrase\"\u003EОтвет на какую фразу?:\u003C\u002Flabel\u003E\u003Cselect class=\"form-control\" id=\"phrase\" ng-model=\"$ctrl.fromNodeId\" name=\"to\" ng-change=\"$ctrl.onChange()\"\u003E\u003Coption ng-repeat=\"state in $ctrl.nodes\" ng-value=\"state.id\"\u003E{{ state.label }}\u003C\u002Foption\u003E\u003C\u002Fselect\u003E\u003Cbutton class=\"btn btn-danger\" ng-click=\"$ctrl.deleteNode()\"\u003E\u003Ci class=\"fa fa-window-close\" aria-hidden=\"true\"\u003E\u003C\u002Fi\u003E\u003C\u002Fbutton\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"text\"\u003EТекст ответа\u003C\u002Flabel\u003E\u003Cinput class=\"form-control\" id=\"text\" type=\"text\" placeholder=\"Введите наименование фразы\" value=\"Привет!\" ng-model=\"$ctrl.label\" name=\"label\"\u003E\u003C\u002Fdiv\u003E\u003Cbutton class=\"btn btn-info\" ng-click=\"$ctrl.addNode()\"\u003E\u003Ci class=\"fa fa-plus-circle\" aria-hidden=\"true\"\u003E\u003C\u002Fi\u003E                Добавить Реплику\u003C\u002Fbutton\u003E\u003Cdiv class=\"form-group\"\u003E\u003Cp ng-repeat=\"phrase in $ctrl.phraseList\"\u003E{{phrase.text}}\u003C\u002Fp\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-md-8\"\u003E\u003Cdiv id=\"mynetwork\"\u003EThis is amind component\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fform\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
 module.exports = template;
 
 /***/ }),

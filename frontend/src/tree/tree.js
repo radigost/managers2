@@ -70,7 +70,6 @@ class TreeCtrl {
     }
 
     updateList() {
-        console.log(this.selectedDialogue);
         this.nodes = this.nodesDataSet.get({
             filter:  (item) => (item.group != this.groupToAdd && item.type != 'failure' && item.type!='success')
         });
@@ -102,6 +101,12 @@ class TreeCtrl {
 
     deleteDialogue(dialogue){
         this.DialogueService.deleteDialogue(dialogue).then(()=>this.DialogueService.init());
+        
+    }
+
+    chooseDialogue(dialogue){
+        let chosenDialogue = JSON.parse(dialogue);
+        this.GraphService.init(chosenDialogue.id);
         
     }
 }

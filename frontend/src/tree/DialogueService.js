@@ -11,7 +11,6 @@ class DialogueService {
     
     init() {
         let deferred = this.q.defer();
-        
         this.Restangular.all('api/v1/dialogues/').getList().then((res) => {
             this.dialogues = [];
             res.forEach((dialogue)=>this.dialogues.push(dialogue));
