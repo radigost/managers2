@@ -72,12 +72,7 @@ function TalkService(Restangular,player,npc,q) {
 
 
     function isStatus (name) {
-        var itIs;
-        itIs = false;
-        if (state.type === name) {
-            itIs = true;
-        }
-        return itIs;
+        return state.type === name;
     }
 
 

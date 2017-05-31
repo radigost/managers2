@@ -25,13 +25,14 @@ class TreeCtrl {
         this.groupToAdd = 'player';
         this.phraseList = [];
         this.$q = $q;
+        this.$scope = $scope;
 
         this.nodesDataSet = new vis.DataView(GraphService.nodes) ;
         this.nodesDataSet.on('*',  (event, properties, senderId)=> {
             this.updateList();
         });
 
-        this.DialogueService=DialogueService;
+        this.DialogueService = DialogueService;
         
         
     }
@@ -44,9 +45,12 @@ class TreeCtrl {
             this.network = this.GraphService.getNetwork();
             this.network.on("selectNode",  (params)=> {
                 let sel = this.nodesDataSet.get(params.nodes[0]);
+                console.log(sel['group'],this.groupToAdd);
                 this.groupToAdd =  sel['group'] == 'player' ? 'npc' : 'player';
+                console.log(this.groupToAdd);
                 this.fromNodeId = params.nodes[0];
                 this.updateList();
+                this.$scope.$apply();
             });
         });
     }
@@ -60,9 +64,12 @@ class TreeCtrl {
         let toAdd = {
             group:this.groupToAdd,
             fromNodeId:this.fromNodeId,
-            text:this.label
+            text:this.label,
+            type: this.type!='none' ? this.type : ''
         };
         this.GraphService.addNode(toAdd);
+        this.type='none';
+        this.label='';
     }
 
     deleteNode() {

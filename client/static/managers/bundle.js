@@ -98945,6 +98945,10 @@ function SignInCtrl(Restangular, cookies, AuthService) {
             _this.$router.navigate(['Menu']);
         });
     };
+    this.$routerOnActivate = function (next) {
+        _this.needVerify = next.params.verify;
+        console.log(next.params.verify);
+    };
 };
 
 /***/ }),
@@ -98970,9 +98974,12 @@ function SignUpCtrl(Restangular, cookies) {
     this.user = {};
     var _this = this;
     _this.signup = function (credentials) {
+        var _this2 = this;
+
         console.log(this.user);
         Restangular.one('api/v1').post('customers', this.user).then(function (res) {
             console.log(res);
+            _this2.$router.navigate(['SignIn', { verify: 'true' }]);
         });
     };
 };
@@ -99035,11 +99042,9 @@ function TalkCtrl(service) {
         var f;
         f = "";
         if (service.isStatus('failure')) {
-            console.log('failure');
             f = "failure";
         }
         if (service.isStatus('success')) {
-            console.log('success');
             f = "success";
         }
         return f;
@@ -99127,12 +99132,7 @@ function TalkService(Restangular, player, npc, q) {
     }
 
     function isStatus(name) {
-        var itIs;
-        itIs = false;
-        if (state.type === name) {
-            itIs = true;
-        }
-        return itIs;
+        return state.type === name;
     }
 }
 
@@ -99243,6 +99243,13 @@ var GraphService = function () {
                 _.forEach(res, function (node) {
                     node.label = _this.formatText(node.text);
                     node.group = node.category;
+                    switch (node.type) {
+                        case 'success':
+                            node.color = { border: 'green' };
+                        case 'failure':
+                            node.color = { border: 'red' };
+                        default:
+                    }
                 });
                 console.log(res);
                 _this.setNodes(res);
@@ -99345,7 +99352,7 @@ var GraphService = function () {
         value: function addNode(toAdd) {
             var _this2 = this;
 
-            this.Restangular.one('api/v1/').post('nodes', { "category": toAdd.group, "text": toAdd.text, "dialogue_id": this.dialogueId }).then(function (node) {
+            this.Restangular.one('api/v1/').post('nodes', { "category": toAdd.group, "text": toAdd.text, "dialogue_id": this.dialogueId, "type": toAdd.type }).then(function (node) {
                 node.label = node.text;
                 node.group = node.category;
                 _this2.nodes.add(node);
@@ -99549,6 +99556,7 @@ var TreeCtrl = function () {
         this.groupToAdd = 'player';
         this.phraseList = [];
         this.$q = $q;
+        this.$scope = $scope;
 
         this.nodesDataSet = new vis.DataView(GraphService.nodes);
         this.nodesDataSet.on('*', function (event, properties, senderId) {
@@ -99567,9 +99575,12 @@ var TreeCtrl = function () {
                 _this2.network = _this2.GraphService.getNetwork();
                 _this2.network.on("selectNode", function (params) {
                     var sel = _this2.nodesDataSet.get(params.nodes[0]);
+                    console.log(sel['group'], _this2.groupToAdd);
                     _this2.groupToAdd = sel['group'] == 'player' ? 'npc' : 'player';
+                    console.log(_this2.groupToAdd);
                     _this2.fromNodeId = params.nodes[0];
                     _this2.updateList();
+                    _this2.$scope.$apply();
                 });
             });
         }
@@ -99585,9 +99596,12 @@ var TreeCtrl = function () {
             var toAdd = {
                 group: this.groupToAdd,
                 fromNodeId: this.fromNodeId,
-                text: this.label
+                text: this.label,
+                type: this.type != 'none' ? this.type : ''
             };
             this.GraphService.addNode(toAdd);
+            this.type = 'none';
+            this.label = '';
         }
     }, {
         key: 'deleteNode',
@@ -116888,7 +116902,7 @@ module.exports = template;
 
 var pug = __webpack_require__(0);
 
-function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-md-4\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-md-4\"\u003E\u003Cform\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel\u003EEmail*\u003C\u002Flabel\u003E\u003Cinput class=\"form-control\" type=\"email\" placeholder=\"Email\" ng-model=\"$ctrl.user.email\" required=\"true\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel\u003EPassword*\u003C\u002Flabel\u003E\u003Cinput class=\"form-control\" type=\"password\" placeholder=\"Password\" ng-model=\"$ctrl.user.password\" required=\"true\"\u003E\u003C\u002Fdiv\u003E\u003Cbutton class=\"btn btn-warning\" ng-click=\"$ctrl.signin()\" style=\"align:'center';\"\u003EВход\u003C\u002Fbutton\u003E\u003C\u002Fform\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-md-4\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
+function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-md-4\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-md-4\"\u003E\u003Cp ng-show=\"$ctrl.needVerify\"\u003Eнеобходимо подтверждение по email\u003C\u002Fp\u003E\u003Cform\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel\u003EEmail*\u003C\u002Flabel\u003E\u003Cinput class=\"form-control\" type=\"email\" placeholder=\"Email\" ng-model=\"$ctrl.user.email\" required=\"true\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel\u003EPassword*\u003C\u002Flabel\u003E\u003Cinput class=\"form-control\" type=\"password\" placeholder=\"Password\" ng-model=\"$ctrl.user.password\" required=\"true\"\u003E\u003C\u002Fdiv\u003E\u003Cbutton class=\"btn btn-warning\" ng-click=\"$ctrl.signin()\" style=\"align:'center';\"\u003EВход\u003C\u002Fbutton\u003E\u003C\u002Fform\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-md-4\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
 module.exports = template;
 
 /***/ }),
@@ -116924,7 +116938,7 @@ module.exports = template;
 
 var pug = __webpack_require__(0);
 
-function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"centered\"\u003E\u003Ch3\u003EРедактор диалога\u003C\u002Fh3\u003E\u003Ch5\u003E[[ctrl.treeType]]\u003C\u002Fh5\u003E\u003C\u002Fdiv\u003E\u003Cdiv\u003E\u003Cform class=\"form\"\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-md-4\"\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-md-12\"\u003E\u003Clabel\u003EВыберите Диалог:\u003C\u002Flabel\u003E\u003Cselect name=\"singleSelect\" id=\"dialogues\" ng-model=\"$ctrl.selectedDialogue\" ng-change=\"$ctrl.chooseDialogue($ctrl.selectedDialogue)\"\u003E\u003Coption ng-repeat=\"dialogue in $ctrl.DialogueService.getDialogues() track by $index\" value=\"{{dialogue}}\"\u003E{{dialogue.name}}\u003C\u002Foption\u003E\u003C\u002Fselect\u003E\u003Cbutton class=\"btn btn-danger\" ng-click=\"$ctrl.deleteDialogue($ctrl.selectedDialogue)\"\u003EУдалить\u003C\u002Fbutton\u003E\u003Cbr\u003E\u003Clabel\u003EИли создайте новый\u003C\u002Flabel\u003E\u003Cinput type=\"text\" ng-model=\"$ctrl.newDialogueName\"\u003E\u003Cbutton class=\"btn btn-info\" ng-click=\"$ctrl.createNewDialogue($ctrl.newDialogueName)\"\u003EСоздать\u003C\u002Fbutton\u003E\u003Chr\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"group\"\u003EДля кого будет фраза:\u003C\u002Flabel\u003E\u003Cinput type=\"radio\" ng-model=\"$ctrl.groupToAdd\" name=\"group\" value=\"npc\" ng-click=\"$ctrl.updateList()\"\u003EКомпьютер\u003Cinput type=\"radio\" ng-model=\"$ctrl.groupToAdd\" name=\"group\" value=\"player\" ng-click=\"$ctrl.updateList()\"\u003EИгрок\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"phrase\"\u003EОтвет на какую фразу?:\u003C\u002Flabel\u003E\u003Cselect class=\"form-control\" id=\"phrase\" ng-model=\"$ctrl.fromNodeId\" name=\"to\" ng-change=\"$ctrl.onChange()\"\u003E\u003Coption ng-repeat=\"state in $ctrl.nodes\" ng-value=\"state.id\"\u003E{{ state.label }}\u003C\u002Foption\u003E\u003C\u002Fselect\u003E\u003Cbutton class=\"btn btn-danger\" ng-click=\"$ctrl.deleteNode()\"\u003E\u003Ci class=\"fa fa-window-close\" aria-hidden=\"true\"\u003E\u003C\u002Fi\u003E\u003C\u002Fbutton\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"text\"\u003EТекст ответа\u003C\u002Flabel\u003E\u003Cinput class=\"form-control\" id=\"text\" type=\"text\" placeholder=\"Введите наименование фразы\" value=\"Привет!\" ng-model=\"$ctrl.label\" name=\"label\"\u003E\u003C\u002Fdiv\u003E\u003Cbutton class=\"btn btn-info\" ng-click=\"$ctrl.addNode()\"\u003E\u003Ci class=\"fa fa-plus-circle\" aria-hidden=\"true\"\u003E\u003C\u002Fi\u003E                Добавить Реплику\u003C\u002Fbutton\u003E\u003Cdiv class=\"form-group\"\u003E\u003Cp ng-repeat=\"phrase in $ctrl.phraseList\"\u003E{{phrase.text}}\u003C\u002Fp\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-md-8\"\u003E\u003Cdiv id=\"mynetwork\"\u003EThis is amind component\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fform\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
+function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"centered\"\u003E\u003Ch3\u003EРедактор диалога\u003C\u002Fh3\u003E\u003Ch5\u003E[[ctrl.treeType]]\u003C\u002Fh5\u003E\u003C\u002Fdiv\u003E\u003Cdiv\u003E\u003Cform class=\"form\"\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-md-4\"\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-md-12\"\u003E\u003Clabel\u003EВыберите Диалог:\u003C\u002Flabel\u003E\u003Cselect name=\"singleSelect\" id=\"dialogues\" ng-model=\"$ctrl.selectedDialogue\" ng-change=\"$ctrl.chooseDialogue($ctrl.selectedDialogue)\"\u003E\u003Coption ng-repeat=\"dialogue in $ctrl.DialogueService.getDialogues() track by $index\" value=\"{{dialogue}}\"\u003E{{dialogue.name}}\u003C\u002Foption\u003E\u003C\u002Fselect\u003E\u003Cbutton class=\"btn btn-danger\" ng-click=\"$ctrl.deleteDialogue($ctrl.selectedDialogue)\"\u003EУдалить\u003C\u002Fbutton\u003E\u003Cbr\u003E\u003Clabel\u003EИли создайте новый\u003C\u002Flabel\u003E\u003Cinput type=\"text\" ng-model=\"$ctrl.newDialogueName\"\u003E\u003Cbutton class=\"btn btn-info\" ng-click=\"$ctrl.createNewDialogue($ctrl.newDialogueName)\"\u003EСоздать\u003C\u002Fbutton\u003E\u003Chr\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"group\"\u003EДля кого будет фраза:\u003C\u002Flabel\u003E\u003Cinput type=\"radio\" ng-model=\"$ctrl.groupToAdd\" name=\"group\" value=\"npc\" ng-click=\"$ctrl.updateList()\"\u003EКомпьютер\u003Cinput type=\"radio\" ng-model=\"$ctrl.groupToAdd\" name=\"group\" value=\"player\" ng-click=\"$ctrl.updateList()\"\u003EИгрок\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"phrase\"\u003EОтвет на какую фразу?:\u003C\u002Flabel\u003E\u003Cselect class=\"form-control\" id=\"phrase\" ng-model=\"$ctrl.fromNodeId\" name=\"to\" ng-change=\"$ctrl.onChange()\"\u003E\u003Coption ng-repeat=\"state in $ctrl.nodes\" ng-value=\"state.id\"\u003E{{ state.label }}\u003C\u002Foption\u003E\u003C\u002Fselect\u003E\u003Cbutton class=\"btn btn-danger\" ng-click=\"$ctrl.deleteNode()\"\u003E\u003Ci class=\"fa fa-window-close\" aria-hidden=\"true\"\u003E\u003C\u002Fi\u003E\u003C\u002Fbutton\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"text\"\u003EТекст ответа\u003Cinput class=\"form-control\" id=\"text\" type=\"text\" placeholder=\"Введите наименование фразы\" value=\"Привет!\" ng-model=\"$ctrl.label\" name=\"label\"\u003E\u003C\u002Flabel\u003E\u003Clabel\u003E\u003Cinput type=\"radio\" ng-model=\"$ctrl.type\" value=\"none\"\u003Enone\u003C\u002Flabel\u003E\u003Clabel\u003E\u003Cinput type=\"radio\" ng-model=\"$ctrl.type\" value=\"success\"\u003Esuccess\u003C\u002Flabel\u003E\u003Clabel\u003E\u003Cinput type=\"radio\" ng-model=\"$ctrl.type\" value=\"failure\"\u003Efailure\u003C\u002Flabel\u003E\u003C\u002Fdiv\u003E\u003Cbutton class=\"btn btn-info\" ng-click=\"$ctrl.addNode()\"\u003E\u003Ci class=\"fa fa-plus-circle\" aria-hidden=\"true\"\u003E\u003C\u002Fi\u003E                Добавить Реплику\u003C\u002Fbutton\u003E\u003Cdiv class=\"form-group\"\u003E\u003Cp ng-repeat=\"phrase in $ctrl.phraseList\"\u003E{{phrase.text}}\u003C\u002Fp\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-md-8\"\u003E\u003Cdiv id=\"mynetwork\"\u003EThis is amind component\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fform\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
 module.exports = template;
 
 /***/ }),

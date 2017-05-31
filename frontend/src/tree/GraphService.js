@@ -26,6 +26,13 @@ class GraphService{
             _.forEach(res,(node)=>{
                     node.label = this.formatText(node.text);
                     node.group = node.category;
+                    switch (node.type){
+                        case 'success':
+                            node.color = {border:'green'}
+                        case 'failure':
+                            node.color = {border:'red'}
+                        default:
+                    }
                 });
                 console.log(res );
                 this.setNodes(res);
@@ -117,7 +124,7 @@ class GraphService{
         return this.network;
     }
     addNode(toAdd) {
-        this.Restangular.one('api/v1/').post('nodes',{"category":toAdd.group,"text":toAdd.text,"dialogue_id":this.dialogueId}).then((node)=>{
+        this.Restangular.one('api/v1/').post('nodes',{"category":toAdd.group,"text":toAdd.text,"dialogue_id":this.dialogueId,"type":toAdd.type}).then((node)=>{
             node.label = node.text;
             node.group = node.category;
             this.nodes.add(node);

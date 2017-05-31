@@ -21,6 +21,7 @@ function SignUpCtrl(Restangular,cookies){
         console.log(this.user);
         Restangular.one('api/v1').post('customers',this.user).then((res)=>{
           console.log(res);
+          this.$router.navigate(['SignIn',{verify:'true'}]);
 
 
         });

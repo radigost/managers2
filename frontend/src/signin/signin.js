@@ -26,6 +26,10 @@ function SignInCtrl(Restangular,cookies,AuthService){
           _this.$router.navigate(['Menu']);
         });
         
+    };
+    this.$routerOnActivate = function(next){
+        _this.needVerify = next.params.verify;
+        console.log(next.params.verify);
     }
 
 

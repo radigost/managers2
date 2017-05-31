@@ -37,8 +37,17 @@ div
                         i(class="fa fa-window-close" aria-hidden="true")
 
                 .form-group
-                  label(for='text') Текст ответа
-                  input#text.form-control(type='text', placeholder='Введите наименование фразы', value='Привет!', ng-model='$ctrl.label', name='label')
+                    label(for='text') Текст ответа
+                        input#text.form-control(type='text', placeholder='Введите наименование фразы', value='Привет!', ng-model='$ctrl.label', name='label')
+                    label
+                        input(type="radio" ng-model="$ctrl.type" value="none") 
+                        | none
+                    label
+                        input(type="radio" ng-model="$ctrl.type" value="success") 
+                        | success
+                    label
+                        input(type="radio" ng-model="$ctrl.type" value="failure") 
+                        | failure
                 button.btn.btn-info(ng-click='$ctrl.addNode()')
                   i.fa.fa-plus-circle(aria-hidden='true')
                   |                 Добавить Реплику
