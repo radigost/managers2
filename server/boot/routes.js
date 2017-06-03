@@ -38,9 +38,13 @@ module.exports = function(app) {
                     });
                 }
                 else {
-                    sendFailure();
+                    sendFailure(res);
                 }
             });
+        },(err)=>{
+            console.log('no node',err);
+            // res.redirect("/app/#!/game");
+            res.json({error:"no starting point"});
         }); 
 
 
@@ -57,11 +61,16 @@ module.exports = function(app) {
             }
             else {
                 Dialogue.find((err,dialogues)=>{
-                    const dialogue = _.sample(dialogues);
+                    console.log(dialogues);
+                    let dialogue = _.sample(dialogues);
+                    console.log(dialogue);
+
                     let enterNode = Node.findOne({where:{'dialogue_id':dialogue.id,'is_start':true}},(err,node)=>{
+                        console.log(err,node);
                         if (!!err || !node){
                             // resolve(31);
-                            next();
+                            console.log('no node');
+                            reject();
                         }
                         else {
                             console.log(err,node.id,!!node.is_start,node.category,dialogue.id);
@@ -77,8 +86,14 @@ module.exports = function(app) {
         
     }
 
-    function sendFailure(){
+    function sendFailure(res){
+        const Node = app.models.Node;
+        
         Node.find({where:{'type':'failure'}},(err,failNodes)=>{
+            if(err){
+                res.json(err);
+            }
+
             let failNode = _.sample(failNodes);
             _.extend(failNode,{
                 gameStats:{},

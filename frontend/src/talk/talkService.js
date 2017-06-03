@@ -8,6 +8,7 @@ angular.module('app').service('TalkService', TalkService);
 TalkService.$inject = ['Restangular', 'Player','Npc','$q'];
 function TalkService(Restangular,player,npc,q) {
     var inited = false;
+    var router;
     var state = {
         time:undefined,
         history : [],
@@ -27,27 +28,49 @@ function TalkService(Restangular,player,npc,q) {
         getPlayerQuestions:getPlayerQuestions,
         getNpcAnswers:getNpcAnswers,
 
-        isStatus:isStatus
+        isStatus:isStatus,
+
+        setRouter:setRouter,
+        hasError:hasError
     };
     return service;
     function init() {
-        state.time = 100;
-        state.end= false;
-        state.type= "";
-        player.init().then(()=>{
-            update();
-            inited = true
-        });
+        
+        return new Promise ((resolve,reject)=>{
+            state.time = 100;
+            state.end= false;
+            state.type= "";
+            state.error = false;
+            player.init().then(()=>{
+                update().then(()=>{
+                    inited = true;
+                    resolve()
+                });
+            });
+        })
     }
     function update (questionId){
       questionId = questionId||'';
       var params = {
         questionId:questionId
       }
-        Restangular.one('api/v1/update').get(params).then((res)=>_.extend(state, res));
+      return new Promise((resolve,reject)=>{
+        Restangular.one('api/v1/update').get(params).then((res)=>{
+            if (!!res.error){
+                // console.log(res,router);
+                
+            }
+            _.extend(state, res);
+            resolve();
+        });
+      })
+        
 
     }
-
+    function hasError(){
+        console.log(!!state.error,state);
+        return !!state.error;
+    }
     function getPlayer(){
         return player;
     }
@@ -66,6 +89,11 @@ function TalkService(Restangular,player,npc,q) {
     }
     function getPlayerQuestions() {
         return state.questions;
+    }
+
+    function setRouter(newrouter){
+        router = newrouter;
+        console.log(router);
     }
 
 

@@ -23,7 +23,11 @@ class GraphService{
         let deferred = this.q.defer();
 
         this.fetchNodes(dialogueId).then((res)=>{
-            _.forEach(res,(node)=>{
+            if (!!res.error){
+
+            }
+            else {
+                _.forEach(res,(node)=>{
                     node.label = this.formatText(node.text);
                     node.group = node.category;
                     switch (node.type){
@@ -35,7 +39,9 @@ class GraphService{
                     }
                 });
                 console.log(res );
-                this.setNodes(res);
+                this.setNodes(res);                
+            }
+
         });
 
         this.fetchLinks(dialogueId).then((res)=>{
@@ -141,6 +147,10 @@ class GraphService{
         this.Restangular.one('api/v1/nodes',id).remove().then((node)=>{
             this.nodes.remove(id);
         });
+    }
+
+    setRouter(router){
+        this.router = router;
     }
 };
 

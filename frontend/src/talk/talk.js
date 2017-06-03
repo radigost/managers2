@@ -27,8 +27,8 @@ angular.module('app').component('talk',{
   controllerAs:'ctrl'
 });
 
-TalkCtrl.$inject = ['TalkService'];
-function TalkCtrl(service)
+TalkCtrl.$inject = ['TalkService','$scope'];
+function TalkCtrl(service,scope)
 {
     this.gameName = "Окно переговоров";
 
@@ -40,12 +40,27 @@ function TalkCtrl(service)
     this.getNpcAnswers = service.getNpcAnswers;
     this.getTime = service.getTime;
 
-    this.$routerOnActivate = function() {
-        service.init();
+    
+    
+
+    this.$routerOnActivate = ()=> {
+        service.init().then(()=>{
+            
+            if (service.hasError()) {
+                console.log(this.$router);
+                // this.$router.navigate['Game','CompanyList'];
+                alert('Не отвечают');
+                this.$router.navigateByUrl('/game');
+            }
+        });
     };
+
+
+    // scope.$watch(()=>service.hasError(),()=>this.$router.navigate['Game']);
+    
     
     this.notTheEnd  = function() {
-        return !(service.isStatus('failure') || service.isStatus('success'));
+        return !(service.isStatus('failure') || service.isStatus('success') );
     }
 
     this.checkColor=function () {

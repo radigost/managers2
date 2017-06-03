@@ -99018,8 +99018,10 @@ angular.module('app').component('talk', {
     controllerAs: 'ctrl'
 });
 
-TalkCtrl.$inject = ['TalkService'];
-function TalkCtrl(service) {
+TalkCtrl.$inject = ['TalkService', '$scope'];
+function TalkCtrl(service, scope) {
+    var _this = this;
+
     this.gameName = "Окно переговоров";
 
     this.player = service.getPlayer();
@@ -99031,8 +99033,19 @@ function TalkCtrl(service) {
     this.getTime = service.getTime;
 
     this.$routerOnActivate = function () {
-        service.init();
+        service.init().then(function () {
+
+            if (service.hasError()) {
+                console.log(_this.$router);
+                // this.$router.navigate['Game','CompanyList'];
+                alert('Не отвечают');
+                _this.$router.navigateByUrl('/game');
+            }
+        });
     };
+
+    // scope.$watch(()=>service.hasError(),()=>this.$router.navigate['Game']);
+
 
     this.notTheEnd = function () {
         return !(service.isStatus('failure') || service.isStatus('success'));
@@ -99071,6 +99084,7 @@ angular.module('app').service('TalkService', TalkService);
 TalkService.$inject = ['Restangular', 'Player', 'Npc', '$q'];
 function TalkService(Restangular, player, npc, q) {
     var inited = false;
+    var router;
     var state = {
         time: undefined,
         history: [],
@@ -99090,16 +99104,25 @@ function TalkService(Restangular, player, npc, q) {
         getPlayerQuestions: getPlayerQuestions,
         getNpcAnswers: getNpcAnswers,
 
-        isStatus: isStatus
+        isStatus: isStatus,
+
+        setRouter: setRouter,
+        hasError: hasError
     };
     return service;
     function init() {
-        state.time = 100;
-        state.end = false;
-        state.type = "";
-        player.init().then(function () {
-            update();
-            inited = true;
+
+        return new Promise(function (resolve, reject) {
+            state.time = 100;
+            state.end = false;
+            state.type = "";
+            state.error = false;
+            player.init().then(function () {
+                update().then(function () {
+                    inited = true;
+                    resolve();
+                });
+            });
         });
     }
     function update(questionId) {
@@ -99107,11 +99130,21 @@ function TalkService(Restangular, player, npc, q) {
         var params = {
             questionId: questionId
         };
-        Restangular.one('api/v1/update').get(params).then(function (res) {
-            return _.extend(state, res);
+        return new Promise(function (resolve, reject) {
+            Restangular.one('api/v1/update').get(params).then(function (res) {
+                if (!!res.error) {
+                    // console.log(res,router);
+
+                }
+                _.extend(state, res);
+                resolve();
+            });
         });
     }
-
+    function hasError() {
+        console.log(!!state.error, state);
+        return !!state.error;
+    }
     function getPlayer() {
         return player;
     }
@@ -99129,6 +99162,11 @@ function TalkService(Restangular, player, npc, q) {
     }
     function getPlayerQuestions() {
         return state.questions;
+    }
+
+    function setRouter(newrouter) {
+        router = newrouter;
+        console.log(router);
     }
 
     function isStatus(name) {
@@ -99240,19 +99278,21 @@ var GraphService = function () {
             var deferred = this.q.defer();
 
             this.fetchNodes(dialogueId).then(function (res) {
-                _.forEach(res, function (node) {
-                    node.label = _this.formatText(node.text);
-                    node.group = node.category;
-                    switch (node.type) {
-                        case 'success':
-                            node.color = { border: 'green' };
-                        case 'failure':
-                            node.color = { border: 'red' };
-                        default:
-                    }
-                });
-                console.log(res);
-                _this.setNodes(res);
+                if (!!res.error) {} else {
+                    _.forEach(res, function (node) {
+                        node.label = _this.formatText(node.text);
+                        node.group = node.category;
+                        switch (node.type) {
+                            case 'success':
+                                node.color = { border: 'green' };
+                            case 'failure':
+                                node.color = { border: 'red' };
+                            default:
+                        }
+                    });
+                    console.log(res);
+                    _this.setNodes(res);
+                }
             });
 
             this.fetchLinks(dialogueId).then(function (res) {
@@ -99373,6 +99413,11 @@ var GraphService = function () {
             this.Restangular.one('api/v1/nodes', id).remove().then(function (node) {
                 _this3.nodes.remove(id);
             });
+        }
+    }, {
+        key: 'setRouter',
+        value: function setRouter(router) {
+            this.router = router;
         }
     }]);
 
