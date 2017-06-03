@@ -130,7 +130,7 @@ class GraphService{
         return this.network;
     }
     addNode(toAdd) {
-        this.Restangular.one('api/v1/').post('nodes',{"category":toAdd.group,"text":toAdd.text,"dialogue_id":this.dialogueId,"type":toAdd.type}).then((node)=>{
+        return this.Restangular.one('api/v1/').post('nodes',{"category":toAdd.group,"text":toAdd.text,"dialogue_id":this.dialogueId,"type":toAdd.type}).then((node)=>{
             node.label = node.text;
             node.group = node.category;
             this.nodes.add(node);
@@ -143,6 +143,25 @@ class GraphService{
             });
         })
     }
+
+    addLink(option){
+        return this.Restangular.one('api/v1').post('links',{'from_node_id':option.from,'to_node_id':option.to,"dialogue_id":this.dialogueId}).then((link)=>{
+                link.from = link.from_node_id;
+                link.to = link.to_node_id;
+                link.color = {inherit:'to'};
+                this.links.add(link)
+            });
+    }
+    deleteLink(option){
+        let toDelete = this.links.get({
+            filter: (link) => link.from == option.from && link.to == option.to
+        });
+
+        return this.Restangular.one('api/v1/links',toDelete[0].id).remove().then((link)=>{
+            this.links.remove(toDelete[0].id);
+        });
+    }
+
     deleteNode(id) {
         this.Restangular.one('api/v1/nodes',id).remove().then((node)=>{
             this.nodes.remove(id);

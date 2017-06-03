@@ -6,8 +6,6 @@
 
 div
     form.form
-        
-        
   
         .row
             .col-md-4
@@ -29,6 +27,7 @@ div
                     input(type='radio', ng-model='$ctrl.groupToAdd', name='group', value='player' ng-click="$ctrl.updateList()")
                     | Игрок
 
+
                 .form-group
                     label(for='phrase') Ответ на какую фразу?:
                     select#phrase.form-control(ng-model='$ctrl.fromNodeId', name='to' ng-change="$ctrl.onChange()")
@@ -38,21 +37,31 @@ div
 
                 .form-group
                     label(for='text') Текст ответа
+                        input(type="radio" ng-model="$ctrl.addOrEdit" value="edit") 
+                        | Добавить существующий
+                        input(type="radio" ng-model="$ctrl.addOrEdit" value="new") 
+                        | Новый
+                    .form-group(ng-show="$ctrl.addOrEdit==='edit'" )
+                        select#phrase.form-control(ng-model='$ctrl.editNodeId', name='editId' )
+                            option(ng-show="$ctrl.notInList(state.id)" ng-repeat='state in $ctrl.oppositeNodes' ng-value="state.id") 
+                                | {{ state.label }}
+                        button(ng-click="$ctrl.addLink($ctrl.editNodeId)") Добавить
+                    
+                        
+                    .form-group(ng-show="$ctrl.addOrEdit==='new'") 
                         input#text.form-control(type='text', placeholder='Введите наименование фразы', value='Привет!', ng-model='$ctrl.label', name='label')
-                    label
                         input(type="radio" ng-model="$ctrl.type" value="none") 
                         | none
-                    label
                         input(type="radio" ng-model="$ctrl.type" value="success") 
                         | success
-                    label
                         input(type="radio" ng-model="$ctrl.type" value="failure") 
                         | failure
-                button.btn.btn-info(ng-click='$ctrl.addNode()')
-                  i.fa.fa-plus-circle(aria-hidden='true')
-                  |                 Добавить Реплику
-                .form-group
-                    p(ng-repeat="phrase in $ctrl.phraseList") {{phrase.text}}
+                        button.btn.btn-info(ng-click='$ctrl.addNode()')
+                            i.fa.fa-plus-circle(aria-hidden='true')
+                            |                 Добавить Реплику
+                    .form-group
+                        p(ng-repeat="phrase in $ctrl.phraseList") {{phrase.text}}
+                            button(ng-click="$ctrl.deleteLink(phrase)") Удалить
 
             .col-md-8
                 div#mynetwork This is amind component

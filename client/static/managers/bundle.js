@@ -99392,7 +99392,7 @@ var GraphService = function () {
         value: function addNode(toAdd) {
             var _this2 = this;
 
-            this.Restangular.one('api/v1/').post('nodes', { "category": toAdd.group, "text": toAdd.text, "dialogue_id": this.dialogueId, "type": toAdd.type }).then(function (node) {
+            return this.Restangular.one('api/v1/').post('nodes', { "category": toAdd.group, "text": toAdd.text, "dialogue_id": this.dialogueId, "type": toAdd.type }).then(function (node) {
                 node.label = node.text;
                 node.group = node.category;
                 _this2.nodes.add(node);
@@ -99406,12 +99406,39 @@ var GraphService = function () {
             });
         }
     }, {
-        key: 'deleteNode',
-        value: function deleteNode(id) {
+        key: 'addLink',
+        value: function addLink(option) {
             var _this3 = this;
 
+            return this.Restangular.one('api/v1').post('links', { 'from_node_id': option.from, 'to_node_id': option.to, "dialogue_id": this.dialogueId }).then(function (link) {
+                link.from = link.from_node_id;
+                link.to = link.to_node_id;
+                link.color = { inherit: 'to' };
+                _this3.links.add(link);
+            });
+        }
+    }, {
+        key: 'deleteLink',
+        value: function deleteLink(option) {
+            var _this4 = this;
+
+            var toDelete = this.links.get({
+                filter: function filter(link) {
+                    return link.from == option.from && link.to == option.to;
+                }
+            });
+
+            return this.Restangular.one('api/v1/links', toDelete[0].id).remove().then(function (link) {
+                _this4.links.remove(toDelete[0].id);
+            });
+        }
+    }, {
+        key: 'deleteNode',
+        value: function deleteNode(id) {
+            var _this5 = this;
+
             this.Restangular.one('api/v1/nodes', id).remove().then(function (node) {
-                _this3.nodes.remove(id);
+                _this5.nodes.remove(id);
             });
         }
     }, {
@@ -99620,11 +99647,12 @@ var TreeCtrl = function () {
                 _this2.network = _this2.GraphService.getNetwork();
                 _this2.network.on("selectNode", function (params) {
                     var sel = _this2.nodesDataSet.get(params.nodes[0]);
-                    console.log(sel['group'], _this2.groupToAdd);
+                    // console.log(sel['group'],this.groupToAdd);
                     _this2.groupToAdd = sel['group'] == 'player' ? 'npc' : 'player';
-                    console.log(_this2.groupToAdd);
+                    // console.log(this.groupToAdd);
                     _this2.fromNodeId = params.nodes[0];
                     _this2.updateList();
+                    _this2.getLinkedToNodes();
                     _this2.$scope.$apply();
                 });
             });
@@ -99638,15 +99666,38 @@ var TreeCtrl = function () {
     }, {
         key: 'addNode',
         value: function addNode() {
+            var _this3 = this;
+
             var toAdd = {
                 group: this.groupToAdd,
                 fromNodeId: this.fromNodeId,
                 text: this.label,
                 type: this.type != 'none' ? this.type : ''
             };
-            this.GraphService.addNode(toAdd);
-            this.type = 'none';
-            this.label = '';
+            this.GraphService.addNode(toAdd).then(function () {
+                _this3.type = 'none';
+                _this3.label = '';
+                _this3.onChange();
+            });
+        }
+    }, {
+        key: 'addLink',
+        value: function addLink(id) {
+            var _this4 = this;
+
+            this.GraphService.addLink({ from: this.fromNodeId, to: id }).then(function () {
+                return _this4.onChange();
+            });
+        }
+    }, {
+        key: 'deleteLink',
+        value: function deleteLink(to) {
+            var _this5 = this;
+
+            console.log(to.id);
+            this.GraphService.deleteLink({ from: this.fromNodeId, to: to.id }).then(function () {
+                return _this5.onChange();
+            });
         }
     }, {
         key: 'deleteNode',
@@ -99656,12 +99707,24 @@ var TreeCtrl = function () {
     }, {
         key: 'updateList',
         value: function updateList() {
-            var _this3 = this;
+            var _this6 = this;
 
             this.nodes = this.nodesDataSet.get({
                 filter: function filter(item) {
-                    return item.group != _this3.groupToAdd && item.type != 'failure' && item.type != 'success';
+                    return item.group != _this6.groupToAdd;
                 }
+            });
+            this.oppositeNodes = this.nodesDataSet.get({
+                filter: function filter(item) {
+                    return item.group === _this6.groupToAdd;
+                }
+            });
+        }
+    }, {
+        key: 'notInList',
+        value: function notInList(id) {
+            return this.phraseList.find(function (phrase) {
+                return phrase.id != id;
             });
         }
     }, {
@@ -99676,13 +99739,13 @@ var TreeCtrl = function () {
     }, {
         key: 'getLinkedToNodes',
         value: function getLinkedToNodes() {
-            var _this4 = this;
+            var _this7 = this;
 
             var nodeIds = [];
             var nodesFromLinks = this.GraphService.links.get({
                 filter: function filter(link) {
-                    link.from == _this4.fromNodeId ? nodeIds.push(link.to) : '';
-                    return link.from == _this4.fromNodeId;
+                    link.from == _this7.fromNodeId ? nodeIds.push(link.to) : '';
+                    return link.from == _this7.fromNodeId;
                 }
             });
             this.phraseList = this.GraphService.nodes.get(nodeIds);
@@ -99692,20 +99755,20 @@ var TreeCtrl = function () {
     }, {
         key: 'createNewDialogue',
         value: function createNewDialogue(name) {
-            var _this5 = this;
+            var _this8 = this;
 
             this.DialogueService.createNewDialogue(name).then(function () {
-                return _this5.DialogueService.init();
+                return _this8.DialogueService.init();
             });
             this.newDialogueName = '';
         }
     }, {
         key: 'deleteDialogue',
         value: function deleteDialogue(dialogue) {
-            var _this6 = this;
+            var _this9 = this;
 
             this.DialogueService.deleteDialogue(dialogue).then(function () {
-                return _this6.DialogueService.init();
+                return _this9.DialogueService.init();
             });
         }
     }, {
@@ -116983,7 +117046,7 @@ module.exports = template;
 
 var pug = __webpack_require__(0);
 
-function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"centered\"\u003E\u003Ch3\u003EРедактор диалога\u003C\u002Fh3\u003E\u003Ch5\u003E[[ctrl.treeType]]\u003C\u002Fh5\u003E\u003C\u002Fdiv\u003E\u003Cdiv\u003E\u003Cform class=\"form\"\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-md-4\"\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-md-12\"\u003E\u003Clabel\u003EВыберите Диалог:\u003C\u002Flabel\u003E\u003Cselect name=\"singleSelect\" id=\"dialogues\" ng-model=\"$ctrl.selectedDialogue\" ng-change=\"$ctrl.chooseDialogue($ctrl.selectedDialogue)\"\u003E\u003Coption ng-repeat=\"dialogue in $ctrl.DialogueService.getDialogues() track by $index\" value=\"{{dialogue}}\"\u003E{{dialogue.name}}\u003C\u002Foption\u003E\u003C\u002Fselect\u003E\u003Cbutton class=\"btn btn-danger\" ng-click=\"$ctrl.deleteDialogue($ctrl.selectedDialogue)\"\u003EУдалить\u003C\u002Fbutton\u003E\u003Cbr\u003E\u003Clabel\u003EИли создайте новый\u003C\u002Flabel\u003E\u003Cinput type=\"text\" ng-model=\"$ctrl.newDialogueName\"\u003E\u003Cbutton class=\"btn btn-info\" ng-click=\"$ctrl.createNewDialogue($ctrl.newDialogueName)\"\u003EСоздать\u003C\u002Fbutton\u003E\u003Chr\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"group\"\u003EДля кого будет фраза:\u003C\u002Flabel\u003E\u003Cinput type=\"radio\" ng-model=\"$ctrl.groupToAdd\" name=\"group\" value=\"npc\" ng-click=\"$ctrl.updateList()\"\u003EКомпьютер\u003Cinput type=\"radio\" ng-model=\"$ctrl.groupToAdd\" name=\"group\" value=\"player\" ng-click=\"$ctrl.updateList()\"\u003EИгрок\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"phrase\"\u003EОтвет на какую фразу?:\u003C\u002Flabel\u003E\u003Cselect class=\"form-control\" id=\"phrase\" ng-model=\"$ctrl.fromNodeId\" name=\"to\" ng-change=\"$ctrl.onChange()\"\u003E\u003Coption ng-repeat=\"state in $ctrl.nodes\" ng-value=\"state.id\"\u003E{{ state.label }}\u003C\u002Foption\u003E\u003C\u002Fselect\u003E\u003Cbutton class=\"btn btn-danger\" ng-click=\"$ctrl.deleteNode()\"\u003E\u003Ci class=\"fa fa-window-close\" aria-hidden=\"true\"\u003E\u003C\u002Fi\u003E\u003C\u002Fbutton\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"text\"\u003EТекст ответа\u003Cinput class=\"form-control\" id=\"text\" type=\"text\" placeholder=\"Введите наименование фразы\" value=\"Привет!\" ng-model=\"$ctrl.label\" name=\"label\"\u003E\u003C\u002Flabel\u003E\u003Clabel\u003E\u003Cinput type=\"radio\" ng-model=\"$ctrl.type\" value=\"none\"\u003Enone\u003C\u002Flabel\u003E\u003Clabel\u003E\u003Cinput type=\"radio\" ng-model=\"$ctrl.type\" value=\"success\"\u003Esuccess\u003C\u002Flabel\u003E\u003Clabel\u003E\u003Cinput type=\"radio\" ng-model=\"$ctrl.type\" value=\"failure\"\u003Efailure\u003C\u002Flabel\u003E\u003C\u002Fdiv\u003E\u003Cbutton class=\"btn btn-info\" ng-click=\"$ctrl.addNode()\"\u003E\u003Ci class=\"fa fa-plus-circle\" aria-hidden=\"true\"\u003E\u003C\u002Fi\u003E                Добавить Реплику\u003C\u002Fbutton\u003E\u003Cdiv class=\"form-group\"\u003E\u003Cp ng-repeat=\"phrase in $ctrl.phraseList\"\u003E{{phrase.text}}\u003C\u002Fp\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-md-8\"\u003E\u003Cdiv id=\"mynetwork\"\u003EThis is amind component\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fform\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
+function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"centered\"\u003E\u003Ch3\u003EРедактор диалога\u003C\u002Fh3\u003E\u003Ch5\u003E[[ctrl.treeType]]\u003C\u002Fh5\u003E\u003C\u002Fdiv\u003E\u003Cdiv\u003E\u003Cform class=\"form\"\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-md-4\"\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-md-12\"\u003E\u003Clabel\u003EВыберите Диалог:\u003C\u002Flabel\u003E\u003Cselect name=\"singleSelect\" id=\"dialogues\" ng-model=\"$ctrl.selectedDialogue\" ng-change=\"$ctrl.chooseDialogue($ctrl.selectedDialogue)\"\u003E\u003Coption ng-repeat=\"dialogue in $ctrl.DialogueService.getDialogues() track by $index\" value=\"{{dialogue}}\"\u003E{{dialogue.name}}\u003C\u002Foption\u003E\u003C\u002Fselect\u003E\u003Cbutton class=\"btn btn-danger\" ng-click=\"$ctrl.deleteDialogue($ctrl.selectedDialogue)\"\u003EУдалить\u003C\u002Fbutton\u003E\u003Cbr\u003E\u003Clabel\u003EИли создайте новый\u003C\u002Flabel\u003E\u003Cinput type=\"text\" ng-model=\"$ctrl.newDialogueName\"\u003E\u003Cbutton class=\"btn btn-info\" ng-click=\"$ctrl.createNewDialogue($ctrl.newDialogueName)\"\u003EСоздать\u003C\u002Fbutton\u003E\u003Chr\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"group\"\u003EДля кого будет фраза:\u003C\u002Flabel\u003E\u003Cinput type=\"radio\" ng-model=\"$ctrl.groupToAdd\" name=\"group\" value=\"npc\" ng-click=\"$ctrl.updateList()\"\u003EКомпьютер\u003Cinput type=\"radio\" ng-model=\"$ctrl.groupToAdd\" name=\"group\" value=\"player\" ng-click=\"$ctrl.updateList()\"\u003EИгрок\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"phrase\"\u003EОтвет на какую фразу?:\u003C\u002Flabel\u003E\u003Cselect class=\"form-control\" id=\"phrase\" ng-model=\"$ctrl.fromNodeId\" name=\"to\" ng-change=\"$ctrl.onChange()\"\u003E\u003Coption ng-repeat=\"state in $ctrl.nodes\" ng-value=\"state.id\"\u003E{{ state.label }}\u003C\u002Foption\u003E\u003C\u002Fselect\u003E\u003Cbutton class=\"btn btn-danger\" ng-click=\"$ctrl.deleteNode()\"\u003E\u003Ci class=\"fa fa-window-close\" aria-hidden=\"true\"\u003E\u003C\u002Fi\u003E\u003C\u002Fbutton\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"text\"\u003EТекст ответа\u003Cinput type=\"radio\" ng-model=\"$ctrl.addOrEdit\" value=\"edit\"\u003EДобавить существующий\u003Cinput type=\"radio\" ng-model=\"$ctrl.addOrEdit\" value=\"new\"\u003EНовый\u003C\u002Flabel\u003E\u003Cdiv class=\"form-group\" ng-show=\"$ctrl.addOrEdit==='edit'\"\u003E\u003Cselect class=\"form-control\" id=\"phrase\" ng-model=\"$ctrl.editNodeId\" name=\"editId\"\u003E\u003Coption ng-show=\"$ctrl.notInList(state.id)\" ng-repeat=\"state in $ctrl.oppositeNodes\" ng-value=\"state.id\"\u003E {{ state.label }}\u003C\u002Foption\u003E\u003C\u002Fselect\u003E\u003Cbutton ng-click=\"$ctrl.addLink($ctrl.editNodeId)\"\u003EДобавить\u003C\u002Fbutton\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\" ng-show=\"$ctrl.addOrEdit==='new'\"\u003E \u003Cinput class=\"form-control\" id=\"text\" type=\"text\" placeholder=\"Введите наименование фразы\" value=\"Привет!\" ng-model=\"$ctrl.label\" name=\"label\"\u003E\u003Cinput type=\"radio\" ng-model=\"$ctrl.type\" value=\"none\"\u003Enone\u003Cinput type=\"radio\" ng-model=\"$ctrl.type\" value=\"success\"\u003Esuccess\u003Cinput type=\"radio\" ng-model=\"$ctrl.type\" value=\"failure\"\u003Efailure\u003Cbutton class=\"btn btn-info\" ng-click=\"$ctrl.addNode()\"\u003E\u003Ci class=\"fa fa-plus-circle\" aria-hidden=\"true\"\u003E\u003C\u002Fi\u003E                Добавить Реплику\u003C\u002Fbutton\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Cp ng-repeat=\"phrase in $ctrl.phraseList\"\u003E{{phrase.text}}\u003Cbutton ng-click=\"$ctrl.deleteLink(phrase)\"\u003EУдалить\u003C\u002Fbutton\u003E\u003C\u002Fp\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-md-8\"\u003E\u003Cdiv id=\"mynetwork\"\u003EThis is amind component\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fform\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
 module.exports = template;
 
 /***/ }),
