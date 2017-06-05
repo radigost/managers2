@@ -99397,7 +99397,7 @@ var GraphService = function () {
                 node.group = node.category;
                 _this2.nodes.add(node);
 
-                _this2.Restangular.one('api/v1').post('links', { 'from_node_id': toAdd.fromNodeId, 'to_node_id': node.id, "dialogue_id": _this2.dialogueId }).then(function (link) {
+                return _this2.Restangular.one('api/v1').post('links', { 'from_node_id': toAdd.fromNodeId, 'to_node_id': node.id, "dialogue_id": _this2.dialogueId }).then(function (link) {
                     link.from = link.from_node_id;
                     link.to = link.to_node_id;
                     link.color = { inherit: 'to' };

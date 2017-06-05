@@ -119,6 +119,7 @@ class TreeCtrl {
             }
         });
         this.phraseList = this.GraphService.nodes.get(nodeIds);
+
     }
     // dialogue
     createNewDialogue(name){

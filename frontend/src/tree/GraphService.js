@@ -135,7 +135,7 @@ class GraphService{
             node.group = node.category;
             this.nodes.add(node);
 
-            this.Restangular.one('api/v1').post('links',{'from_node_id':toAdd.fromNodeId,'to_node_id':node.id,"dialogue_id":this.dialogueId}).then((link)=>{
+            return this.Restangular.one('api/v1').post('links',{'from_node_id':toAdd.fromNodeId,'to_node_id':node.id,"dialogue_id":this.dialogueId}).then((link)=>{
                 link.from = link.from_node_id;
                 link.to = link.to_node_id;
                 link.color = {inherit:'to'};
