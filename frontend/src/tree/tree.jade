@@ -11,6 +11,7 @@ div
             .col-md-4
                 .row
                     .col-md-12
+                        p(ng-show = "$ctrl.hasNoStart" class="text-danger") У диалога нет точки начала! Вставьте ее чтобы диалог работал!
                         label Выберите Диалог:
                         select(name="singleSelect" id="dialogues" ng-model="$ctrl.selectedDialogue" ng-change="$ctrl.chooseDialogue($ctrl.selectedDialogue)" )
                             option(ng-repeat = "dialogue in $ctrl.DialogueService.getDialogues() track by $index" value="{{dialogue}}") {{dialogue.name}}

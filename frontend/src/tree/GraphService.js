@@ -23,38 +23,37 @@ class GraphService{
         let deferred = this.q.defer();
 
         this.fetchNodes(dialogueId).then((res)=>{
-            if (!!res.error){
+            _.forEach(res,(node)=>{
+                node.label = this.formatText(node.text);
+                node.group = node.category;
+                switch (node.type){
+                    case 'success':
+                        node.color = {border:'green'}
+                    case 'failure':
+                        node.color = {border:'red'}
+                    default:
+                }
+            });
+            this.setNodes(res);                
 
-            }
-            else {
-                _.forEach(res,(node)=>{
-                    node.label = this.formatText(node.text);
-                    node.group = node.category;
-                    switch (node.type){
-                        case 'success':
-                            node.color = {border:'green'}
-                        case 'failure':
-                            node.color = {border:'red'}
-                        default:
-                    }
+
+            this.fetchLinks(dialogueId).then((res)=>{
+                _.forEach(res,(link)=>{
+                    link.from = link.from_node_id;
+                    link.to = link.to_node_id;
+                    link.color = {inherit:'to'};
                 });
-                console.log(res );
-                this.setNodes(res);                
-            }
+                this.setLinks(res);
+
+                this.inited = true;
+                deferred.resolve();
+            });
 
         });
 
-        this.fetchLinks(dialogueId).then((res)=>{
-            _.forEach(res,(link)=>{
-                link.from = link.from_node_id;
-                link.to = link.to_node_id;
-                link.color = {inherit:'to'};
-            });
-            this.setLinks(res);
-        });;
+
         
-        this.inited = true;
-        deferred.resolve();
+        
         return deferred.promise;
     }
     
