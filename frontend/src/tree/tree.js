@@ -17,12 +17,14 @@ require('../lib/NpcService');
 class TreeCtrl {
     constructor(player,Npc,Restangular,$q,uibModal,cookies,GraphService,$scope,DialogueService){
         this.GraphService = GraphService;
-        
         this.groupToAdd = 'player';
         this.phraseList = [];
         this.$q = $q;
         this.$scope = $scope;
         this.hasNoStart = true;
+        this.state = {
+            isEditingNode: false
+        };
 
         this.nodesDataSet = new vis.DataView(GraphService.nodes) ;
         this.nodesDataSet.on('*',  (event, properties, senderId)=> {
@@ -31,6 +33,7 @@ class TreeCtrl {
         });
 
         this.DialogueService = DialogueService;
+
         
         
     }
@@ -53,6 +56,7 @@ class TreeCtrl {
                 this.getLinkedToNodes();
                 this.$scope.$apply();
             });
+
         });
     }
 
@@ -93,7 +97,25 @@ class TreeCtrl {
             this.label='';
             this.onChange()
         });
-        
+    }
+
+    deleteNode() {
+        this.GraphService.deleteNode(this.fromNodeId);
+    }
+
+    editNode(id){
+        this.state.isEditingNode = true;
+        let node = this.GraphService.nodes.get({filter:(node)=>node.id==id})[0];
+        this.editingNode = node;
+        this.editingLabel=node.label;
+    }
+
+    updateNode(node){
+        node.label =  this.editingLabel;
+        this.GraphService.updateNode(node).then(()=>{
+            this.isEditingNode = false;
+            this.onChange()
+        });
     }
 
     addLink(id){
@@ -105,9 +127,7 @@ class TreeCtrl {
         this.GraphService.deleteLink({from:this.fromNodeId,to:to.id}).then(()=>this.onChange());
     }
 
-    deleteNode() {
-        this.GraphService.deleteNode(this.fromNodeId);
-    }
+    
 
     updateList() {
         this.nodes = this.nodesDataSet.get({

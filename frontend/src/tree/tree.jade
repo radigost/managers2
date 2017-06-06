@@ -31,10 +31,18 @@ div
 
                 .form-group
                     label(for='phrase') Ответ на какую фразу?:
-                    select#phrase.form-control(ng-model='$ctrl.fromNodeId', name='to' ng-change="$ctrl.onChange()")
-                        option(ng-repeat='state in $ctrl.nodes' ng-value="state.id") {{ state.label }}
-                    button(class="btn btn-danger" ng-click="$ctrl.deleteNode()")
+                    div(ng-hide="$ctrl.state.isEditingNode")
+                        select#phrase.form-control(ng-model='$ctrl.fromNodeId', name='to' ng-change="$ctrl.onChange()")
+                            option(ng-repeat='node in $ctrl.nodes' ng-value="node.id") {{ node.label }}
+
+                    input(type="text" ng-show="$ctrl.state.isEditingNode" ng-model="$ctrl.editingLabel")
+
+                    button(class="btn btn-danger" ng-click="$ctrl.deleteNode()" ng-hide="$ctrl.state.isEditingNode" )
                         i(class="fa fa-window-close" aria-hidden="true")
+                    button(class="btn btn-warning" ng-click="$ctrl.editNode($ctrl.fromNodeId)" ng-hide="$ctrl.state.isEditingNode" )
+                        i(class="fa fa-pencil" aria-hidden="true")
+                    button(class="btn btn-success" ng-show="$ctrl.state.isEditingNode"  ng-click="$ctrl.updateNode($ctrl.editingNode)")
+                        i(class="fa fa-check-circle-o" aria-hidden="true")
 
                 .form-group
                     label(for='text') Текст ответа

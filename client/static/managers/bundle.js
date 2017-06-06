@@ -329,53 +329,57 @@ function pug_rethrow(err, filename, lineno, str){
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
+/***/ (function(module, exports) {
 
 /**
  * Created by user on 05.01.17.
  */
-angular.module('app').service('Npc', Npc);
+angular.module('app').service('Npc',  Npc);
 
 Npc.$inject = ['Restangular', '$q'];
 
-function Npc(Restangular, q) {
+function Npc(Restangular,q) {
   var type = 'npc',
-      currentNpc = {},
-      npcList = {};
+  currentNpc = {},
+  npcList = {};
 
   var service = {
-    type: type,
-    initNew: initNew,
-    getNpc: getNpc,
-    selectCurrent: selectCurrent,
-    getCurrentNpc: getCurrentNpc
+    type:type,
+    initNew:initNew,
+    getNpc:getNpc,
+    selectCurrent:selectCurrent,
+    getCurrentNpc:getCurrentNpc,
   };
   return service;
+
 
   //factory method
   function initNew(Restangular, q) {
     return new Npc(Restangular, q);
   }
   function selectCurrent(id) {
-    getNpc(id).then(function (res) {
-      return currentNpc = res;
-    });
+      getNpc(id).then((res)=> currentNpc = res);
   }
   function getCurrentNpc() {
     return currentNpc;
   }
   function getNpc(id) {
     var defer = q.defer();
-    npcList[id] ? defer.resolve(npcList[id]) : Restangular.one('api/v1/npc/', id).get().then(function (res) {
+    npcList[id] ? defer.resolve(npcList[id]) :  Restangular.one('api/v1/npc/', id).get().then((res)=>{
       npcList[id] = res;
-      defer.resolve(npcList[id]);
+     defer.resolve(npcList[id]);
     });
     return defer.promise;
   }
+
+
+
 };
+
+
+
+
+
 
 /***/ }),
 /* 2 */
@@ -389,9 +393,6 @@ module.exports = angular;
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-
-
 // import * as angular from "angular";
 // import * as restangular from "restangular";
 // import {storage} from "angular";
@@ -403,35 +404,36 @@ __webpack_require__(4);
 angular.module('app').service('gameService', GameService);
 
 GameService.$inject = ['Restangular', 'Player'];
-function GameService(Restangular, player) {
+function GameService(Restangular,player) {
 
-    var inited, companies;
+    var inited,companies;
 
     var inited = false;
 
-    var service = {
-        inited: inited,
-        companies: companies,
-        player: player,
-        init: init
+    var service =  {
+        inited:inited,
+        companies:companies,
+        player:player,
+        init:init
     };
     return service;
 
     function init() {
         player.init();
-        Restangular.one('api/v1/companies/').get().then(function (res) {
-            service.companies = res;
-            inited = true;
+        Restangular.one('api/v1/companies/').get().then(function(res) {
+          service.companies = res;
+          inited = true;
         });
     }
 }
 
+
+
+
+
 /***/ }),
 /* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
+/***/ (function(module, exports) {
 
 /**
  * Created by user on 05.01.17.
@@ -441,43 +443,40 @@ angular.module('app').service('Player', Player);
 
 Player.$inject = ['Restangular', '$q'];
 
-function Player(Restangular, q) {
+function Player(Restangular,q) {
   var inited = false;
   var id;
   var type = 'player',
-      name = "",
-      fakeName = "Иван Иванович",
-      company = "",
-      money = "",
-      position = "";
+  name = "",
+  fakeName = "Иван Иванович",
+  company = "",
+  money = "",
+  position = "";
 
   var service = {
-    type: type,
-    name: name,
-    fakeName: fakeName,
-    company: company,
-    money: money,
-    position: position,
+      type:type,
+      name:name,
+      fakeName:fakeName,
+      company:company,
+      money:money,
+      position:position,
 
-    init: init,
-    choosePlayer: choosePlayer
-  };
+      init:init,
+      choosePlayer:choosePlayer,
+    };
   return service;
 
   function init() {
-    var _this = this;
-
     var d = q.defer();
     id = localStorage.getItem("playerId");
     if (!inited) {
-      Restangular.one('api/v1/persons/', id).get().then(function (res) {
-        _.extend(_this, res);
-        inited = true;
-        d.resolve();
-      });
-    } else {
-      d.resolve();
+        Restangular.one('api/v1/persons/', id).get().then((res)=>{
+            _.extend(this, res);
+            inited = true;
+            d.resolve();
+        });
     }
+    else {d.resolve();}
     return d.promise;
   }
 
@@ -486,68 +485,15 @@ function Player(Restangular, q) {
       return this.playerAvatarID = playerAvatarID;
     }
   }
+
+
 };
+
+
+
 
 /***/ }),
 /* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * Created by user on 05.01.17.
- */
-
-angular.module('app').service('AuthService', AuthService);
-
-AuthService.$inject = ['Restangular', '$q'];
-
-function AuthService(Restangular, q) {
-  var inited = false;
-  var token = null;
-  var loggedIn = false;
-
-  var authService = {
-    init: init,
-    login: login,
-    logout: logout,
-    isLoggedIn: isLoggedIn
-  };
-  return authService;
-
-  function init() {
-    var d = q.defer();
-    id = localStorage.getItem("playerId");
-    if (!inited) {
-      inited = true;
-      d.resolve();
-    } else {
-      d.resolve();
-    }
-    return d.promise;
-  }
-
-  function login(credentials) {
-    return Restangular.one('api/v1').post('customers/login', credentials).then(function (res) {
-      token = res.id;
-      loggedIn = true;
-    });
-  }
-
-  function logout() {
-    return Restangular.one('api/v1').post('customers/logout', { access_token: token }).then(function (res) {
-      token = null;
-      loggedIn = false;
-    });
-  }
-  function isLoggedIn() {
-    return loggedIn;
-  }
-};
-
-/***/ }),
-/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -52892,61 +52838,159 @@ return /******/ (function(modules) { // webpackBootstrap
 ;
 
 /***/ }),
+/* 6 */
+/***/ (function(module, exports) {
+
+/**
+ * Created by user on 05.01.17.
+ */
+
+angular.module('app')
+    .service('AuthService', AuthService);
+
+AuthService.$inject = ['Restangular', '$q'];
+
+function AuthService(Restangular,q) {
+  var inited = false;
+  var token = null;
+  var loggedIn = false;
+  
+
+  var authService = {
+      init:init,
+      login:login,
+      logout:logout,
+      isLoggedIn:isLoggedIn
+    };
+  return authService;
+
+  function init() {
+    var d = q.defer();
+    id = localStorage.getItem("playerId");
+    if (!inited) {
+            inited = true;
+            d.resolve();
+    }
+    else {d.resolve();}
+    return d.promise;
+  }
+
+  function login(credentials){
+    return Restangular.one('api/v1').post('customers/login',credentials).then((res)=>{
+        token=res.id;
+        loggedIn=true;
+        });
+  }
+
+  function logout (){
+      return Restangular.one('api/v1').post('customers/logout',{access_token:token}).then((res)=>{
+        token=null;
+        loggedIn=false;
+        });
+  }
+  function isLoggedIn(){
+      return loggedIn;
+  }
+
+
+};
+
+
+
+
+/***/ }),
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-
-
 //styles and fonts
-__webpack_require__(38);
+__webpack_require__(20);
+
 
 //modules
 __webpack_require__(2);
-__webpack_require__(56);
+__webpack_require__(38);
 __webpack_require__(9);
 // import "@angular/upgrade/upgrade";
 __webpack_require__(15);
 __webpack_require__(11);
 __webpack_require__(13);
-__webpack_require__(58);
-__webpack_require__(36);
-__webpack_require__(35);
-__webpack_require__(37);
+__webpack_require__(40);
+__webpack_require__(18);
+__webpack_require__(17);
+__webpack_require__(19);
 
-var appTpl = __webpack_require__(43);
+
+
+
+const appTpl = __webpack_require__(25);
 __webpack_require__(2);
-angular.module('app', ['restangular', 'ngComponentRouter', 'ui.bootstrap', 'ngCookies', 'ngSanitize', 'ui.select']).config(function ($interpolateProvider) {
-    $interpolateProvider.startSymbol('[[');
-    $interpolateProvider.endSymbol(']]');
-}).config(function (RestangularProvider) {
-    return RestangularProvider.setRequestSuffix("/");
-}).config(function ($locationProvider) {
-    return $locationProvider.html5Mode(false);
-});
+angular
+    .module('app',
+    [
+      'restangular',
+      'ngComponentRouter',
+      'ui.bootstrap',
+      'ngCookies',
+      'ngSanitize',
+      'ui.select'
+    ])
+    .config(function($interpolateProvider) {
+      $interpolateProvider.startSymbol('[[');
+      $interpolateProvider.endSymbol(']]');
+    })
+    .config(function(RestangularProvider) {
+      return RestangularProvider.setRequestSuffix("/");
+    })
+    .config(function($locationProvider) {
+      return $locationProvider.html5Mode(false);
+}   )
 
-__webpack_require__(24);
-__webpack_require__(29);
-__webpack_require__(34);
-__webpack_require__(21);
-__webpack_require__(26);
-__webpack_require__(28);
-__webpack_require__(27);
 
-angular.module('app').component('app', {
-    template: appTpl(),
-    $routeConfig: [{ path: '/', name: 'Menu', component: 'menu', useAsDefault: true }, { path: '/talk/', name: 'Talk', component: 'talk' }, { path: '/tree/', name: 'Tree', component: 'tree' }, { path: '/newgame/', name: 'NewGame', component: 'newgame' }, { path: '/game/...', name: 'Game', component: 'game' }, { path: '/signup', name: 'SignUp', component: 'signup' }, { path: '/signin', name: 'SignIn', component: 'signin' }]
-}).value('$routerRootComponent', 'app');
 
-angular.element(document).ready(function () {
+
+__webpack_require__(50);
+__webpack_require__(55);
+__webpack_require__(60);
+__webpack_require__(47);
+__webpack_require__(52);
+__webpack_require__(54);
+__webpack_require__(53);
+
+
+
+
+
+angular
+    .module('app').component('app',{
+        template:appTpl(),
+        $routeConfig: [
+            {path: '/', name: 'Menu', component: 'menu',useAsDefault:true},
+            {path: '/talk/', name: 'Talk', component: 'talk'},
+            {path: '/tree/', name: 'Tree', component: 'tree'},
+            {path: '/newgame/', name: 'NewGame', component: 'newgame'},
+            {path: '/game/...', name: 'Game', component: 'game'},
+            {path: '/signup', name: 'SignUp', component: 'signup'},
+            {path: '/signin', name: 'SignIn', component: 'signin'}
+        ]
+        })
+        .value('$routerRootComponent', 'app');
+
+
+
+angular.element(document).ready(function() {
     angular.bootstrap(document, ["app"]);
 });
 
+
+
+
 /***/ }),
 /* 8 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-"use strict";
+
+
+
 
 
 /***/ }),
@@ -98328,1516 +98372,36 @@ $provide.value("$locale", {
 
 /***/ }),
 /* 17 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-"use strict";
-
-
-/**
- * Created by user on 05.01.17.
- */
-
-var NpcInfoTpl = __webpack_require__(41);
-__webpack_require__(1);
-
-angular.module('app').component('npcInfo', {
-  bindings: {
-    $router: '<',
-    id: '<'
-  },
-  template: NpcInfoTpl(),
-  controller: NpcInfoCtrl,
-  controllerAs: 'ctrl'
-});
-
-NpcInfoCtrl.$inject = ['Restangular', 'Npc', '$q'];
-function NpcInfoCtrl(Restangular, Npc, q) {
-  var npc;
-
-  this.$onInit = function () {
-    var _this = this;
-
-    Npc.getNpc(this.id).then(function (res) {
-      return _this.npc = res;
-    });
-  };
-  this.talk = function () {
-    Npc.selectCurrent(this.id);
-    // console.log(this.$router);
-    this.$router.navigate(['/Talk']);
-  };
-};
+// removed by extract-text-webpack-plugin
 
 /***/ }),
 /* 18 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-"use strict";
-
-
-// import * as angular from "angular";
-// import IService = restangular.IService;
-// import * as restangular from "restangular";
-// import IComponentOptions = angular.IComponentOptions;
-/**
- * Created by user on 05.01.17.
- */
-
-var PlayerInfoTpl = __webpack_require__(42);
-
-angular.module('app').component('playerInfo', {
-  bindings: {
-    $router: '<'
-  },
-  template: PlayerInfoTpl(),
-  controller: PlayerInfoCtrl,
-  controllerAs: 'ctrl'
-});
-
-PlayerInfoCtrl.$inject = ['Restangular', 'Player'];
-function PlayerInfoCtrl(Restangular, player) {
-  this.player = player;
-  console.log(this);
-};
+// removed by extract-text-webpack-plugin
 
 /***/ }),
 /* 19 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-"use strict";
-
-
-// import * as angular from "angular";
-// import {GameService} from "../gameService";
-// import {Company} from "../../lib/Company";
-// import IComponentOptions = angular.IComponentOptions;
-/**
- * Created by user on 05.01.17.
- */
-
-var companyDetailTpl = __webpack_require__(44);
-
-__webpack_require__(17);
-__webpack_require__(23);
-
-__webpack_require__(3);
-
-angular.module('app').component('companyDetail', {
-  bindings: {
-    $router: '<'
-  },
-  template: companyDetailTpl(),
-  controller: CompanyDetailCtrl,
-  controllerAs: 'ctrl'
-});
-
-CompanyDetailCtrl.$inject = ['gameService', 'Company'];
-
-function CompanyDetailCtrl(service, company) {
-  this.gameName = "Экран информации о компании";
-  this.company = company;
-
-  this.$routerOnActivate = function (next) {
-    this.company.selectCurrent(next.params.companyId);
-  };
-
-  this.goToTalk = function (id) {
-    this.$router.navigate(['Talk', {
-      npcId: id
-    }]);
-  };
-};
+// removed by extract-text-webpack-plugin
 
 /***/ }),
 /* 20 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-"use strict";
-
-
-var CompanyListTpl = __webpack_require__(45);
-
-angular.module('app').component('companyList', {
-    bindings: { $router: '<' },
-    template: CompanyListTpl(),
-    controller: CompanyListCtrl,
-    controllerAs: 'ctrl'
-});
-
-CompanyListCtrl.$inject = ['gameService'];
-
-function CompanyListCtrl(service) {
-    this.service = service;
-};
+// removed by extract-text-webpack-plugin
 
 /***/ }),
 /* 21 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-"use strict";
-
-
-/**
- * Created by user on 05.01.17.
- */
-// import * as angular from "angular";
-// import {GameService} from "./gameService";
-// import IComponentOptions = angular.IComponentOptions;
-var gameTpl = __webpack_require__(46);
-
-__webpack_require__(18);
-
-__webpack_require__(3);
-
-__webpack_require__(20);
-
-__webpack_require__(19);
-
-__webpack_require__(22);
-
-angular.module('app').component('game', {
-  bindings: {
-    $router: '<'
-  },
-  template: gameTpl(),
-  controller: GameCtrl,
-  controllerAs: 'ctrl',
-  $routeConfig: [{
-    path: '/',
-    name: 'CompanyList',
-    component: 'companyList',
-    useAsDefault: true
-  }, {
-    path: '/company-detail',
-    name: 'CompanyDetail',
-    component: 'companyDetail'
-  }, {
-    path: '/profile',
-    name: 'Profile',
-    component: 'profile'
-  }]
-});
-GameCtrl.$inject = ['gameService'];
-function GameCtrl(service) {
-  this.gameName = "Основной экран";
-  this.$routerOnActivate = function () {
-    service.init();
-  };
-};
+// removed by extract-text-webpack-plugin
 
 /***/ }),
 /* 22 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-// import * as angular from "angular";
-// import {GameService} from "../gameService";
-// import IService = restangular.IService;
-// import * as restangular from "restangular";
-// import IComponentOptions = angular.IComponentOptions;
-/**
- * Created by user on 05.01.17.
- */
-
-var profileTpl = __webpack_require__(47);
-
-__webpack_require__(3);
-
-angular.module('app').component('profile', {
-  bindings: {
-    $router: '<'
-  },
-  template: profileTpl(),
-  controller: ProfileCtrl,
-  controllerAs: 'ctrl'
-});
-
-ProfileCtrl.$inject = ['gameService'];
-
-function ProfileCtrl(service) {
-  this.service = service;
-};
-
-/***/ }),
-/* 23 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-// import * as angular from "angular";
-// import IService = restangular.IService;
-// import * as restangular from "restangular";
-/**
- * Created by user on 05.01.17.
- */
-
-angular.module('app').service('Company', ['Restangular', Company]);
-
-function Company(Restangular) {
-    // public current: {};
-    // public items: Array<any>;
-    var current = {},
-        items = [];
-    var service = {
-        current: current,
-        items: items,
-
-        selectCurrent: selectCurrent
-    };
-    return service;
-
-    function selectCurrent(id) {
-        if (service.current.id != id) {
-            Restangular.one('api/v1/companies/', id).get().then(function (res) {
-                service.current = res;
-                Restangular.one('api/v1/companies/' + id + '/npcs/').get().then(function (res) {
-                    var s = [];
-                    _.forEach(res, function (npc) {
-                        s.push(npc.id);
-                    });
-                    service.current.npc_set = s;
-                });
-            });
-        }
-    }
-};
-
-/***/ }),
-/* 24 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var menuTpl = __webpack_require__(48);
-var modalTpl = __webpack_require__(49);
-__webpack_require__(25);
-__webpack_require__(5);
-
-angular.module('app').component('menu', {
-  bindings: {
-    $router: '<'
-  },
-  template: menuTpl(),
-  controller: MenuCtrl,
-  controllerAs: 'ctrl'
-}).value('$routerRootComponent', 'app');
-
-MenuCtrl.$inject = ['$uibModal', 'Restangular', '$cookies', 'AuthService'];
-
-function MenuCtrl(uibModal, Restangular, cookies, AuthService) {
-  this.isLoggedIn = AuthService.isLoggedIn;
-  this.logout = AuthService.logout;
-  var vm = this;
-  vm.canSeeEditor = false;
-  vm.$onInit = function () {
-    Restangular.one('api/v1/my/').get().then(function (res) {
-      localStorage.setItem("userId", res.user_id);
-      vm.canSeeEditor = res.see_editor;
-    });
-
-    Restangular.one('api/v1/persons').get().then(function (res) {
-      vm.players = res;
-    });
-  };
-  vm.goToGame = function (playerId) {
-    localStorage.setItem("playerId", playerId);
-    vm.$router.navigate(['Game']);
-  };
-  vm.deletePerson = function (id) {
-    var s = cookies.getAll();
-    return Restangular.one('api/v1/persons/' + id).remove('', {
-      'X-CSRFToken': s.csrftoken
-    }).then(function (res) {
-      return vm.$onInit();
-    });
-  };
-  vm.help = function () {
-    return vm.modal = uibModal.open({
-      controller: 'modalHelpCtrl',
-      controllerAs: '$ctrl',
-      template: modalTpl()
-    });
-  };
-}
-
-/***/ }),
-/* 25 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-// import * as angular from "angular";
-// import {IModalServiceInstance} from "angular-ui-bootstrap";
-//
-angular.module('app').controller('ModalHelpCtrl', ModalHelpCtrl);
-
-ModalHelpCtrl.$inject = ['$uibModalInstance'];
-function ModalHelpCtrl($uibModalInstance) {
-  this.cancel = function () {
-    return uibModalInstance.close();
-  };
-};
-
-/***/ }),
-/* 26 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var newGameTpl = __webpack_require__(50);
-
-angular.module('app').component('newgame', {
-  bindings: {
-    $router: '<'
-  },
-  template: newGameTpl(),
-  controller: NewGameCtrl,
-  controllerAs: 'ctrl'
-});
-
-NewGameCtrl.$inject = ['Restangular', '$cookies'];
-function NewGameCtrl(Restangular, cookies) {
-  this.images = [];
-  this.gameName = "Экран выбора персонажа";
-  this.stats = {
-    items: [{
-      id: 1,
-      caption: "Активность",
-      value: 5,
-      max: 9,
-      min: 1,
-      name: 'activeness'
-    }, {
-      id: 2,
-      caption: "Связи",
-      value: 5,
-      max: 9,
-      min: 1,
-      name: 'network'
-    }, {
-      id: 3,
-      caption: "Психология",
-      value: 5,
-      max: 9,
-      min: 1,
-      name: 'psychology'
-    }, {
-      id: 4,
-      caption: "Интелект",
-      value: 5,
-      max: 9,
-      min: 1,
-      name: 'intellect'
-    }, {
-      id: 5,
-      caption: "Интроверсия - Экстроверсия",
-      value: 3,
-      max: 3,
-      min: 1,
-      name: 'introversion'
-    }]
-  };
-  this.specialties = {
-    items: [{
-      id: 2,
-      caption: "Любимец государства",
-      tooltip: "Хорошо получается работать с гос. сектором"
-    }, {
-      id: 3,
-      caption: "Прошаренный",
-      tooltip: "Знает технологию по которой работает компания"
-    }, {
-      id: 4,
-      caption: "Большой чек",
-      tooltip: "Получает дополнительную возможность успешно продать если чек большой"
-    }, {
-      id: 5,
-      caption: "Телефонный маньяк",
-      tooltip: "Может делать огромное количество звонков,но на личных встречах ведет себя не очень"
-    }]
-  };
-  this.perks = {
-    items: [{
-      id: 1,
-      caption: "Парень с заводского",
-      chosen: false
-    }, {
-      id: 2,
-      caption: "Белый воротничок",
-      chosen: false
-    }, {
-      id: 3,
-      caption: "Раздолбай",
-      chosen: false
-    }]
-  };
-  this.indusrty = {
-    items: [{
-      id: 1,
-      caption: "Строительство"
-    }, {
-      id: 2,
-      caption: "Сельское Хозяйство"
-    }, {
-      id: 3,
-      caption: "FMCG"
-    }, {
-      id: 4,
-      caption: "Государственный сектор"
-    }]
-  };
-  this.points = 5;
-
-  var vm = this;
-
-  vm.$onInit = function () {
-    Restangular.one('api/v1/persons').get().then(function (res) {
-      vm.players = res;
-    });
-    vm.current = {
-      stats: {
-        personality: {
-          activeness: 5,
-          network: 5,
-          psychology: 5,
-          intellect: 5,
-          introversion: 5
-        },
-        specialties: [this.specialties.items[0]],
-        knowProduct: 1,
-        minCalls: 7,
-        maxCalls: 14,
-        perks: [],
-        money: 15
-      },
-      image_path: '',
-      first_name: "Иван",
-      last_name: "Иванов",
-      company: "Абырвалг инкорпорейтед"
-    };
-    return vm.generateImages();
-  };
-
-  vm.plus = function (what) {
-    var r;
-    r = _.find(vm.stats.items, {
-      id: what
-    });
-    if (vm.current.stats.personality[r.name] < r.max && vm.points > 0) {
-      vm.current.stats.personality[r.name]++;
-      vm.points--;
-    }
-  };
-
-  vm.minus = function (what) {
-    var r;
-    r = _.find(this.stats.items, {
-      id: what
-    });
-    if (this.current.stats.personality[r.name] > r.min) {
-      this.current.stats.personality[r.name]--;
-      this.points++;
-    }
-  };
-
-  vm.toggle = function () {
-    this.showMenu = !this.showMenu;
-  };
-
-  vm.chooseSpecialty = function (id) {
-    this.current.specialties = [_.find(this.specialties.items, {
-      id: id
-    })];
-    if (this.current.specialties[0].id === 3) {
-      this.current.knowProduct = 5;
-    } else {
-      this.current.knowProduct = 1;
-    }
-    if (this.current.specialties[0].id === 5) {
-      return this.current.maxCalls = 25;
-    } else {
-      return this.current.maxCalls = 15;
-    }
-  };
-
-  vm.chooseIndustry = function (id) {
-    return this.current.industry = _.find(this.indusrty.items, {
-      id: id
-    });
-  };
-
-  vm.chooseAvatar = function (image_path) {
-    return this.current.image_path = image_path;
-  };
-
-  vm.startGame = function (id) {
-    return this.$router.navigate(['Game', {
-      playerAvatarId: id
-    }]);
-  };
-
-  vm.generateImages = function () {
-    var i, j, k, len, name, names;
-    names = ['manager', 'secretar'];
-    this.images = [];
-    for (j = 0, len = names.length; j < len; j++) {
-      name = names[j];
-      for (i = k = 1; k <= 11; i = ++k) {
-        vm.images.push(name + i + '.png');
-      }
-    }
-    console.log(vm.images);
-    return this.current.image_path = vm.images[0];
-  };
-
-  vm.create = function () {
-    var s;
-    s = cookies.getAll();
-    this.current.name = this.current.first_name + this.current.last_name;
-    this.current.related_companies = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    this.current.owner = localStorage.getItem("userId");
-    return Restangular.one('api/v1/persons').get().then(function (_this) {
-      return function (res) {
-        return res.post('', _this.current, '', {
-          'X-CSRFToken': s.csrftoken
-        }).then(function (res) {
-          _this.$router.navigate(['Menu']);
-        });
-      };
-    }(this));
-  };
-};
-
-/***/ }),
-/* 27 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var template = __webpack_require__(51);
-
-__webpack_require__(5);
-
-angular.module('app').component('signin', {
-    bindings: {
-        $router: '<'
-    },
-    template: template(),
-    controller: SignInCtrl
-});
-
-SignInCtrl.$inject = ['Restangular', '$cookies', 'AuthService'];
-
-function SignInCtrl(Restangular, cookies, AuthService) {
-    this.user = {};
-    var _this = this;
-    _this.signin = function () {
-        console.log(this.user);
-        AuthService.login(this.user).then(function (res) {
-            console.log("login successfull");
-            _this.$router.navigate(['Menu']);
-        });
-    };
-    this.$routerOnActivate = function (next) {
-        _this.needVerify = next.params.verify;
-        console.log(next.params.verify);
-    };
-};
-
-/***/ }),
-/* 28 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var template = __webpack_require__(52);
-
-angular.module('app').component('signup', {
-    bindings: {
-        $router: '<'
-    },
-    template: template(),
-    controller: SignUpCtrl
-});
-
-SignUpCtrl.$inject = ['Restangular', '$cookies'];
-
-function SignUpCtrl(Restangular, cookies) {
-    this.user = {};
-    var _this = this;
-    _this.signup = function (credentials) {
-        var _this2 = this;
-
-        console.log(this.user);
-        Restangular.one('api/v1').post('customers', this.user).then(function (res) {
-            console.log(res);
-            _this2.$router.navigate(['SignIn', { verify: 'true' }]);
-        });
-    };
-};
-
-/***/ }),
-/* 29 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-// import * as angular from "angular";
-// import * as _ from "lodash";
-// import {Player} from "../lib/player";
-// import IService = restangular.IService;
-// import * as restangular from "restangular";
-// import IQService = angular.IQService;
-// import {Npc} from "../lib/npc";
-// import IComponentOptions = angular.IComponentOptions;
-/**
- * Created by user on 05.01.17.
- */
-
-__webpack_require__(4);
-__webpack_require__(1);
-__webpack_require__(30);
-
-var talkTpl = __webpack_require__(53);
-
-angular.module('app').component('talk', {
-    bindings: {
-        $router: '<'
-    },
-    template: talkTpl(),
-    controller: TalkCtrl,
-    controllerAs: 'ctrl'
-});
-
-TalkCtrl.$inject = ['TalkService', '$scope'];
-function TalkCtrl(service, scope) {
-    var _this = this;
-
-    this.gameName = "Окно переговоров";
-
-    this.player = service.getPlayer();
-    this.npc = service.getNpc();
-    this.getHistory = service.getHistory;
-    this.getPlayerQuestions = service.getPlayerQuestions;
-    this.update = service.update;
-    this.getNpcAnswers = service.getNpcAnswers;
-    this.getTime = service.getTime;
-
-    this.$routerOnActivate = function () {
-        service.init().then(function () {
-
-            if (service.hasError()) {
-                console.log(_this.$router);
-                // this.$router.navigate['Game','CompanyList'];
-                alert('Не отвечают');
-                _this.$router.navigateByUrl('/game');
-            }
-        });
-    };
-
-    // scope.$watch(()=>service.hasError(),()=>this.$router.navigate['Game']);
-
-
-    this.notTheEnd = function () {
-        return !(service.isStatus('failure') || service.isStatus('success'));
-    };
-
-    this.checkColor = function () {
-        var f;
-        f = "";
-        if (service.isStatus('failure')) {
-            f = "failure";
-        }
-        if (service.isStatus('success')) {
-            f = "success";
-        }
-        return f;
-    };
-};
-
-// ---
-// generated by coffee-script 1.9.2
-
-/***/ }),
-/* 30 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * Created by user on 29.03.17.
- */
-__webpack_require__(4);
-__webpack_require__(1);
-angular.module('app').service('TalkService', TalkService);
-
-TalkService.$inject = ['Restangular', 'Player', 'Npc', '$q'];
-function TalkService(Restangular, player, npc, q) {
-    var inited = false;
-    var router;
-    var state = {
-        time: undefined,
-        history: [],
-        result: {},
-        questions: [],
-        previousAnswer: {}
-    };
-    var service = {
-        init: init,
-        update: update,
-        getPlayer: getPlayer,
-        getNpc: getNpc,
-
-        getTime: getTime,
-        getHistory: getHistory,
-
-        getPlayerQuestions: getPlayerQuestions,
-        getNpcAnswers: getNpcAnswers,
-
-        isStatus: isStatus,
-
-        setRouter: setRouter,
-        hasError: hasError
-    };
-    return service;
-    function init() {
-
-        return new Promise(function (resolve, reject) {
-            state.time = 100;
-            state.end = false;
-            state.type = "";
-            state.error = false;
-            player.init().then(function () {
-                update().then(function () {
-                    inited = true;
-                    resolve();
-                });
-            });
-        });
-    }
-    function update(questionId) {
-        questionId = questionId || '';
-        var params = {
-            questionId: questionId
-        };
-        return new Promise(function (resolve, reject) {
-            Restangular.one('api/v1/update').get(params).then(function (res) {
-                if (!!res.error) {
-                    // console.log(res,router);
-
-                }
-                _.extend(state, res);
-                resolve();
-            });
-        });
-    }
-    function hasError() {
-        console.log(!!state.error, state);
-        return !!state.error;
-    }
-    function getPlayer() {
-        return player;
-    }
-    function getNpc() {
-        return npc.getCurrentNpc();
-    }
-    function getNpcAnswers() {
-        return state.previousAnswer;
-    }
-    function getTime() {
-        return state.time;
-    }
-    function getHistory() {
-        return state.history;
-    }
-    function getPlayerQuestions() {
-        return state.questions;
-    }
-
-    function setRouter(newrouter) {
-        router = newrouter;
-        console.log(router);
-    }
-
-    function isStatus(name) {
-        return state.type === name;
-    }
-}
-
-/***/ }),
-/* 31 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var DialogueService = function () {
-    function DialogueService(Restangular, q) {
-        _classCallCheck(this, DialogueService);
-
-        this.inited = false;
-        this.dialogues = [];
-        this.q = q;
-        this.Restangular = Restangular;
-    }
-
-    _createClass(DialogueService, [{
-        key: 'init',
-        value: function init() {
-            var _this = this;
-
-            var deferred = this.q.defer();
-            this.Restangular.all('api/v1/dialogues/').getList().then(function (res) {
-                _this.dialogues = [];
-                res.forEach(function (dialogue) {
-                    return _this.dialogues.push(dialogue);
-                });
-                _this.inited = true;
-                return deferred.resolve(res);
-            });
-            return deferred.promise;
-        }
-    }, {
-        key: 'getDialogues',
-        value: function getDialogues() {
-            return this.dialogues;
-        }
-    }, {
-        key: 'createNewDialogue',
-        value: function createNewDialogue(name) {
-            return this.Restangular.all('api/v1/dialogues').post({ name: name });
-        }
-    }, {
-        key: 'deleteDialogue',
-        value: function deleteDialogue(dialogue) {
-            var del = JSON.parse(dialogue);
-            var toDelete = this.dialogues.find(function (d) {
-                return d.id === del.id;
-            });
-            return toDelete.remove();
-        }
-    }]);
-
-    return DialogueService;
-}();
-
-DialogueService.$inject = ['Restangular', '$q'];
-
-angular.module('app').service('DialogueService', DialogueService);
-
-/***/ }),
-/* 32 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- * Created by user on 20.04.17.
- */
-var vis = __webpack_require__(6);
-
-var GraphService = function () {
-    function GraphService(Restangular, q) {
-        _classCallCheck(this, GraphService);
-
-        this.inited = false;
-        this.Restangular = Restangular;
-        this.q = q;
-
-        this.nodes = new vis.DataSet();
-        this.links = new vis.DataSet();
-        this.network = null;
-    }
-
-    _createClass(GraphService, [{
-        key: 'init',
-        value: function init(dialogueId) {
-            var _this = this;
-
-            this.dialogueId = dialogueId;
-            this.inited = false;
-            var deferred = this.q.defer();
-
-            this.fetchNodes(dialogueId).then(function (res) {
-                _.forEach(res, function (node) {
-                    node.label = _this.formatText(node.text);
-                    node.group = node.category;
-                    switch (node.type) {
-                        case 'success':
-                            node.color = { border: 'green' };
-                        case 'failure':
-                            node.color = { border: 'red' };
-                        default:
-                    }
-                });
-                _this.setNodes(res);
-
-                _this.fetchLinks(dialogueId).then(function (res) {
-                    _.forEach(res, function (link) {
-                        link.from = link.from_node_id;
-                        link.to = link.to_node_id;
-                        link.color = { inherit: 'to' };
-                    });
-                    _this.setLinks(res);
-
-                    _this.inited = true;
-                    deferred.resolve();
-                });
-            });
-
-            return deferred.promise;
-        }
-    }, {
-        key: 'fetchNodes',
-        value: function fetchNodes(dialogueId) {
-            var deferred = this.q.defer();
-            var where = !!dialogueId ? '/?filter[where][dialogue_id]=' + dialogueId : null;
-            fetch('/api/v1/nodes' + where).then(function (res) {
-                return res.json();
-            }).then(function (res) {
-                return deferred.resolve(res);
-            });
-            return deferred.promise;
-        }
-    }, {
-        key: 'setNodes',
-        value: function setNodes(nodes) {
-            this.nodes.clear();
-            this.nodes.add(nodes);
-        }
-    }, {
-        key: 'fetchLinks',
-        value: function fetchLinks(dialogueId) {
-            var deferred = this.q.defer();
-            var where = !!dialogueId ? '/?filter[where][dialogue_id]=' + dialogueId : null;
-            fetch('/api/v1/links' + where).then(function (res) {
-                return res.json();
-            }).then(function (res) {
-                return deferred.resolve(res);
-            });
-            return deferred.promise;
-        }
-    }, {
-        key: 'setLinks',
-        value: function setLinks(links) {
-            this.links.clear();
-            this.links.add(links);
-        }
-    }, {
-        key: 'formatText',
-        value: function formatText(text) {
-            var outText = "";
-            if (!text) {
-                return '';
-            } else {
-                var textArray = text.split(' ');
-                textArray.forEach(function (element, index) {
-                    index % 3 == 0 ? outText += " " + element + "\n " : outText += " " + element + " ";
-                });
-            }
-            return outText;
-        }
-    }, {
-        key: 'getNetwork',
-        value: function getNetwork() {
-            var container = document.getElementById('mynetwork');
-            var data = {
-                nodes: this.nodes,
-                edges: this.links
-            };
-            var options = {
-                layout: {},
-                edges: {
-                    physics: false,
-                    length: 300,
-                    smooth: false,
-                    arrows: {
-                        to: true
-                    }
-                },
-                nodes: {
-                    shape: 'box'
-                },
-                "physics": {
-                    "solver": "repulsion"
-                }
-            };
-            this.network = new vis.Network(container, data, options);
-
-            return this.network;
-        }
-    }, {
-        key: 'addNode',
-        value: function addNode(toAdd) {
-            var _this2 = this;
-
-            return this.Restangular.one('api/v1/').post('nodes', { "category": toAdd.group, "text": toAdd.text, "dialogue_id": this.dialogueId, "type": toAdd.type }).then(function (node) {
-                node.label = node.text;
-                node.group = node.category;
-                _this2.nodes.add(node);
-
-                return _this2.Restangular.one('api/v1').post('links', { 'from_node_id': toAdd.fromNodeId, 'to_node_id': node.id, "dialogue_id": _this2.dialogueId }).then(function (link) {
-                    link.from = link.from_node_id;
-                    link.to = link.to_node_id;
-                    link.color = { inherit: 'to' };
-                    _this2.links.add(link);
-                });
-            });
-        }
-    }, {
-        key: 'addLink',
-        value: function addLink(option) {
-            var _this3 = this;
-
-            return this.Restangular.one('api/v1').post('links', { 'from_node_id': option.from, 'to_node_id': option.to, "dialogue_id": this.dialogueId }).then(function (link) {
-                link.from = link.from_node_id;
-                link.to = link.to_node_id;
-                link.color = { inherit: 'to' };
-                _this3.links.add(link);
-            });
-        }
-    }, {
-        key: 'deleteLink',
-        value: function deleteLink(option) {
-            var _this4 = this;
-
-            var toDelete = this.links.get({
-                filter: function filter(link) {
-                    return link.from == option.from && link.to == option.to;
-                }
-            });
-
-            return this.Restangular.one('api/v1/links', toDelete[0].id).remove().then(function (link) {
-                _this4.links.remove(toDelete[0].id);
-            });
-        }
-    }, {
-        key: 'deleteNode',
-        value: function deleteNode(id) {
-            var _this5 = this;
-
-            this.Restangular.one('api/v1/nodes', id).remove().then(function (node) {
-                _this5.nodes.remove(id);
-            });
-        }
-    }, {
-        key: 'setRouter',
-        value: function setRouter(router) {
-            this.router = router;
-        }
-    }]);
-
-    return GraphService;
-}();
-
-;
-
-GraphService.$inject = ['Restangular', '$q'];
-
-angular.module('app').service('GraphService', GraphService);
-
-/***/ }),
-/* 33 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-// import * as angular from "angular";
-// import * as restangular from "restangular";
-// import {cookies} from "angular";
-// import {IModalServiceInstance} from "angular-ui-bootstrap";
-// import * as _ from "lodash";
-// import IComponentOptions = angular.IComponentOptions;
-/**
- * Created by user on 05.01.17.
- */
-
-var treeModalTpl = __webpack_require__(54);
-
-angular.module('app').component('modalComponent', {
-  bindings: {
-    resolve: '<',
-    close: '&',
-    dismiss: '&'
-  },
-  template: treeModalTpl(),
-  controller: TreeModalCtrl,
-  controllerAs: '$ctrl'
-});
-TreeModalCtrl.$inject = ['Restangular', '$cookies'];
-function TreeModalCtrl(Restangular, cookies) {
-  var vm = this;
-
-  this.$onInit = function () {
-    this.node = this.resolve.node;
-    this.toAdd = {
-      text: ""
-    };
-  };
-
-  this.cancel = function () {
-    return this.dismiss({
-      $value: 'cancel'
-    });
-  };
-
-  this.save = function () {
-    var _this = this;
-
-    Restangular.one('api/v1/nodes/', this.node.id).get().then(function (res) {
-      res.choice.push(_this.selected.id);
-      var s = cookies.getAll();
-      return res.customPUT('', '', '', {
-        'X-CSRFToken': s.csrftoken
-      }).then(function () {
-        _this.node.answers.push(_this.selected);
-      });
-    });
-  };
-
-  this.deleteNode = function (id) {
-    var _this2 = this;
-
-    Restangular.one('api/v1/nodes/', this.node.id).get().then(function (res) {
-      res.choice = _.pull(res.choice, id);
-      var s = cookies.getAll();
-      res.customPUT('', '', '', {
-        'X-CSRFToken': s.csrftoken
-      }).then(function () {
-        return _this2.node.answers = _.pullAllBy(_this2.node.answers, [{
-          'id': id
-        }], 'id');
-      });
-    });
-  };
-
-  this.close = function () {
-    return this.dismiss({ $value: 'cancel' });
-  };
-
-  this.create = function (text) {
-    var _this3 = this;
-
-    var obj, s, type;
-    if (this.node.category === 'npc') {
-      type = 'player';
-    } else {
-      type = 'npc';
-    }
-    console.log(this.toAdd);
-    obj = {
-      "category": type,
-      "text": this.toAdd.text,
-      "is_fail": null || this.toAdd.is_fail,
-      "is_success": null,
-      "is_start": null,
-      "type": null || this.toAdd.type,
-      "choice": []
-    };
-    s = cookies.getAll();
-    Restangular.one('api/v1/nodes/').get().then(function (res) {});
-    Restangular.one('api/v1/nodes/').post('', obj, '', {
-      'X-CSRFToken': s.csrftoken
-    }).then(function (res) {
-      _this3.selected = res;
-      _this3.save();
-    });
-  };
-
-  this.setFailure = function () {
-    this.toAdd.is_fail = true;
-    this.toAdd.is_success = null;
-    return this.toAdd.type = 'failure';
-  };
-
-  this.setSuccess = function () {
-    this.toAdd.is_fail = null;
-    this.toAdd.is_success = true;
-    return this.toAdd.type = 'success';
-  };
-
-  this.setDefault = function () {
-    this.toAdd.is_fail = null;
-    this.toAdd.is_success = null;
-    return this.toAdd.type = '';
-  };
-};
-
-/***/ }),
-/* 34 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-__webpack_require__(39);
-
-__webpack_require__(33);
-
-__webpack_require__(32);
-
-__webpack_require__(31);
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- * Created by user on 05.01.17.
- */
-
-var vis = __webpack_require__(6);
-
-var template = __webpack_require__(55);
-
-__webpack_require__(1);
-
-var TreeCtrl = function () {
-    function TreeCtrl(player, Npc, Restangular, $q, uibModal, cookies, GraphService, $scope, DialogueService) {
-        var _this = this;
-
-        _classCallCheck(this, TreeCtrl);
-
-        this.GraphService = GraphService;
-
-        this.groupToAdd = 'player';
-        this.phraseList = [];
-        this.$q = $q;
-        this.$scope = $scope;
-        this.hasNoStart = true;
-
-        this.nodesDataSet = new vis.DataView(GraphService.nodes);
-        this.nodesDataSet.on('*', function (event, properties, senderId) {
-            _this.updateList();
-        });
-
-        this.DialogueService = DialogueService;
-    }
-
-    _createClass(TreeCtrl, [{
-        key: '$routerOnActivate',
-        value: function $routerOnActivate() {
-            var _this2 = this;
-
-            this.$q.all([this.GraphService.init(), this.DialogueService.init()]).then(function () {
-                _this2.checkStartingPoint();
-                _this2.network = _this2.GraphService.getNetwork();
-
-                _this2.network.on("selectNode", function (params) {
-                    var sel = _this2.nodesDataSet.get(params.nodes[0]);
-                    // console.log(sel['group'],this.groupToAdd);
-                    _this2.groupToAdd = sel['group'] == 'player' ? 'npc' : 'player';
-                    // console.log(this.groupToAdd);
-                    _this2.fromNodeId = params.nodes[0];
-                    _this2.updateList();
-                    _this2.getLinkedToNodes();
-                    _this2.$scope.$apply();
-                });
-            });
-        }
-    }, {
-        key: 'getLinkedToNodes',
-        value: function getLinkedToNodes() {
-            var _this3 = this;
-
-            var nodeIds = [];
-            var nodesFromLinks = this.GraphService.links.get({
-                filter: function filter(link) {
-                    link.from == _this3.fromNodeId ? nodeIds.push(link.to) : '';
-                    return link.from == _this3.fromNodeId;
-                }
-            });
-            this.phraseList = this.GraphService.nodes.get(nodeIds);
-        }
-    }, {
-        key: 'showNodeOnNetwork',
-        value: function showNodeOnNetwork() {
-            this.network.focus(this.fromNodeId, { scale: 1, animation: { // animation object, can also be Boolean
-                    duration: 1000, // animation duration in milliseconds (Number)
-                    easingFunction: "easeInOutQuad" // Animation easing function, available are:
-                } });
-            this.network.selectNodes([this.fromNodeId]);
-        }
-    }, {
-        key: 'onChange',
-        value: function onChange() {
-            this.showNodeOnNetwork();
-            this.getLinkedToNodes();
-        }
-    }, {
-        key: 'addNode',
-        value: function addNode() {
-            var _this4 = this;
-
-            var toAdd = {
-                group: this.groupToAdd,
-                fromNodeId: this.fromNodeId,
-                text: this.label,
-                type: this.type != 'none' ? this.type : ''
-            };
-            this.GraphService.addNode(toAdd).then(function () {
-                _this4.type = 'none';
-                _this4.label = '';
-                _this4.onChange();
-            });
-        }
-    }, {
-        key: 'addLink',
-        value: function addLink(id) {
-            var _this5 = this;
-
-            this.GraphService.addLink({ from: this.fromNodeId, to: id }).then(function () {
-                return _this5.onChange();
-            });
-        }
-    }, {
-        key: 'deleteLink',
-        value: function deleteLink(to) {
-            var _this6 = this;
-
-            console.log(to.id);
-            this.GraphService.deleteLink({ from: this.fromNodeId, to: to.id }).then(function () {
-                return _this6.onChange();
-            });
-        }
-    }, {
-        key: 'deleteNode',
-        value: function deleteNode() {
-            this.GraphService.deleteNode(this.fromNodeId);
-        }
-    }, {
-        key: 'updateList',
-        value: function updateList() {
-            var _this7 = this;
-
-            this.nodes = this.nodesDataSet.get({
-                filter: function filter(item) {
-                    return item.group != _this7.groupToAdd;
-                }
-            });
-            this.oppositeNodes = this.nodesDataSet.get({
-                filter: function filter(item) {
-                    return item.group === _this7.groupToAdd;
-                }
-            });
-        }
-    }, {
-        key: 'checkStartingPoint',
-        value: function checkStartingPoint() {
-            var _this8 = this;
-
-            this.hasNoStart = true;
-            this.GraphService.nodes.forEach(function (item) {
-                _this8.hasNoStart = item.is_start ? false : _this8.hasNoStart;
-            });
-            // this.hasNoStart ? alert("there is no Starting Point in this dialogue!") : '' ; 
-        }
-    }, {
-        key: 'notInList',
-        value: function notInList(id) {
-            return this.phraseList.find(function (phrase) {
-                return phrase.id != id;
-            });
-        }
-
-        // dialogue
-
-    }, {
-        key: 'createNewDialogue',
-        value: function createNewDialogue(name) {
-            var _this9 = this;
-
-            this.DialogueService.createNewDialogue(name).then(function () {
-                return _this9.DialogueService.init();
-            });
-            this.newDialogueName = '';
-        }
-    }, {
-        key: 'deleteDialogue',
-        value: function deleteDialogue(dialogue) {
-            var _this10 = this;
-
-            this.DialogueService.deleteDialogue(dialogue).then(function () {
-                return _this10.DialogueService.init();
-            });
-        }
-    }, {
-        key: 'chooseDialogue',
-        value: function chooseDialogue(dialogue) {
-            var _this11 = this;
-
-            var chosenDialogue = JSON.parse(dialogue);
-            this.GraphService.init(chosenDialogue.id).then(function (res) {
-                return _this11.checkStartingPoint();
-            });
-        }
-    }]);
-
-    return TreeCtrl;
-}();
-
-TreeCtrl.$inject = ['Player', 'Npc', 'Restangular', '$q', '$uibModal', '$cookies', 'GraphService', '$scope', 'DialogueService'];
-
-angular.module('app').component('tree', {
-    bindings: {
-        $router: '<'
-    },
-    template: template(),
-    controller: TreeCtrl
-});
-
-/***/ }),
-/* 35 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 36 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 37 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 38 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 39 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, module) {var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -116926,10 +115490,10 @@ angular.module('app').component('tree', {
   }
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59), __webpack_require__(60)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(41), __webpack_require__(42)(module)))
 
 /***/ }),
-/* 41 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -116938,7 +115502,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 42 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -116947,7 +115511,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 43 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -116956,7 +115520,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 44 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -116965,7 +115529,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 45 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -116974,7 +115538,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 46 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -116983,7 +115547,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 47 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -116992,7 +115556,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 48 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -117001,7 +115565,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 49 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -117010,7 +115574,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 50 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -117019,7 +115583,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 51 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -117028,7 +115592,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 52 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -117037,7 +115601,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 53 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -117046,7 +115610,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 54 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
@@ -117055,16 +115619,16 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 55 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(0);
 
-function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"centered\"\u003E\u003Ch3\u003EРедактор диалога\u003C\u002Fh3\u003E\u003Ch5\u003E[[ctrl.treeType]]\u003C\u002Fh5\u003E\u003C\u002Fdiv\u003E\u003Cdiv\u003E\u003Cform class=\"form\"\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-md-4\"\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-md-12\"\u003E\u003Cp class=\"text-danger\" ng-show=\"$ctrl.hasNoStart\"\u003EУ диалога нет точки начала! Вставьте ее чтобы диалог работал!\u003C\u002Fp\u003E\u003Clabel\u003EВыберите Диалог:\u003C\u002Flabel\u003E\u003Cselect name=\"singleSelect\" id=\"dialogues\" ng-model=\"$ctrl.selectedDialogue\" ng-change=\"$ctrl.chooseDialogue($ctrl.selectedDialogue)\"\u003E\u003Coption ng-repeat=\"dialogue in $ctrl.DialogueService.getDialogues() track by $index\" value=\"{{dialogue}}\"\u003E{{dialogue.name}}\u003C\u002Foption\u003E\u003C\u002Fselect\u003E\u003Cbutton class=\"btn btn-danger\" ng-click=\"$ctrl.deleteDialogue($ctrl.selectedDialogue)\"\u003EУдалить\u003C\u002Fbutton\u003E\u003Cbr\u003E\u003Clabel\u003EИли создайте новый\u003C\u002Flabel\u003E\u003Cinput type=\"text\" ng-model=\"$ctrl.newDialogueName\"\u003E\u003Cbutton class=\"btn btn-info\" ng-click=\"$ctrl.createNewDialogue($ctrl.newDialogueName)\"\u003EСоздать\u003C\u002Fbutton\u003E\u003Chr\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"group\"\u003EДля кого будет фраза:\u003C\u002Flabel\u003E\u003Cinput type=\"radio\" ng-model=\"$ctrl.groupToAdd\" name=\"group\" value=\"npc\" ng-click=\"$ctrl.updateList()\"\u003EКомпьютер\u003Cinput type=\"radio\" ng-model=\"$ctrl.groupToAdd\" name=\"group\" value=\"player\" ng-click=\"$ctrl.updateList()\"\u003EИгрок\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"phrase\"\u003EОтвет на какую фразу?:\u003C\u002Flabel\u003E\u003Cselect class=\"form-control\" id=\"phrase\" ng-model=\"$ctrl.fromNodeId\" name=\"to\" ng-change=\"$ctrl.onChange()\"\u003E\u003Coption ng-repeat=\"state in $ctrl.nodes\" ng-value=\"state.id\"\u003E{{ state.label }}\u003C\u002Foption\u003E\u003C\u002Fselect\u003E\u003Cbutton class=\"btn btn-danger\" ng-click=\"$ctrl.deleteNode()\"\u003E\u003Ci class=\"fa fa-window-close\" aria-hidden=\"true\"\u003E\u003C\u002Fi\u003E\u003C\u002Fbutton\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"text\"\u003EТекст ответа\u003Cinput type=\"radio\" ng-model=\"$ctrl.addOrEdit\" value=\"edit\"\u003EДобавить существующий\u003Cinput type=\"radio\" ng-model=\"$ctrl.addOrEdit\" value=\"new\"\u003EНовый\u003C\u002Flabel\u003E\u003Cdiv class=\"form-group\" ng-show=\"$ctrl.addOrEdit==='edit'\"\u003E\u003Cselect class=\"form-control\" id=\"phrase\" ng-model=\"$ctrl.editNodeId\" name=\"editId\"\u003E\u003Coption ng-show=\"$ctrl.notInList(state.id)\" ng-repeat=\"state in $ctrl.oppositeNodes\" ng-value=\"state.id\"\u003E {{ state.label }}\u003C\u002Foption\u003E\u003C\u002Fselect\u003E\u003Cbutton ng-click=\"$ctrl.addLink($ctrl.editNodeId)\"\u003EДобавить\u003C\u002Fbutton\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\" ng-show=\"$ctrl.addOrEdit==='new'\"\u003E \u003Cinput class=\"form-control\" id=\"text\" type=\"text\" placeholder=\"Введите наименование фразы\" value=\"Привет!\" ng-model=\"$ctrl.label\" name=\"label\"\u003E\u003Cinput type=\"radio\" ng-model=\"$ctrl.type\" value=\"none\"\u003Enone\u003Cinput type=\"radio\" ng-model=\"$ctrl.type\" value=\"success\"\u003Esuccess\u003Cinput type=\"radio\" ng-model=\"$ctrl.type\" value=\"failure\"\u003Efailure\u003Cbutton class=\"btn btn-info\" ng-click=\"$ctrl.addNode()\"\u003E\u003Ci class=\"fa fa-plus-circle\" aria-hidden=\"true\"\u003E\u003C\u002Fi\u003E                Добавить Реплику\u003C\u002Fbutton\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Cp ng-repeat=\"phrase in $ctrl.phraseList\"\u003E{{phrase.text}}\u003Cbutton ng-click=\"$ctrl.deleteLink(phrase)\"\u003EУдалить\u003C\u002Fbutton\u003E\u003C\u002Fp\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-md-8\"\u003E\u003Cdiv id=\"mynetwork\"\u003EThis is amind component\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fform\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
+function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"centered\"\u003E\u003Ch3\u003EРедактор диалога\u003C\u002Fh3\u003E\u003Ch5\u003E[[ctrl.treeType]]\u003C\u002Fh5\u003E\u003C\u002Fdiv\u003E\u003Cdiv\u003E\u003Cform class=\"form\"\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-md-4\"\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-md-12\"\u003E\u003Cp class=\"text-danger\" ng-show=\"$ctrl.hasNoStart\"\u003EУ диалога нет точки начала! Вставьте ее чтобы диалог работал!\u003C\u002Fp\u003E\u003Clabel\u003EВыберите Диалог:\u003C\u002Flabel\u003E\u003Cselect name=\"singleSelect\" id=\"dialogues\" ng-model=\"$ctrl.selectedDialogue\" ng-change=\"$ctrl.chooseDialogue($ctrl.selectedDialogue)\"\u003E\u003Coption ng-repeat=\"dialogue in $ctrl.DialogueService.getDialogues() track by $index\" value=\"{{dialogue}}\"\u003E{{dialogue.name}}\u003C\u002Foption\u003E\u003C\u002Fselect\u003E\u003Cbutton class=\"btn btn-danger\" ng-click=\"$ctrl.deleteDialogue($ctrl.selectedDialogue)\"\u003EУдалить\u003C\u002Fbutton\u003E\u003Cbr\u003E\u003Clabel\u003EИли создайте новый\u003C\u002Flabel\u003E\u003Cinput type=\"text\" ng-model=\"$ctrl.newDialogueName\"\u003E\u003Cbutton class=\"btn btn-info\" ng-click=\"$ctrl.createNewDialogue($ctrl.newDialogueName)\"\u003EСоздать\u003C\u002Fbutton\u003E\u003Chr\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"group\"\u003EДля кого будет фраза:\u003C\u002Flabel\u003E\u003Cinput type=\"radio\" ng-model=\"$ctrl.groupToAdd\" name=\"group\" value=\"npc\" ng-click=\"$ctrl.updateList()\"\u003EКомпьютер\u003Cinput type=\"radio\" ng-model=\"$ctrl.groupToAdd\" name=\"group\" value=\"player\" ng-click=\"$ctrl.updateList()\"\u003EИгрок\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"phrase\"\u003EОтвет на какую фразу?:\u003C\u002Flabel\u003E\u003Cdiv ng-hide=\"$ctrl.state.isEditingNode\"\u003E\u003Cselect class=\"form-control\" id=\"phrase\" ng-model=\"$ctrl.fromNodeId\" name=\"to\" ng-change=\"$ctrl.onChange()\"\u003E\u003Coption ng-repeat=\"node in $ctrl.nodes\" ng-value=\"node.id\"\u003E{{ node.label }}\u003C\u002Foption\u003E\u003C\u002Fselect\u003E\u003C\u002Fdiv\u003E\u003Cinput type=\"text\" ng-show=\"$ctrl.state.isEditingNode\" ng-model=\"$ctrl.editingLabel\"\u003E\u003Cbutton class=\"btn btn-danger\" ng-click=\"$ctrl.deleteNode()\" ng-hide=\"$ctrl.state.isEditingNode\"\u003E\u003Ci class=\"fa fa-window-close\" aria-hidden=\"true\"\u003E\u003C\u002Fi\u003E\u003C\u002Fbutton\u003E\u003Cbutton class=\"btn btn-warning\" ng-click=\"$ctrl.editNode($ctrl.fromNodeId)\" ng-hide=\"$ctrl.state.isEditingNode\"\u003E\u003Ci class=\"fa fa-pencil\" aria-hidden=\"true\"\u003E\u003C\u002Fi\u003E\u003C\u002Fbutton\u003E\u003Cbutton class=\"btn btn-success\" ng-show=\"$ctrl.state.isEditingNode\" ng-click=\"$ctrl.updateNode($ctrl.editingNode)\"\u003E\u003Ci class=\"fa fa-check-circle-o\" aria-hidden=\"true\"\u003E\u003C\u002Fi\u003E\u003C\u002Fbutton\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Clabel for=\"text\"\u003EТекст ответа\u003Cinput type=\"radio\" ng-model=\"$ctrl.addOrEdit\" value=\"edit\"\u003EДобавить существующий\u003Cinput type=\"radio\" ng-model=\"$ctrl.addOrEdit\" value=\"new\"\u003EНовый\u003C\u002Flabel\u003E\u003Cdiv class=\"form-group\" ng-show=\"$ctrl.addOrEdit==='edit'\"\u003E\u003Cselect class=\"form-control\" id=\"phrase\" ng-model=\"$ctrl.editNodeId\" name=\"editId\"\u003E\u003Coption ng-show=\"$ctrl.notInList(state.id)\" ng-repeat=\"state in $ctrl.oppositeNodes\" ng-value=\"state.id\"\u003E {{ state.label }}\u003C\u002Foption\u003E\u003C\u002Fselect\u003E\u003Cbutton ng-click=\"$ctrl.addLink($ctrl.editNodeId)\"\u003EДобавить\u003C\u002Fbutton\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\" ng-show=\"$ctrl.addOrEdit==='new'\"\u003E \u003Cinput class=\"form-control\" id=\"text\" type=\"text\" placeholder=\"Введите наименование фразы\" value=\"Привет!\" ng-model=\"$ctrl.label\" name=\"label\"\u003E\u003Cinput type=\"radio\" ng-model=\"$ctrl.type\" value=\"none\"\u003Enone\u003Cinput type=\"radio\" ng-model=\"$ctrl.type\" value=\"success\"\u003Esuccess\u003Cinput type=\"radio\" ng-model=\"$ctrl.type\" value=\"failure\"\u003Efailure\u003Cbutton class=\"btn btn-info\" ng-click=\"$ctrl.addNode()\"\u003E\u003Ci class=\"fa fa-plus-circle\" aria-hidden=\"true\"\u003E\u003C\u002Fi\u003E                Добавить Реплику\u003C\u002Fbutton\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"form-group\"\u003E\u003Cp ng-repeat=\"phrase in $ctrl.phraseList\"\u003E{{phrase.text}}\u003Cbutton ng-click=\"$ctrl.deleteLink(phrase)\"\u003EУдалить\u003C\u002Fbutton\u003E\u003C\u002Fp\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-md-8\"\u003E\u003Cdiv id=\"mynetwork\"\u003EThis is amind component\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fform\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
 module.exports = template;
 
 /***/ }),
-/* 56 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -117076,7 +115640,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   /* global define, require */
   // https://github.com/umdjs/umd/blob/master/templates/returnExports.js
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(40), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(22), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -118525,7 +117089,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 
 /***/ }),
-/* 57 */
+/* 39 */
 /***/ (function(module, exports) {
 
 /*!
@@ -120923,15 +119487,15 @@ $templateCache.put("selectize/select-multiple.tpl.html","<div class=\"ui-select-
 $templateCache.put("selectize/select.tpl.html","<div class=\"ui-select-container selectize-control single\" ng-class=\"{\'open\': $select.open}\"><div class=\"selectize-input\" ng-class=\"{\'focus\': $select.open, \'disabled\': $select.disabled, \'selectize-focus\' : $select.focus}\" ng-click=\"$select.open && !$select.searchEnabled ? $select.toggle($event) : $select.activate()\"><div class=\"ui-select-match\"></div><input type=\"search\" autocomplete=\"off\" tabindex=\"-1\" class=\"ui-select-search ui-select-toggle\" ng-class=\"{\'ui-select-search-hidden\':!$select.searchEnabled}\" ng-click=\"$select.toggle($event)\" placeholder=\"{{$select.placeholder}}\" ng-model=\"$select.search\" ng-hide=\"!$select.isEmpty() && !$select.open\" ng-disabled=\"$select.disabled\" aria-label=\"{{ $select.baseTitle }}\"></div><div class=\"ui-select-choices\"></div><div class=\"ui-select-no-choice\"></div></div>");}]);
 
 /***/ }),
-/* 58 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(57);
+__webpack_require__(39);
 module.exports = 'ui.select';
 
 
 /***/ }),
-/* 59 */
+/* 41 */
 /***/ (function(module, exports) {
 
 var g;
@@ -120958,7 +119522,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 60 */
+/* 42 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -120986,6 +119550,1539 @@ module.exports = function(module) {
 
 
 /***/ }),
+/* 43 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/**
+ * Created by user on 05.01.17.
+ */
+
+
+var NpcInfoTpl = __webpack_require__(23);
+__webpack_require__(1);
+
+
+angular.module('app').component('npcInfo',{
+  bindings:{
+    $router:'<',
+    id: '<'
+  },
+  template:NpcInfoTpl(),
+  controller:NpcInfoCtrl,
+  controllerAs:'ctrl'
+});
+
+NpcInfoCtrl.$inject = ['Restangular','Npc','$q'];
+function NpcInfoCtrl(Restangular,Npc,q){
+  var npc;
+
+  this.$onInit = function() {
+    Npc.getNpc(this.id).then(res=>this.npc = res);
+  }
+  this.talk = function () {
+      Npc.selectCurrent(this.id);
+      // console.log(this.$router);
+      this.$router.navigate(['/Talk']);
+  }
+};
+
+
+
+
+/***/ }),
+/* 44 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// import * as angular from "angular";
+// import IService = restangular.IService;
+// import * as restangular from "restangular";
+// import IComponentOptions = angular.IComponentOptions;
+/**
+ * Created by user on 05.01.17.
+ */
+
+var PlayerInfoTpl  = __webpack_require__(24);
+
+
+angular.module('app').component('playerInfo',{
+    bindings:{
+      $router:'<'
+  },
+  template:PlayerInfoTpl(),
+  controller :PlayerInfoCtrl,
+  controllerAs:'ctrl'
+});
+
+PlayerInfoCtrl.$inject =  ['Restangular','Player'];
+function PlayerInfoCtrl(Restangular,player) {
+  this.player = player;
+  console.log(this);
+};
+
+
+
+
+/***/ }),
+/* 45 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// import * as angular from "angular";
+// import {GameService} from "../gameService";
+// import {Company} from "../../lib/Company";
+// import IComponentOptions = angular.IComponentOptions;
+/**
+ * Created by user on 05.01.17.
+ */
+
+var companyDetailTpl = __webpack_require__(26);
+
+
+
+__webpack_require__(43);
+__webpack_require__(49);
+
+__webpack_require__(3);
+
+angular.module('app').component('companyDetail',{
+  bindings:{
+    $router:'<'
+  },
+  template:companyDetailTpl(),
+  controller :CompanyDetailCtrl,
+  controllerAs:'ctrl'
+});
+
+CompanyDetailCtrl.$inject= ['gameService','Company'];
+
+function CompanyDetailCtrl(service,company) {
+    this.gameName = "Экран информации о компании";
+    this.company = company;
+
+  this.$routerOnActivate = function(next) {
+    this.company.selectCurrent(next.params.companyId);
+  }
+
+  this.goToTalk=function(id) {
+    this.$router.navigate([
+      'Talk', {
+        npcId: id
+      }
+    ]);
+  }
+
+
+};
+
+
+
+
+
+/***/ }),
+/* 46 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var CompanyListTpl = __webpack_require__(27);
+
+angular.module('app').component('companyList',{
+    bindings:{$router:'<'},
+    template: CompanyListTpl(),
+    controller :CompanyListCtrl,
+    controllerAs:'ctrl'
+});
+
+CompanyListCtrl.$inject = ['gameService'];
+
+function CompanyListCtrl(service) {
+    this.service = service;
+
+};
+
+
+
+
+
+/***/ }),
+/* 47 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/**
+ * Created by user on 05.01.17.
+ */
+// import * as angular from "angular";
+// import {GameService} from "./gameService";
+// import IComponentOptions = angular.IComponentOptions;
+var gameTpl = __webpack_require__(28);
+
+__webpack_require__(44);
+
+__webpack_require__(3);
+
+__webpack_require__(46);
+
+__webpack_require__(45);
+
+__webpack_require__(48);
+
+
+
+angular.module('app').component('game',{
+  bindings:{
+    $router:'<'
+  },
+  template:gameTpl(),
+  controller :GameCtrl,
+  controllerAs:'ctrl',
+  $routeConfig: [
+    {
+      path: '/',
+      name: 'CompanyList',
+      component: 'companyList',
+      useAsDefault: true
+    }, {
+      path: '/company-detail',
+      name: 'CompanyDetail',
+      component: 'companyDetail'
+    }, {
+      path: '/profile',
+      name: 'Profile',
+      component: 'profile'
+    }
+  ]
+});
+GameCtrl.$inject = ['gameService'];
+function GameCtrl(service)  {
+  this.gameName = "Основной экран";
+  this.$routerOnActivate =function() {
+    service.init();
+  }
+
+};
+
+
+
+
+
+
+
+/***/ }),
+/* 48 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// import * as angular from "angular";
+// import {GameService} from "../gameService";
+// import IService = restangular.IService;
+// import * as restangular from "restangular";
+// import IComponentOptions = angular.IComponentOptions;
+/**
+ * Created by user on 05.01.17.
+ */
+
+var profileTpl = __webpack_require__(29);
+
+__webpack_require__(3);
+
+
+angular.module('app').component('profile',{
+  bindings:{
+    $router:'<'
+  },
+  template:profileTpl(),
+  controller : ProfileCtrl,
+  controllerAs:'ctrl'
+});
+
+ProfileCtrl.$inject = ['gameService'];
+
+function ProfileCtrl(service)  {
+  this.service = service
+
+};
+
+
+
+/***/ }),
+/* 49 */
+/***/ (function(module, exports) {
+
+// import * as angular from "angular";
+// import IService = restangular.IService;
+// import * as restangular from "restangular";
+/**
+ * Created by user on 05.01.17.
+ */
+
+angular.module('app').service('Company', ['Restangular', Company]);
+
+function Company(Restangular){
+  // public current: {};
+  // public items: Array<any>;
+    var current = {},
+    items = [];
+    var service={
+        current:current,
+        items:items,
+
+        selectCurrent:selectCurrent
+    };
+    return service;
+
+    function selectCurrent(id) {
+        if (service.current.id != id) {
+        Restangular.one('api/v1/companies/', id).get().then((res)=>{
+            service.current = res;
+            Restangular.one('api/v1/companies/'+ id+'/npcs/').get().then((res)=>{
+                var s = [];
+                _.forEach(res,(npc)=>{
+                    s.push(npc.id);
+                })
+                service.current.npc_set = s;
+            });
+        });
+        
+    }
+    }
+
+};
+
+
+
+
+
+
+/***/ }),
+/* 50 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var menuTpl = __webpack_require__(30);
+var  modalTpl = __webpack_require__(31);
+__webpack_require__(51);
+__webpack_require__(6);
+
+
+
+angular.module('app')
+  .component('menu',{
+    bindings:{
+      $router:'<'
+    },
+    template:menuTpl(),
+    controller: MenuCtrl,
+    controllerAs:'ctrl'
+  })
+  .value('$routerRootComponent', 'app');
+
+MenuCtrl.$inject = ['$uibModal', 'Restangular', '$cookies','AuthService'];
+
+function  MenuCtrl(uibModal,Restangular,cookies,AuthService)  {
+  this.isLoggedIn = AuthService.isLoggedIn;
+  this.logout = AuthService.logout;
+  var vm = this;
+  vm.canSeeEditor = false;
+  vm.$onInit = function(){
+    Restangular.one('api/v1/my/').get().then( function(res) {
+        localStorage.setItem("userId",res.user_id);
+        vm.canSeeEditor = res.see_editor;
+    });
+
+    Restangular.one('api/v1/persons').get().then(function (res){
+        vm.players = res;
+    });
+  }
+  vm.goToGame = function(playerId) {
+    localStorage.setItem("playerId",playerId );
+    vm.$router.navigate(['Game']);
+  }
+  vm.deletePerson = function(id) {
+    var s =  cookies.getAll();
+    return Restangular.one('api/v1/persons/' + id).remove('', {
+      'X-CSRFToken': s.csrftoken
+    }).then( function(res) { return vm.$onInit();});
+  }
+  vm.help = function() {
+    return vm.modal = uibModal.open({
+      controller: 'modalHelpCtrl',
+      controllerAs: '$ctrl',
+      template: modalTpl()
+    });
+  }
+
+
+}
+
+
+
+/***/ }),
+/* 51 */
+/***/ (function(module, exports) {
+
+
+
+
+
+// import * as angular from "angular";
+// import {IModalServiceInstance} from "angular-ui-bootstrap";
+//
+angular
+    .module('app').controller('ModalHelpCtrl',ModalHelpCtrl);
+
+ModalHelpCtrl.$inject = ['$uibModalInstance'];
+function ModalHelpCtrl($uibModalInstance)
+{
+  this.cancel=function() { return uibModalInstance.close(); };
+};
+
+
+
+
+/***/ }),
+/* 52 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var newGameTpl= __webpack_require__(32);
+
+
+angular.module('app').component('newgame',{
+   bindings:{
+    $router:'<'
+  },
+  template:newGameTpl(),
+  controller :  NewGameCtrl,
+  controllerAs: 'ctrl'
+    }
+);
+
+
+NewGameCtrl.$inject = ['Restangular', '$cookies'];
+function NewGameCtrl(Restangular,cookies){
+    this.images = [];
+    this.gameName = "Экран выбора персонажа";
+    this.stats = {
+      items: [
+        {
+          id: 1,
+          caption: "Активность",
+          value: 5,
+          max: 9,
+          min: 1,
+          name: 'activeness'
+        }, {
+          id: 2,
+          caption: "Связи",
+          value: 5,
+          max: 9,
+          min: 1,
+          name: 'network'
+        }, {
+          id: 3,
+          caption: "Психология",
+          value: 5,
+          max: 9,
+          min: 1,
+          name: 'psychology'
+        }, {
+          id: 4,
+          caption: "Интелект",
+          value: 5,
+          max: 9,
+          min: 1,
+          name: 'intellect'
+        }, {
+          id: 5,
+          caption: "Интроверсия - Экстроверсия",
+          value: 3,
+          max: 3,
+          min: 1,
+          name: 'introversion'
+        }
+      ]
+    };
+    this.specialties = {
+      items: [
+        {
+          id: 2,
+          caption: "Любимец государства",
+          tooltip: "Хорошо получается работать с гос. сектором"
+        }, {
+          id: 3,
+          caption: "Прошаренный",
+          tooltip: "Знает технологию по которой работает компания"
+        }, {
+          id: 4,
+          caption: "Большой чек",
+          tooltip: "Получает дополнительную возможность успешно продать если чек большой"
+        }, {
+          id: 5,
+          caption: "Телефонный маньяк",
+          tooltip: "Может делать огромное количество звонков,но на личных встречах ведет себя не очень"
+        }
+      ]
+    };
+    this.perks = {
+      items: [
+        {
+          id: 1,
+          caption: "Парень с заводского",
+          chosen: false
+        }, {
+          id: 2,
+          caption: "Белый воротничок",
+          chosen: false
+        }, {
+          id: 3,
+          caption: "Раздолбай",
+          chosen: false
+        }
+      ]
+    };
+    this.indusrty = {
+      items: [
+        {
+          id: 1,
+          caption: "Строительство"
+        }, {
+          id: 2,
+          caption: "Сельское Хозяйство"
+        }, {
+          id: 3,
+          caption: "FMCG"
+        }, {
+          id: 4,
+          caption: "Государственный сектор"
+        }
+      ]
+    };
+    this.points = 5;
+
+    var vm = this;
+
+  vm.$onInit = function() {
+    Restangular.one('api/v1/persons').get().then((res)=> {
+        vm.players = res;
+      });
+    vm.current = {
+      stats: {
+        personality: {
+          activeness: 5,
+          network: 5,
+          psychology: 5,
+          intellect: 5,
+          introversion: 5
+        },
+        specialties: [this.specialties.items[0]],
+        knowProduct: 1,
+        minCalls: 7,
+        maxCalls: 14,
+        perks: [],
+        money: 15
+      },
+      image_path: '',
+      first_name: "Иван",
+      last_name: "Иванов",
+      company: "Абырвалг инкорпорейтед"
+    };
+    return vm.generateImages();
+  }
+
+  vm.plus  = function(what) {
+    var r;
+    r = _.find(vm.stats.items, {
+      id: what
+    });
+    if (vm.current.stats.personality[r.name] < r.max && vm.points > 0) {
+      vm.current.stats.personality[r.name]++;
+      vm.points--;
+    }
+  }
+
+  vm.minus = function(what) {
+    var r;
+    r = _.find(this.stats.items, {
+      id: what
+    });
+    if (this.current.stats.personality[r.name] > r.min) {
+      this.current.stats.personality[r.name]--;
+      this.points++;
+    }
+  }
+
+  vm.toggle = function() {
+    this.showMenu = !this.showMenu;
+  }
+
+  vm.chooseSpecialty = function(id) {
+    this.current.specialties = [
+      _.find(this.specialties.items, {
+        id: id
+      })
+    ];
+    if (this.current.specialties[0].id === 3) {
+      this.current.knowProduct = 5;
+    } else {
+      this.current.knowProduct = 1;
+    }
+    if (this.current.specialties[0].id === 5) {
+      return this.current.maxCalls = 25;
+    } else {
+      return this.current.maxCalls = 15;
+    }
+  }
+
+  vm.chooseIndustry =function(id) {
+    return this.current.industry = _.find(this.indusrty.items, {
+      id: id
+    });
+  }
+
+  vm.chooseAvatar = function(image_path) {
+    return this.current.image_path = image_path;
+  }
+
+  vm.startGame = function (id) {
+    return this.$router.navigate([
+      'Game', {
+        playerAvatarId: id
+      }
+    ]);
+  }
+
+  vm.generateImages = function () {
+    var i, j, k, len, name, names;
+    names = ['manager', 'secretar'];
+    this.images = [];
+    for (j = 0, len = names.length; j < len; j++) {
+      name = names[j];
+      for (i = k = 1; k <= 11; i = ++k) {
+        vm.images.push(name + i + '.png');
+      }
+    }
+    console.log(vm.images);
+    return this.current.image_path = vm.images[0];
+  }
+
+  vm.create = function () {
+    var s;
+    s = cookies.getAll();
+    this.current.name = this.current.first_name + this.current.last_name;
+    this.current.related_companies = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    this.current.owner = localStorage.getItem("userId");
+    return Restangular.one('api/v1/persons').get().then((function(_this) {
+      return function(res) {
+        return res.post('', _this.current, '', {
+          'X-CSRFToken': s.csrftoken
+        }).then(function(res) {
+          _this.$router.navigate(['Menu']);
+        });
+      };
+    })(this));
+  }
+
+
+};
+
+
+
+
+/***/ }),
+/* 53 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var template= __webpack_require__(33);
+
+__webpack_require__(6);
+
+
+angular.module('app').component('signin',{
+   bindings:{
+    $router:'<'
+  },
+  template:template(),
+  controller :  SignInCtrl,
+    }
+);
+
+
+SignInCtrl.$inject = ['Restangular', '$cookies','AuthService'];
+
+function SignInCtrl(Restangular,cookies,AuthService){
+    this.user = {};
+    var _this = this;
+    _this.signin = function(){
+        console.log(this.user);
+        AuthService.login(this.user).then((res)=>{
+          console.log("login successfull");
+          _this.$router.navigate(['Menu']);
+        });
+        
+    };
+    this.$routerOnActivate = function(next){
+        _this.needVerify = next.params.verify;
+        console.log(next.params.verify);
+    }
+
+
+};
+
+
+
+
+/***/ }),
+/* 54 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var template= __webpack_require__(34);
+
+
+angular.module('app').component('signup',{
+   bindings:{
+    $router:'<'
+  },
+  template:template(),
+  controller :  SignUpCtrl,
+    }
+);
+
+
+SignUpCtrl.$inject = ['Restangular', '$cookies'];
+
+function SignUpCtrl(Restangular,cookies){
+    this.user = {};
+    var _this = this;
+    _this.signup = function(credentials){
+        console.log(this.user);
+        Restangular.one('api/v1').post('customers',this.user).then((res)=>{
+          console.log(res);
+          this.$router.navigate(['SignIn',{verify:'true'}]);
+
+
+        });
+    }
+
+
+};
+
+
+
+
+/***/ }),
+/* 55 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// import * as angular from "angular";
+// import * as _ from "lodash";
+// import {Player} from "../lib/player";
+// import IService = restangular.IService;
+// import * as restangular from "restangular";
+// import IQService = angular.IQService;
+// import {Npc} from "../lib/npc";
+// import IComponentOptions = angular.IComponentOptions;
+/**
+ * Created by user on 05.01.17.
+ */
+
+
+__webpack_require__(4);
+__webpack_require__(1);
+__webpack_require__(56);
+
+var talkTpl = __webpack_require__(35);
+
+
+angular.module('app').component('talk',{
+  bindings:{
+    $router:'<'
+  },
+  template:talkTpl(),
+  controller :TalkCtrl,
+  controllerAs:'ctrl'
+});
+
+TalkCtrl.$inject = ['TalkService','$scope'];
+function TalkCtrl(service,scope)
+{
+    this.gameName = "Окно переговоров";
+
+    this.player=service.getPlayer();
+    this.npc=service.getNpc();
+    this.getHistory = service.getHistory;
+    this.getPlayerQuestions = service.getPlayerQuestions;
+    this.update = service.update;
+    this.getNpcAnswers = service.getNpcAnswers;
+    this.getTime = service.getTime;
+
+    
+    
+
+    this.$routerOnActivate = ()=> {
+        service.init().then(()=>{
+            
+            if (service.hasError()) {
+                console.log(this.$router);
+                // this.$router.navigate['Game','CompanyList'];
+                alert('Не отвечают');
+                this.$router.navigateByUrl('/game');
+            }
+        });
+    };
+
+
+    // scope.$watch(()=>service.hasError(),()=>this.$router.navigate['Game']);
+    
+    
+    this.notTheEnd  = function() {
+        return !(service.isStatus('failure') || service.isStatus('success') );
+    }
+
+    this.checkColor=function () {
+        var f;
+        f = "";
+        if (service.isStatus('failure')) {
+            f = "failure";
+        }
+        if (service.isStatus('success')) {
+            f = "success";
+        }
+        return f;
+    };
+
+    
+
+
+
+
+
+};
+
+
+
+
+// ---
+// generated by coffee-script 1.9.2
+
+/***/ }),
+/* 56 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/**
+ * Created by user on 29.03.17.
+ */
+__webpack_require__(4);
+__webpack_require__(1);
+angular.module('app').service('TalkService', TalkService);
+
+TalkService.$inject = ['Restangular', 'Player','Npc','$q'];
+function TalkService(Restangular,player,npc,q) {
+    var inited = false;
+    var router;
+    var state = {
+        time:undefined,
+        history : [],
+        result : {},
+        questions:[],
+        previousAnswer:{},
+    };
+    var service =  {
+        init:init,
+        update:update,
+        getPlayer:getPlayer,
+        getNpc:getNpc,
+
+        getTime:getTime,
+        getHistory:getHistory,
+
+        getPlayerQuestions:getPlayerQuestions,
+        getNpcAnswers:getNpcAnswers,
+
+        isStatus:isStatus,
+
+        setRouter:setRouter,
+        hasError:hasError
+    };
+    return service;
+    function init() {
+        
+        return new Promise ((resolve,reject)=>{
+            state.time = 100;
+            state.end= false;
+            state.type= "";
+            state.error = false;
+            player.init().then(()=>{
+                update().then(()=>{
+                    inited = true;
+                    resolve()
+                });
+            });
+        })
+    }
+    function update (questionId){
+      questionId = questionId||'';
+      var params = {
+        questionId:questionId
+      }
+      return new Promise((resolve,reject)=>{
+        Restangular.one('api/v1/update').get(params).then((res)=>{
+            if (!!res.error){
+                // console.log(res,router);
+                
+            }
+            _.extend(state, res);
+            resolve();
+        });
+      })
+        
+
+    }
+    function hasError(){
+        console.log(!!state.error,state);
+        return !!state.error;
+    }
+    function getPlayer(){
+        return player;
+    }
+    function getNpc() {
+        return npc.getCurrentNpc();
+    }
+    function getNpcAnswers() {
+        return state.previousAnswer;
+
+    }
+    function getTime() {
+        return state.time;
+    }
+    function getHistory() {
+        return state.history;
+    }
+    function getPlayerQuestions() {
+        return state.questions;
+    }
+
+    function setRouter(newrouter){
+        router = newrouter;
+        console.log(router);
+    }
+
+
+
+
+    function isStatus (name) {
+        return state.type === name;
+    }
+
+
+
+}
+
+
+
+
+
+/***/ }),
+/* 57 */
+/***/ (function(module, exports) {
+
+
+
+class DialogueService {
+
+    constructor(Restangular,q){
+        this.inited = false;
+        this.dialogues = [];
+        this.q = q;
+        this.Restangular=Restangular;
+    }
+    
+    init() {
+        let deferred = this.q.defer();
+        this.Restangular.all('api/v1/dialogues/').getList().then((res) => {
+            this.dialogues = [];
+            res.forEach((dialogue)=>this.dialogues.push(dialogue));
+            this.inited = true;
+            return deferred.resolve(res);
+        });
+        return deferred.promise;
+    }
+
+    getDialogues(){
+        return this.dialogues;
+    }
+
+    createNewDialogue(name){
+        return this.Restangular.all('api/v1/dialogues').post({name:name});
+    }
+
+    deleteDialogue(dialogue){
+        const del = JSON.parse(dialogue);
+        let toDelete = this.dialogues.find((d)=> d.id===del.id);
+        return toDelete.remove();
+
+    }
+}
+
+DialogueService.$inject = ['Restangular', '$q'];
+
+angular.module('app').service('DialogueService',DialogueService);
+
+
+
+/***/ }),
+/* 58 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/**
+ * Created by user on 20.04.17.
+ */
+let vis = __webpack_require__(5);
+
+
+
+class GraphService{
+    constructor(Restangular,q) {
+        this.inited = false;
+        this.Restangular = Restangular;
+        this.q = q;
+
+        this.nodes = new vis.DataSet();
+        this.links = new vis.DataSet();
+        this.network = null;
+    }
+
+    init(dialogueId) {
+        this.dialogueId = dialogueId;
+        this.inited = false;
+        let deferred = this.q.defer();
+
+        this.fetchNodes(dialogueId).then((res)=>{
+            _.forEach(res,(node)=>{
+                node.label = this.formatText(node.text);
+                node.group = node.category;
+                switch (node.type){
+                    case 'success':
+                        node.color = {border:'green'}
+                    case 'failure':
+                        node.color = {border:'red'}
+                    default:
+                }
+            });
+            this.setNodes(res);                
+
+            this.fetchLinks(dialogueId).then((res)=>{
+                _.forEach(res,(link)=>{
+                    link.from = link.from_node_id;
+                    link.to = link.to_node_id;
+                    link.color = {inherit:'to'};
+                });
+                this.setLinks(res);
+
+                this.inited = true;
+                deferred.resolve();
+            });
+
+        });
+        return deferred.promise;
+    }
+
+    getNetwork() {
+        const container= document.getElementById('mynetwork');
+        let data = {
+            nodes: this.nodes,
+            edges: this.links
+        };
+        const options = {
+            layout: {},
+            edges:{
+                physics:false,
+                length:300,
+                smooth:false,
+                arrows:{
+                    to: true
+                }
+            },
+            nodes:{
+                shape:'box'
+            },
+            "physics": {
+                "solver": "repulsion"
+            }
+        };
+        this.network = new vis.Network(container, data,options);
+
+        return this.network;
+    }
+
+
+    addNode(toAdd) {
+        return this.Restangular.one('api/v1/').post('nodes',{"category":toAdd.group,"text":toAdd.text,"dialogue_id":this.dialogueId,"type":toAdd.type}).then((node)=>{
+            node.label = node.text;
+            node.group = node.category;
+            this.nodes.add(node);
+
+            return this.Restangular.one('api/v1').post('links',{'from_node_id':toAdd.fromNodeId,'to_node_id':node.id,"dialogue_id":this.dialogueId}).then((link)=>{
+                link.from = link.from_node_id;
+                link.to = link.to_node_id;
+                link.color = {inherit:'to'};
+                this.links.add(link)
+            });
+        })
+    }
+
+    deleteNode(id) {
+        return this.Restangular.one('api/v1/nodes',id).remove().then((node)=>{
+            this.nodes.remove(id);
+        });
+    }
+
+    updateNode(node){
+        console.log(node);
+        node.text = node.label;
+        // return this.Restangular.one('api/v1').
+        var formData = new FormData();
+        var myHeaders = new Headers({'Content-Type': 'application/json'});
+        formData.append('id',node.id);
+        formData.append('text',node.text);
+        var myInit = { method: 'PUT',
+               headers: myHeaders,
+            //    mode: 'cors',
+               cache: 'default',
+               credentials: 'include' ,
+               body:JSON.stringify(node)
+             };
+
+        return new Promise((resolve,reject)=>{
+            fetch('/api/v1/nodes', myInit).then((res)=>res.json()).then((res)=> {
+                this.nodes.update(res);
+                resolve();
+            });
+        });
+        
+    }
+
+    addLink(option){
+        return this.Restangular.one('api/v1').post('links',{'from_node_id':option.from,'to_node_id':option.to,"dialogue_id":this.dialogueId}).then((link)=>{
+                link.from = link.from_node_id;
+                link.to = link.to_node_id;
+                link.color = {inherit:'to'};
+                this.links.add(link)
+            });
+    }
+
+    deleteLink(option){
+        let toDelete = this.links.get({
+            filter: (link) => link.from == option.from && link.to == option.to
+        });
+        return this.Restangular.one('api/v1/links',toDelete[0].id).remove().then((link)=>{
+            this.links.remove(toDelete[0].id);
+        });
+    }
+
+// private
+
+    fetchNodes(dialogueId){
+        let deferred = this.q.defer();
+        let  where  = !!dialogueId ? '/?filter[where][dialogue_id]=' + dialogueId : null;
+        fetch('/api/v1/nodes'+where)
+            .then(res => res.json())
+            .then((res)=> deferred.resolve(res));
+        return deferred.promise;
+    }
+
+
+    fetchLinks(dialogueId){
+        let deferred = this.q.defer();
+        let  where  = !!dialogueId ? '/?filter[where][dialogue_id]=' + dialogueId : null;
+        fetch('/api/v1/links'+where)
+            .then(res => res.json())
+            .then((res)=> deferred.resolve(res));
+        return deferred.promise;
+        
+    }
+    setLinks(links){
+        this.links.clear();
+        this.links.add(links);
+    }
+
+    setNodes(nodes){
+        this.nodes.clear();
+        this.nodes.add(nodes);
+    }
+
+    
+    formatText(text) {
+        let outText = "";
+        if (!text){
+            return ''
+        }
+        else {
+            const textArray = text.split(' ');
+            textArray.forEach(function (element,index) {
+                index %3 ==0 ? outText+=" " + element+ "\n "  : outText+= " " + element +  " ";
+            });
+        }
+        return outText;
+    }
+
+
+
+};
+
+GraphService.$inject = ['Restangular', '$q'];
+
+angular.module('app').service('GraphService', GraphService);
+
+
+
+
+
+
+/***/ }),
+/* 59 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// import * as angular from "angular";
+// import * as restangular from "restangular";
+// import {cookies} from "angular";
+// import {IModalServiceInstance} from "angular-ui-bootstrap";
+// import * as _ from "lodash";
+// import IComponentOptions = angular.IComponentOptions;
+/**
+ * Created by user on 05.01.17.
+ */
+
+var treeModalTpl = __webpack_require__(36);
+
+
+angular.module('app').component('modalComponent', {
+    bindings:{
+      resolve: '<',
+      close: '&',
+      dismiss: '&'
+  },
+  template:treeModalTpl(),
+  controller :  TreeModalCtrl,
+  controllerAs:'$ctrl'
+});
+TreeModalCtrl.$inject = ['Restangular', '$cookies'];
+function TreeModalCtrl(Restangular,cookies) {
+    var vm=this;
+
+  this.$onInit= function(){
+    this.node = this.resolve.node;
+    this.toAdd = {
+      text: ""
+    };
+  }
+
+  this.cancel = function(){
+    return this.dismiss({
+      $value: 'cancel'
+    });
+  }
+
+
+  this.save= function() {
+    Restangular.one('api/v1/nodes/', this.node.id).get().then((res)=> {
+        res.choice.push(this.selected.id);
+        var s = cookies.getAll();
+        return res.customPUT('', '', '', {
+          'X-CSRFToken': s.csrftoken
+        }).then(()=>{
+          this.node.answers.push(this.selected);
+        });
+    });
+  }
+
+  this.deleteNode= function(id) {
+    Restangular.one('api/v1/nodes/', this.node.id).get().then(
+      (res)=> {
+        res.choice = _.pull(res.choice, id);
+        var s = cookies.getAll();
+        res.customPUT('', '', '', {
+          'X-CSRFToken': s.csrftoken
+        }).then(()=> {
+          return this.node.answers = _.pullAllBy(this.node.answers, [
+            {
+              'id': id
+            }
+          ], 'id');
+        });
+
+      });
+
+  }
+
+  this.close= function() {
+    return this.dismiss({$value: 'cancel' });
+  }
+
+  this.create= function(text) {
+    var obj, s, type;
+    if (this.node.category === 'npc') {
+      type = 'player';
+    } else {
+      type = 'npc';
+    }
+    console.log(this.toAdd);
+    obj = {
+      "category": type,
+      "text": this.toAdd.text,
+      "is_fail": null || this.toAdd.is_fail,
+      "is_success": null,
+      "is_start": null,
+      "type": null || this.toAdd.type,
+      "choice": []
+    };
+    s = cookies.getAll();
+    Restangular.one('api/v1/nodes/').get().then((res)=>{
+        }
+    );
+    Restangular.one('api/v1/nodes/').post('', obj, '', {
+      'X-CSRFToken': s.csrftoken
+    }).then((res)=> {
+        this.selected = res;
+        this.save();
+      });
+  }
+
+  this.setFailure= function(){
+    this.toAdd.is_fail = true;
+    this.toAdd.is_success = null;
+    return this.toAdd.type = 'failure';
+  }
+
+  this.setSuccess= function(){
+    this.toAdd.is_fail = null;
+    this.toAdd.is_success = true;
+    return this.toAdd.type = 'success';
+  }
+
+  this.setDefault = function(){
+    this.toAdd.is_fail = null;
+    this.toAdd.is_success = null;
+    return this.toAdd.type = '';
+  }
+
+};
+
+
+
+
+
+/***/ }),
+/* 60 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__tree_css__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__tree_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__tree_css__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__modal__ = __webpack_require__(59);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__modal___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__modal__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__GraphService__ = __webpack_require__(58);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__GraphService___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__GraphService__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__DialogueService__ = __webpack_require__(57);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__DialogueService___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__DialogueService__);
+
+
+/**
+ * Created by user on 05.01.17.
+ */
+
+var vis = __webpack_require__(5);
+
+var template = __webpack_require__(37);
+
+
+
+
+__webpack_require__(1);
+
+
+class TreeCtrl {
+    constructor(player,Npc,Restangular,$q,uibModal,cookies,GraphService,$scope,DialogueService){
+        this.GraphService = GraphService;
+        this.groupToAdd = 'player';
+        this.phraseList = [];
+        this.$q = $q;
+        this.$scope = $scope;
+        this.hasNoStart = true;
+        this.state = {
+            isEditingNode: false
+        };
+
+        this.nodesDataSet = new vis.DataView(GraphService.nodes) ;
+        this.nodesDataSet.on('*',  (event, properties, senderId)=> {
+            this.updateList();
+            
+        });
+
+        this.DialogueService = DialogueService;
+
+        
+        
+    }
+
+    $routerOnActivate() {
+        this.$q.all([
+            this.GraphService.init(),
+            this.DialogueService.init()
+            ]).then(()=>{
+            this.checkStartingPoint();
+            this.network = this.GraphService.getNetwork();
+
+            this.network.on("selectNode",  (params)=> {
+                let sel = this.nodesDataSet.get(params.nodes[0]);
+                // console.log(sel['group'],this.groupToAdd);
+                this.groupToAdd =  sel['group'] == 'player' ? 'npc' : 'player';
+                // console.log(this.groupToAdd);
+                this.fromNodeId = params.nodes[0];
+                this.updateList();
+                this.getLinkedToNodes();
+                this.$scope.$apply();
+            });
+
+        });
+    }
+
+    getLinkedToNodes() {
+        let nodeIds = [];
+        let nodesFromLinks = this.GraphService.links.get({
+            filter: (link) => {
+                link.from == this.fromNodeId ? nodeIds.push(link.to): '';
+                return link.from == this.fromNodeId;
+            }
+        });
+        this.phraseList = this.GraphService.nodes.get(nodeIds);
+
+    }
+
+    showNodeOnNetwork() {
+        this.network.focus(this.fromNodeId,{scale:1,    animation: {             // animation object, can also be Boolean
+            duration: 1000,                 // animation duration in milliseconds (Number)
+            easingFunction: "easeInOutQuad" // Animation easing function, available are:
+        }  });
+        this.network.selectNodes([this.fromNodeId]);
+    }
+
+    onChange() {
+        this.showNodeOnNetwork();
+        this.getLinkedToNodes();
+    }
+
+    addNode() {
+        let toAdd = {
+            group:this.groupToAdd,
+            fromNodeId:this.fromNodeId,
+            text:this.label,
+            type: this.type!='none' ? this.type : ''
+        };
+        this.GraphService.addNode(toAdd).then(()=>{
+            this.type='none';
+            this.label='';
+            this.onChange()
+        });
+    }
+
+    deleteNode() {
+        this.GraphService.deleteNode(this.fromNodeId);
+    }
+
+    editNode(id){
+        this.state.isEditingNode = true;
+        let node = this.GraphService.nodes.get({filter:(node)=>node.id==id})[0];
+        this.editingNode = node;
+        this.editingLabel=node.label;
+    }
+
+    updateNode(node){
+        node.label =  this.editingLabel;
+        this.GraphService.updateNode(node).then(()=>{
+            this.isEditingNode = false;
+            this.onChange()
+        });
+    }
+
+    addLink(id){
+        this.GraphService.addLink({from:this.fromNodeId,to:id}).then(()=>this.onChange());
+    }
+
+    deleteLink(to){
+        console.log(to.id);
+        this.GraphService.deleteLink({from:this.fromNodeId,to:to.id}).then(()=>this.onChange());
+    }
+
+    
+
+    updateList() {
+        this.nodes = this.nodesDataSet.get({
+            filter: (item) => {
+                return (item.group != this.groupToAdd );
+            }
+        });
+        this.oppositeNodes = this.nodesDataSet.get({
+            filter:(item) => {
+                return (item.group === this.groupToAdd );
+            }
+        });
+        
+
+    }
+
+
+    checkStartingPoint(){
+        this.hasNoStart = true;
+        this.GraphService.nodes.forEach((item)=>{
+            this.hasNoStart =  item.is_start ? false : this.hasNoStart ;
+        });
+        // this.hasNoStart ? alert("there is no Starting Point in this dialogue!") : '' ; 
+    }
+
+    notInList(id){
+        return this.phraseList.find(phrase => phrase.id!=id);
+    }
+
+    
+
+    
+    // dialogue
+    createNewDialogue(name){
+        this.DialogueService.createNewDialogue(name).then(()=>this.DialogueService.init());
+        this.newDialogueName = '';
+    }
+
+    deleteDialogue(dialogue){
+        this.DialogueService.deleteDialogue(dialogue).then(()=>this.DialogueService.init());
+        
+    }
+
+    chooseDialogue(dialogue){
+        let chosenDialogue = JSON.parse(dialogue);
+        this.GraphService.init(chosenDialogue.id).then(res => this.checkStartingPoint());
+        
+    }
+}
+
+TreeCtrl.$inject =['Player', 'Npc', 'Restangular', '$q', '$uibModal', '$cookies','GraphService','$scope','DialogueService'];
+
+angular.module('app').component('tree',{
+    bindings:{
+    $router:'<'
+  },
+  template:template(),
+  controller : TreeCtrl,
+});
+
+
+
+
+
+
+
+
+
+/***/ }),
 /* 61 */
 /***/ (function(module, exports) {
 
@@ -121002,10 +121099,15 @@ module.exports = function(module) {
 
 
 
+
 __webpack_require__(8);
 __webpack_require__(7);
 
+
+
 // angular.bootstrap(document, ['app']);
+
+
 
 /***/ })
 /******/ ]);

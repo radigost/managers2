@@ -14,7 +14,6 @@ class GraphService{
         this.nodes = new vis.DataSet();
         this.links = new vis.DataSet();
         this.network = null;
-        
     }
 
     init(dialogueId) {
@@ -36,7 +35,6 @@ class GraphService{
             });
             this.setNodes(res);                
 
-
             this.fetchLinks(dialogueId).then((res)=>{
                 _.forEach(res,(link)=>{
                     link.from = link.from_node_id;
@@ -50,56 +48,8 @@ class GraphService{
             });
 
         });
-
-
-        
-        
         return deferred.promise;
     }
-    
-    fetchNodes(dialogueId){
-        let deferred = this.q.defer();
-        let  where  = !!dialogueId ? '/?filter[where][dialogue_id]=' + dialogueId : null;
-        fetch('/api/v1/nodes'+where)
-            .then(res => res.json())
-            .then((res)=> deferred.resolve(res));
-        return deferred.promise;
-    }
-
-    setNodes(nodes){
-        this.nodes.clear();
-        this.nodes.add(nodes);
-    }
-
-    fetchLinks(dialogueId){
-        let deferred = this.q.defer();
-        let  where  = !!dialogueId ? '/?filter[where][dialogue_id]=' + dialogueId : null;
-        fetch('/api/v1/links'+where)
-            .then(res => res.json())
-            .then((res)=> deferred.resolve(res));
-        return deferred.promise;
-        
-    }
-
-    setLinks(links){
-        this.links.clear();
-        this.links.add(links);
-    }
-    
-    formatText(text) {
-        let outText = "";
-        if (!text){
-            return ''
-        }
-        else {
-            const textArray = text.split(' ');
-            textArray.forEach(function (element,index) {
-                index %3 ==0 ? outText+=" " + element+ "\n "  : outText+= " " + element +  " ";
-            });
-        }
-        return outText;
-    }
-
 
     getNetwork() {
         const container= document.getElementById('mynetwork');
@@ -107,7 +57,7 @@ class GraphService{
             nodes: this.nodes,
             edges: this.links
         };
-        let options = {
+        const options = {
             layout: {},
             edges:{
                 physics:false,
@@ -128,6 +78,8 @@ class GraphService{
 
         return this.network;
     }
+
+
     addNode(toAdd) {
         return this.Restangular.one('api/v1/').post('nodes',{"category":toAdd.group,"text":toAdd.text,"dialogue_id":this.dialogueId,"type":toAdd.type}).then((node)=>{
             node.label = node.text;
@@ -143,6 +95,37 @@ class GraphService{
         })
     }
 
+    deleteNode(id) {
+        return this.Restangular.one('api/v1/nodes',id).remove().then((node)=>{
+            this.nodes.remove(id);
+        });
+    }
+
+    updateNode(node){
+        console.log(node);
+        node.text = node.label;
+        // return this.Restangular.one('api/v1').
+        var formData = new FormData();
+        var myHeaders = new Headers({'Content-Type': 'application/json'});
+        formData.append('id',node.id);
+        formData.append('text',node.text);
+        var myInit = { method: 'PUT',
+               headers: myHeaders,
+            //    mode: 'cors',
+               cache: 'default',
+               credentials: 'include' ,
+               body:JSON.stringify(node)
+             };
+
+        return new Promise((resolve,reject)=>{
+            fetch('/api/v1/nodes', myInit).then((res)=>res.json()).then((res)=> {
+                this.nodes.update(res);
+                resolve();
+            });
+        });
+        
+    }
+
     addLink(option){
         return this.Restangular.one('api/v1').post('links',{'from_node_id':option.from,'to_node_id':option.to,"dialogue_id":this.dialogueId}).then((link)=>{
                 link.from = link.from_node_id;
@@ -151,25 +134,64 @@ class GraphService{
                 this.links.add(link)
             });
     }
+
     deleteLink(option){
         let toDelete = this.links.get({
             filter: (link) => link.from == option.from && link.to == option.to
         });
-
         return this.Restangular.one('api/v1/links',toDelete[0].id).remove().then((link)=>{
             this.links.remove(toDelete[0].id);
         });
     }
 
-    deleteNode(id) {
-        this.Restangular.one('api/v1/nodes',id).remove().then((node)=>{
-            this.nodes.remove(id);
-        });
+// private
+
+    fetchNodes(dialogueId){
+        let deferred = this.q.defer();
+        let  where  = !!dialogueId ? '/?filter[where][dialogue_id]=' + dialogueId : null;
+        fetch('/api/v1/nodes'+where)
+            .then(res => res.json())
+            .then((res)=> deferred.resolve(res));
+        return deferred.promise;
     }
 
-    setRouter(router){
-        this.router = router;
+
+    fetchLinks(dialogueId){
+        let deferred = this.q.defer();
+        let  where  = !!dialogueId ? '/?filter[where][dialogue_id]=' + dialogueId : null;
+        fetch('/api/v1/links'+where)
+            .then(res => res.json())
+            .then((res)=> deferred.resolve(res));
+        return deferred.promise;
+        
     }
+    setLinks(links){
+        this.links.clear();
+        this.links.add(links);
+    }
+
+    setNodes(nodes){
+        this.nodes.clear();
+        this.nodes.add(nodes);
+    }
+
+    
+    formatText(text) {
+        let outText = "";
+        if (!text){
+            return ''
+        }
+        else {
+            const textArray = text.split(' ');
+            textArray.forEach(function (element,index) {
+                index %3 ==0 ? outText+=" " + element+ "\n "  : outText+= " " + element +  " ";
+            });
+        }
+        return outText;
+    }
+
+
+
 };
 
 GraphService.$inject = ['Restangular', '$q'];
