@@ -1,334 +1,252 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="app">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-  <!-- Latest compiled and minified CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-  <link rel="stylesheet" href="style.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-resource.min.js"></script>
-  <script src="index.js"></script>
+    <head>
+        <meta charset="UTF-8">
 
-</head>
-<body ng-controller="BasicController as $ctrl">
-<div class="container-fluid">
-  <!--<div class="header clearfix">-->
-    <!--<nav>-->
-      <!--<ul class="nav nav-pills pull-right">-->
-        <!--<li role="presentation" class="active"><a href="#">Home</a></li>-->
-        <!--<li role="presentation"><a href="#">About</a></li>-->
-        <!--<li role="presentation"><a href="#">Contact</a></li>-->
-      <!--</ul>-->
-    <!--</nav>-->
-    <!--&lt;!&ndash;<h3 class="text-muted">Project name</h3>&ndash;&gt;-->
-  <!--</div>-->
+        <title>Tetra Sales</title>
 
-  <div class="" id="top-image" >
-    <div class="row">
-      <div class="col-md-12">
-        <h1><b><i class="fa fa-flask" aria-hidden="true"></i> TETRA SALES</b></h1>
-        <div class="">
-          <div class="col-md-4"></div>
-          <div class="col-md-4"></div>
-          <div class="col-md-4">
-            <h3>Уникальная программа для развития навыков продаж через диалоги</h3>
-            <p class="lead"> Учимся через практику для быстрого результата</p>
-          </div>
-        </div>
-        
-      </div>
-      <div class="col-md-4">
-        <div class="form-email">
-              <form class="form-inline" ng-submit="$ctrl.sendEmail()">
-                <h3> Зарегистрироваться</h1>
-                <div class="form-group">
-                  <label class="sr-only" for="email">Email address</label>
-                  <input type="email" class="form-control" ng-model="$ctrl.email" id="email" placeholder="Email" name="email">
-                  <button class="btn btn-default">регистрация</button>
+        <!-- Latest compiled and minified CSS -->
+        <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">-->
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="normalize.css">
+    </head>
+
+    <body ng-controller="BasicController as $ctrl">
+        <main class="main main__inner">
+
+            <section class="main__row row-top row-top__inner">
+                    <h1 class="row-top__caption">
+                        <!--<div class="row-top__logo"><i class="fa fa-flask" aria-hidden="true"></i></div>-->
+                        <b>TETRA SALES</b>
+                    </h1>
+
+                    <h5 class="row-top__sales-text">Уникальная программа для развития навыков продаж через диалоги</h5>
+                    <h6 class= "row-top__sales-subtext">Учимся через практику для быстрого результата</h6>
+
+                    <form class = "top-registration-form top-registration-form__inner" ng-submit="$ctrl.sendEmail()">
+                        <label class="top-registration-form__header">
+                            <h3>Оставьте заявку чтобы получить доступ    </h3>
+                        </label>
+                        <input type="email" class="top-registration-form__email" ng-model="$ctrl.email">
+                        <button class="top-registration-form__submit"> Получить</button>
+                    </form>
+            </section>
+
+            <section class="main__row faq faq__inner">
+                <h1 class="">Что это за система</h1>
+                <div class="faq__elements-container">
+                    <div class="faq__element">
+                        <h2>Основана на настоящих продажах</h2>
+                        <p>Вы хотели бы узнать, какие слова продают? Как разговаривают настоящие звезды продаж? У вас теперь есть такая возможность. Мы собрали огромное количество реальных диалогов, происходящих у менеджеров по продажам, переработали их и отобрали самые продающие скрипты, которые представлены у нас в системе.</p>
+                    </div>
+                    <div class="faq__element">
+                        <h2>Опыт реальных людей</h2>
+                        <p>В нашей команде люди, которые сами очень много продавали, формировали команды продаж. На основе опыта продаж огромного количества людей, мы создали систему,на которой можно учится. Как показала практика, игровой процесс позволяет гораздо лучше усваивать необходимую информацию </p>
+                    </div>
+                    <div class="faq__element">
+                        <h2>Искуственный интеллект</h2>
+                        <p>В программе вы работаете с искуственным интеллектом. Наша система искуственного интеллекта постоянно обучается, в том числе на основе ваших ответов. Мы ожидаем, что скоро общение с ним не будет отличаться от разговора с реальными людьми</p>
+                    </div>
+                    <div class="faq__element">
+                        <h2>Практика</h2>
+                        <p>Говорят, чтобы добиться успеха в каком-либо деле, надо потратить на него 10 000 часов. Наша система позволяет начать вкладывать в навыки продаж сразу при начале обучения</p>  
+                    </div>
+                    <div class="faq__element">
+                        <h2>Направленность по отраслям</h2>
+                        <p>В каждой отрасли свои характеристики продаж. Где-то большие суммы продаж, но долгие сделки, где то наоборот. Вы сможете выбрать отрасль, в которой будете практиковаться, и отработаете обход возражений и заключение сделок в этой отрасли.</p>
+                    </div>
+                    <div class="faq__element">
+                        <h2>Все этапы сделок</h2>
+                        <p>В каждой отрасли свои характеристики продаж. Где-то большие чеки, но долгие продажи, где то наоборот. Вы сможете выбрать отрасль, в которой будете практиковаться, и отработаете возражения и заключение сделки в этой отрасли.</p>
+                    </div>
                 </div>
+            </section>
+
+            <section class="main__row traditional traditional__inner ">
+                <h1>Традиционные способы обучения</h1>
+                <div class="traditional__elements-container">
+                    <div class="traditional__element">
+                        <div class="traditional__element-icon">
+                            <i class="fa fa-clock-o" aria-hidden="true"></i>
+                        </div>
+                        <div class="traditional__element-text">
+                            <h2>Короткий временной эффект от обычных тренингов</h2>
+                            <p>Максимальный эффект от тренингов - во время их прохождения, позже эффект значительно снижается</p>
+                        </div>
+                    </div>                        
+                    <div class="traditional__element">
+                        <div class="traditional__element-icon">
+                            <i class="fa fa-book" aria-hidden="true"></i>
+                        </div>
+                        <div class="traditional__element-text">
+                            <h2>Качество обучения</h2>
+                            <p>Хорошие тренеры стоят больших денег, а эффект от посредственных - слабый</p>
+                        </div>
+                    </div>                        
+                    <div class="traditional__element">
+                        <div class="traditional__element-icon">
+                            <i class="fa fa-money" aria-hidden="true"></i>
+                        </div>
+                        <div class="traditional__element-text">
+                            <h2>Книги дают временный эффект</h2>
+                            <p>Можно прочитать сотни книг, но без действий сложно продать, только действия приводят к результату, а переводная литература не всегда применима к региональным особенностям рынка.</p>
+                        </div>
+                    </div>                        
+                    <div class="traditional__element">
+                        <div class="traditional__element-icon">
+                            <i class="fa fa-user-o" aria-hidden="true"></i>
+                        </div>
+                        <div class="traditional__element-text">
+                            <h2>Большая стоимость хороших тренингов</h2>
+                            <p>Не всегда есть нужная сумма </p>
+                        </div>
+                    </div>                        
+                </div>
+            </section>
+
+            <section class="main__row benefits benefits__inner">
+                <h1>Что вы получите благодаря нашей системе</h1>
+                <div class="benefits__elements-container">
+                    <div class="benefits__element">
+                        <div class="benefits__element-icon">
+                            <i class="fa fa-list" aria-hidden="true"></i>
+                        </div>
+                        <div class="benefits__element-text">
+                            <p >Отработаете ту отрасль продаж, которая вам интересна</p>
+                        </div>
+                    </div>                
+                    <div class="benefits__element">
+                        <div class="benefits__element-icon">
+                            <i class="fa fa-fire" aria-hidden="true"></i>
+                        </div>
+                        <div class="benefits__element-text">
+                            <p >Сможете сразу применить знания на практике</p>
+                        </div>
+                    </div>                
+                    <div class="benefits__element">
+                        <div class="benefits__element-icon">
+                            <i class="fa fa-exchange" aria-hidden="true"></i>
+                        </div>
+                        <div class="benefits__element-text">
+                            <p>Техники представленна в интерактивной форме</p>
+                        </div>
+                    </div>                
+                    <div class="benefits__element">
+                        <div class="benefits__element-icon">
+                            <i class="fa fa-hand-paper-o" aria-hidden="true"></i>
+                        </div>
+                        <div class="benefits__element-text">
+                            <p> Узнаете как преодолевать возражения клиентов </p>
+                        </div>
+                    </div>                
+                    <div class="benefits__element">
+                        <div class="benefits__element-icon">
+                            <i class="fa fa-child" aria-hidden="true"></i>
+                        </div>
+                        <div class="benefits__element-text">
+                            <p >Преодолеете страх первого звонка</p>
+                        </div>
+                    </div>                
+                    <div class="benefits__element">
+                        <div class="benefits__element-icon">
+                            <i class="fa fa-user-o" aria-hidden="true"></i>
+                        </div>
+                        <div class="benefits__element-text">
+                            <p >Узнаете, как продают профессионалы</p>
+                        </div>
+                    </div>                
+
+                </div>
+            </section>
+
+            <section class="main__row feedback feedback__inner">
+                <h1>Отзывы наших клиентов</h1>
+                <div class="feedback__people-container">
+                    <div class="feedback__element">
+                        <img src="m_1_640.jpg" width="200px">
+                        <p><b>Дмитрий</b>, менеджер по продажам</p>
+                        <p class="feedback__text">Я ни разу до этого не занимался продажами. Теперь работай в этой отрасли и мне нравится!</p>
+                    </div>
+                    <div class="feedback__element">
+                        <!--<picture>
+                            <source media="(min-width: 800px)"
+                                    sizes="80vw"
+                                    srcset="lighthouse-landscape-640.jpg 640w,
+                                            lighthouse-landscape-1280.jpg 1280w,
+                                            lighthouse-landscape-2560.jpg 2560w">
+                            <img src="lighthouse-160.jpg" alt="lighthouse"
+                                sizes="80vw"
+                                srcset="lighthouse-160.jpg 160w,
+                                        lighthouse-320.jpg 320w,
+                                        lighthouse-640.jpg 640w,
+                                        lighthouse-1280.jpg 1280w">
+                        </picture>-->
+
+                        <img src="m_2_640.jpg" width="200px">
+                        <p><b>Константин</b></p>
+                        <p class="feedback__text">Научился техникам отработки возражений за неделю, реально помогли!</p>
+                    </div>
+                    <div class="feedback__element">
+                        <img src="m_3_320.jpg" width="200px">
+                        <p><b>Сергей</b></p>
+                        <p class="feedback__text">Я ни разу до этого не занимался продажами. Теперь работай в этой отрасли и мне нравится!</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="main__row howto howto__inner">
+                <h1> Как работать в нашей системе</h1>
+                <div class="howto__container">
+                    <div class="howto__element">
+                        <h3>Зарегистрироваться </h3>
+                    </div>
+                    <div class="howto__arrow">
+                        <i class="fa fa-arrow-circle-right" aria-hidden="true"></i>
+                    </div>
+                    <div class="howto__element">
+                        <h3> Выбрать категорию продаж</h3>
+                    </div>
+                    <div class="howto__arrow">
+                        <i class="fa fa-arrow-circle-right" aria-hidden="true"></i>
+                    </div>
+                    <div class="howto__element">
+                        <h3>Начать изучать теорию</h3>
+                    </div>
+                    <div class="howto__arrow">
+                        <i class="fa fa-arrow-circle-right" aria-hidden="true"></i>
+                    </div>
+                    <div class="howto__element">
+                        <h3>Проводить тренировочные звонки</h3>
+                    </div>
+                </div>
+            </section>
+
+            <section class="main__row calltoaction calltoaction__inner">
+                <h1>Начните продавать уже на следующией неделе!</h1>
+                <form class = "top-registration-form top-registration-form__inner" ng-submit="$ctrl.sendEmail()"> 
+                        <label class="top-registration-form__header">
+                            <h3>Оставьте заявку чтобы получить доступ    </h3>
+                        </label>
+                        <input type="email" class="top-registration-form__email" ng-model="$ctrl.email">
+                        <button class="top-registration-form__submit"> Получить</button>
+                    </form>
+            </section>
+            
                 
-              </form>
-          </div>
-      </div>
-      <div class="col-md-4">
-          
+        </main>
 
-      </div>
-      <div class="col-md-4"></div>
-    </div>
-  </div>
-
-  <div class="row" id="about">
-    <div class="col-md-12">
-      <h1>Что это за система</h1>
-      <div class="row text">
-        <div class="col-md-4">
-          <div class="row">
-            <div class="col-md-12">
-              <h3>Основана на настоящих продажах</h3>
-              <p>Вы хотели бы узнать, какие слова продают? Как разговаривают настоящие звезды продаж? У вас теперь есть такая возможность. Мы собрали огромное количество реальных диалогов, происходящих у менеджеров по продажам, переработали их и отобрали самые продающие скрипты, которые представлены у нас в системе.</p>
-            </div>
-            <div class="col-md-12">
-              <h3>Опыт реальных людей</h3>
-              <p>В нашей команде люди, которые сами очень много продавали, формировали команды продаж. На основе опыта продаж огромного количества людей, мы создали систему,на которой можно учится. Как показала практика, игровой процесс позволяет гораздо лучше усваивать необходимую информацию </p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="row">
-            <div class="col-md-12">
-              <h3>Искуственный интеллект</h3>
-              <p>В программе вы работаете с искуственным интеллектом. Наша система искуственного интеллекта постоянно обучается, в том числе на основе ваших ответов. Мы ожидаем, что скоро общение с ним не будет отличаться от разговора с реальными людьми</p>
-            </div>
-            <div class="col-md-12">
-              <h3>Практика</h3>
-              <p>Говорят, чтобы добиться успеха в каком-либо деле, надо потратить на него 10 000 часов. Наша система позволяет начать вкладывать в навыки продаж сразу при начале обучения</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="row">
-            <div class="col-md-12">
-              <h3>Направленность по отраслям</h3>
-              <p>В каждой отрасли свои характеристики продаж. Где-то большие суммы продаж, но долгие сделки, где то наоборот. Вы сможете выбрать отрасль, в которой будете практиковаться, и отработаете обход возражений и заключение сделок в этой отрасли.</p>
-            </div>
-            <div class="col-md-12">
-              <h3>Все этапы сделок</h3>
-              <p>В каждой отрасли свои характеристики продаж. Где-то большие чеки, но долгие продажи, где то наоборот. Вы сможете выбрать отрасль, в которой будете практиковаться, и отработаете возражения и заключение сделки в этой отрасли.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="row" id="classic-education">
-    <div class="col-md-12">
-      <h1>Традиционные способы обучения</h1>
-      <div class="row text">
-        <div class="col-md-6">
-          <div class="row">
-            <div class="col-md-3 icon">
-              <i class="fa fa-clock-o" aria-hidden="true"></i>
-            </div>
-            <div class="col-md-9">
-              <h2>Короткий временной эффект от обычных тренингов</h2>
-              <p>Максимальный эффект от тренингов - во время их прохождения, позже эффект значительно снижается</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="row ">
-            <div class="col-md-3 icon">
-              <i class="fa fa-book" aria-hidden="true"></i>
-
-            </div>
-            <div class="col-md-9">
-              <h2>Качество обучения</h2>
-              <p>Хорошие тренеры стоят больших денег, а эффект от посредственных - слабый</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row text">
-        <div class="col-md-6">
-          <div class="row">
-            <div class="col-md-3 icon">
-              <i class="fa fa-money" aria-hidden="true"></i>
-            </div>
-            <div class="col-md-9">
-              <h2>Книги дают временный эффект</h2>
-              <p>Можно прочитать сотни книг, но без действий сложно продать, только действия приводят к результату, а переводная литература не всегда применима к региональным особенностям рынка.</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="row">
-            <div class="col-md-3 icon">
-              <i class="fa fa-user-o" aria-hidden="true"></i>
-            </div>
-            <div class="col-md-9">
-              <h2>Большая стоимость хороших тренингов</h2>
-              <p>Не всегда есть нужная сумма </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="row" id="benefits">
-    <div class="col-md-12">
-      <h1>Что вы получите благодаря нашей системе</h1>
-      <div class="row">
-        <div class="col-md-10 col-md-offset-1">
-          <div class="col-md-4">
-            <div class="icon">
-              <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
-            </div>
-            <p class="icon-text">Отработаете ту отрасль продаж, которая вам интересна</p>
-          </div>
-          <div class="col-md-4">
-            <div class="icon">
-              <span class="glyphicon glyphicon-fire" aria-hidden="true"></span>
-            </div>
-            <p class="icon-text">Сможете сразу применить знания на практике</p>
-          </div>
-          <div class="col-md-4">
-            <div class="icon">
-              <span class="glyphicon glyphicon-transfer" aria-hidden="true"></span>
-            </div>
-            <p class="icon-text">Техники представленна в интерактивной форме</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-10 col-md-offset-1">
-          <div class="col-md-4">
-            <div class="icon">
-              <i class="fa fa-hand-paper-o" aria-hidden="true"></i>
-            </div>
-            <p class="icon-text">Узнаете как преодолевать возражения клиентов</p>
-          </div>
-          <div class="col-md-4">
-            <div class="icon">
-              <i class="fa fa-child" aria-hidden="true"></i>
-            </div>
-            <p class="icon-text">Преодолеете страх первого звонка</p>
-          </div>
-          <div class="col-md-4">
-            <div class="icon">
-              <i class="fa fa-user-o" aria-hidden="true"></i>
-            </div>
-            <p class="icon-text">Узнаете, как продают профессионалы</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="row" id="feedback">
-    <div class="col-sd-12" >
-      <h1>Отзывы наших клиентов</h1>
-      <div class="row">
-        <div class="col-md-2 col-sm-12"></div>
-        <div class="col-md-8 col-sm-12" >
-          <div class="col-md-4 col-sm-12">
-            <div class="photo col-md-12 icon">
-              <img src="manager1.jpg">
-              <!--<i class="fa fa-user-o" aria-hidden="true"></i>-->
-            </div>
-            <div class="col-md-12 icon-text">
-              <h5 class="icon-text-caption"><strong>Дмитрий</strong>, менеджер по продажам</h5>
-              <p>Я ни разу до этого не занимался продажами. Теперь работай в этой отрасли и мне нравится! </p>
-            </div>
-          </div>
-
-          <div class="col-md-4 col-sm-12">
-            <div class="photo col-md-12 icon">
-              <img src="manager2.jpg">
-            </div>
-            <div class="col-md-12 icon-text">
-              <h5 class="icon-text-caption">Константин</h5>
-              <p>Научился техникам отработки возражений за неделю, реально помогли!</p>
-            </div>
-          </div>
-
-          <div class="col-md-4 col-sm-12">
-            <div class="photo col-md-12 icon">
-              <img src="G7DvOVL9ADs.jpg" >
-            </div>
-            <div class="col-md-12 icon-text">
-              <h5 class="icon-text-caption">Сергей</h5>
-              <p>Попробовал игру, сам продаю, прислал ребятам пару идей</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-2 col-sm-12"></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="row" id="howto">
-    <div class="col-md-12">
-      <h1>Как работать в нашей системе</h1>
-      <div class="row">
-        <div class="col-md-12 ">
-          <div class="row">
-            <div class="col-md-4"></div>
-            <div class="col-md-4 element-text"><h2>Зарегистрироваться </h2></div>
-            <div class="col-md-4"></div>
-          </div>
-        </div>
-        <div class="col-md-12 element-arrow">
-          <i class="fa fa-arrow-circle-right" aria-hidden="true"></i>
-        </div>
-        <div class="col-md-12">
-          <div class="col-md-4"></div>
-          <div class="col-md-4 element-text"><h2> Выбрать категорию продаж</h2></div>
-          <div class="col-md-4"></div>
-
-        </div>
-        <div class="col-md-12 element-arrow">
-          <i class="fa fa-arrow-circle-right" aria-hidden="true"></i>
-        </div>
-        <div class="col-md-12">
-          <div class="col-md-4"></div>
-          <div class="col-md-4 element-text"><h2>Начать изучать теорию</h2></div>
-          <div class="col-md-4"></div>
-
-        </div>
-        <div class="col-md-12 element-arrow">
-          <i class="fa fa-arrow-circle-right" aria-hidden="true"></i>
-        </div>
-        <div class="col-md-12 ">
-          <div class="col-md-4"></div>
-          <div class="col-md-4 element-text"><h2>Проводить тренировочные звонки</h2></div>
-          <div class="col-md-4"></div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="row" id="foot_catch">
+        <footer class="footer footer__inner">
+            <p>© 2017 <i class="fa fa-flask" aria-hidden="true"></i> Тетра Лаб</p>
+        </footer>
 
 
-    <div class="col-md-4 form-email jumbotron">
-    <h3>Зарегистрироваться сейчас</h3>
-      <p>Укажите свой email чтобы мы могли включить вас в список доступа</p>
-      <form class=" form form-inline" ng-submit="$ctrl.sendEmail()">
-
-        <div class="form-group">
-          <label class="sr-only" for="email">Email address</label>
-          <input type="email" class="form-control" ng-model="$ctrl.email" id="email" placeholder="Email" name="email">
-        </div>
-        <button class="btn btn-default">регистрация</button>
-      </form>
-
-    </div>
-    <div class="col-md-6 lozung">
-      <h1>Начните продавать уже на следующией неделе!</h1>
-    </div>
-    <div class="col-md-2"></div>
-  </div>
-
-
-
-  <footer class="footer row">
-    <div class="col-md-12">
-      <p>© 2017 <i class="fa fa-flask" aria-hidden="true"></i> Тетра Лаб</p>
-    </div>
-  </footer>
-
-</div>
-
-  <script src="https://use.fontawesome.com/bf21cdbf1e.js"></script>
-  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<!-- Latest compiled and minified JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-</body>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-resource.min.js"></script>
+        <script src="index.js"></script>
+        <script src="https://use.fontawesome.com/bf21cdbf1e.js"></script>
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    </body>
 </html>
