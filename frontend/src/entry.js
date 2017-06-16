@@ -5,8 +5,13 @@
 
 'use strict';
 
-require('./vendor');
-require('./app');
+import './vendor';
+import './app';
+import './routes';
+
+angular.element(document).ready(function() {
+    angular.bootstrap(document, ["app"]);
+});
 
 
 

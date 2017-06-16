@@ -1,6 +1,6 @@
 var menuTpl = require('./menu.jade');
 var  modalTpl = require('./modal.jade');
-require('./modal');
+// require('./modal');
 require('../lib/AuthService');
 
 

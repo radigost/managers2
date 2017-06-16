@@ -2,54 +2,52 @@
  * Created by user on 05.01.17.
  */
 
+
+
+
+let _inited = new WeakMap();
+let _token = new WeakMap();
+let _loggedIn = new WeakMap();
+let _restangular = new WeakMap();
+
+class AuthService {
+  constructor(Restangular) {
+    _inited.set(this,false);
+    _token.set(this,null);
+    _loggedIn.set(this,false);
+    _restangular.set(this,Restangular);
+
+  }
+
+  init() {
+    return new Promise((resolve,reject)=>{
+      const id = localStorage.getItem("playerId");
+      _inited.set(this,true);
+      resolve();
+    })
+  }
+
+  login(credentials){
+    return _restangular.get(this).one('api/v1').post('customers/login',credentials).then((res)=>{
+        _token.set(this,res.id);
+        _loggedIn.set(this,true);
+    });
+  }
+
+  logout (){
+      return _restangular.get(this).one('api/v1').post('customers/logout',{access_token:token}).then((res)=>{
+        _token.set(this,null);
+        _loggedIn.set(this,false);
+      });
+  }
+
+  get isLoggedIn(){
+      return _loggedIn.get(this);
+  }
+}
+
+AuthService.$inject = ['Restangular'];
+
 angular.module('app')
     .service('AuthService', AuthService);
-
-AuthService.$inject = ['Restangular', '$q'];
-
-function AuthService(Restangular,q) {
-  var inited = false;
-  var token = null;
-  var loggedIn = false;
-  
-
-  var authService = {
-      init:init,
-      login:login,
-      logout:logout,
-      isLoggedIn:isLoggedIn
-    };
-  return authService;
-
-  function init() {
-    var d = q.defer();
-    id = localStorage.getItem("playerId");
-    if (!inited) {
-            inited = true;
-            d.resolve();
-    }
-    else {d.resolve();}
-    return d.promise;
-  }
-
-  function login(credentials){
-    return Restangular.one('api/v1').post('customers/login',credentials).then((res)=>{
-        token=res.id;
-        loggedIn=true;
-        });
-  }
-
-  function logout (){
-      return Restangular.one('api/v1').post('customers/logout',{access_token:token}).then((res)=>{
-        token=null;
-        loggedIn=false;
-        });
-  }
-  function isLoggedIn(){
-      return loggedIn;
-  }
-
-
-};
-
 

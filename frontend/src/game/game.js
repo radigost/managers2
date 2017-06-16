@@ -4,18 +4,33 @@
 // import * as angular from "angular";
 // import {GameService} from "./gameService";
 // import IComponentOptions = angular.IComponentOptions;
-var gameTpl = require('./game.pug');
+let gameTpl = require('./game.pug');
 
-require('../Components/playerInfo/playerInfo');
+import '../Components/playerInfo/playerInfo';
+import './gameService';
+import './companyList/companyList';
+import './companyDetail/companyDetail';
+import './profile/profile';
 
-require('./gameService');
 
-require('./companyList/companyList');
 
-require('./companyDetail/companyDetail');
+class  GameCtrl{
+  constructor(service)  {
+    this.gameName = "Основной экран";
+    // this.service=service;
+    Object.assign(this,{
+      service:service
+    });
+  }
 
-require('./profile/profile');
+  $routerOnActivate() {
+    console.log(this);
+      this.service.init();
+  }
 
+}
+
+GameCtrl.$inject = ['gameService'];
 
 
 angular.module('app').component('game',{
@@ -42,16 +57,6 @@ angular.module('app').component('game',{
     }
   ]
 });
-GameCtrl.$inject = ['gameService'];
-function GameCtrl(service)  {
-  this.gameName = "Основной экран";
-  this.$routerOnActivate =function() {
-    service.init();
-  }
-
-};
-
-
 
 
 

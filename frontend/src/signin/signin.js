@@ -1,38 +1,45 @@
 
-var template= require('./signin.jade');
+let template= require('./signin.jade');
 
-require('../lib/AuthService');
+import '../lib/AuthService';
 
 
-angular.module('app').component('signin',{
-   bindings:{
-    $router:'<'
-  },
-  template:template(),
-  controller :  SignInCtrl,
+
+
+
+
+class SignInCtrl{
+    constructor(Restangular,cookies,AuthService){
+        Object.assign(this,{
+            user:{},
+            AuthService:AuthService
+        });
+        console.log(this);
     }
-);
 
-
-SignInCtrl.$inject = ['Restangular', '$cookies','AuthService'];
-
-function SignInCtrl(Restangular,cookies,AuthService){
-    this.user = {};
-    var _this = this;
-    _this.signin = function(){
+    signin(){
         console.log(this.user);
-        AuthService.login(this.user).then((res)=>{
-          console.log("login successfull");
-          _this.$router.navigate(['Menu']);
+        this.AuthService.login(this.user).then((res)=>{
+          this.$router.navigate(['Menu']);
         });
         
     };
-    this.$routerOnActivate = function(next){
-        _this.needVerify = next.params.verify;
-        console.log(next.params.verify);
+
+    $routerOnActivate(next){
+        this.needVerify = next.params.verify;
     }
 
 
 };
 
+SignInCtrl.$inject = ['Restangular', '$cookies','AuthService'];
 
+
+angular.module('app')
+    .component('signin',{
+        bindings:{
+            $router:'<'
+        },
+        template:template(),
+        controller :  SignInCtrl,
+    });
