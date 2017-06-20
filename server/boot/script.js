@@ -25,7 +25,7 @@ Customer.findOrCreate({where:
 
             if (roleCreated) console.log('Created role:', role);
 
-            if(created && roleCreated) role.principals.create({
+            if(created || roleCreated) role.principals.create({
                 principalType: RoleMapping.USER,
                 principalId: user.id
             }, function(err, principal) {
