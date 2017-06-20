@@ -12,7 +12,7 @@ Customer.findOrCreate({where:
     if (err) throw err;
 
     if (created) Customer.replaceById(user.id,{username: 'Nickolay', email: 'nickolay.pol@gmail.com',password:"adminadmin",emailVerified:"true"},(err,model)=>makeRoles(model,created))
-    else Customer.create({username: 'Nickolay', email: 'nickolay.pol@gmail.com',password:"adminadmin",emailVerified:"true"},(err,model)=>makeRoles(model,created));
+    else Customer.create({username: 'Nickolay', email: 'nickolay.pol@gmail.com',password:"adminadmin",emailVerified:"true"},(err,model)=>makeRoles(model,true));
   });
 
     function makeRoles(user,created){
