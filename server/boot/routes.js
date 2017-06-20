@@ -16,8 +16,8 @@ module.exports = function(app) {
 
     app.get('/api/v1/update', function(req, res) {
         
-        var Link = app.models.Link;
-        var Node = app.models.Node;
+        let Link = app.models.Link;
+        let Node = app.models.Node;
 
         var npcAnswer,content,nodeChoices;
         findEnterPoint(req.query.questionId).then((questionId)=>{

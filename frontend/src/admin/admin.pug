@@ -9,6 +9,7 @@ table(class="table")
         th First Name
         th Last Name
         th Email is verified
+        th Roles
     tr(ng-repeat ="user in $ctrl.users ")
         td [[user.id]]
         td [[user.username]]
@@ -17,6 +18,8 @@ table(class="table")
         td [[user.first_name]]
         td [[user.last_name]]
         td [[user.emailVerified]]
+        td 
+            span(ng-repeat="role in user.roles") [[role]],
         
 
 

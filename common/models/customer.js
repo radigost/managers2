@@ -7,10 +7,12 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var config = require('../../server/config.json');
-var path = require('path');
+let config = require('../../server/config.json');
+let path = require('path');
 
-module.exports = function(customer) {
+
+
+module.exports = function(customer,Role) {
 
 
 
@@ -65,4 +67,48 @@ module.exports = function(customer) {
   //     console.log('> sending password reset email to:', info.email);
   //   });
   // });
+
+  customer.withRoles = function(cb){
+
+    // TODO refactor to normal relations find with working 'include'
+    let app = customer.app;
+    let Role = app.models.Role;
+    let RoleMapping = app.models.RoleMapping;
+
+    Role.find((err,roles)=>{
+      if (err) throw err;
+      RoleMapping.find((err,rolemap)=>{
+        customer.find({include:'role'},(err,customers)=>{
+          
+          customers.forEach((customer)=> {
+              customer.roles = roles.map(
+                (role)=>rolemap.find(
+                  (rolemap)=>rolemap.principalId===customer.id && role.id===rolemap.roleId
+                ) ? role.name : false  
+              );
+          });
+
+          cb(null,customers);
+        })
+      })
+      
+    });
+
+    
+    
+  }
+ 
+  customer.remoteMethod(
+    'withRoles', {
+      http: {
+        path: '/with-roles',
+        verb: 'get'
+      },
+      returns: {
+        arg: 'data',
+        type: 'array',
+        root:'true'
+      }
+    }
+  );
 };

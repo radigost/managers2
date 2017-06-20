@@ -35,7 +35,7 @@ boot(app, __dirname, function(err) {
 });
 
 
-app.datasources['postgres'].autoupdate(['customer'], function(err) {
-  !!err ? console.log(err) :'';
-});
+// app.datasources['postgres'].autoupdate(['Customer'], function(err) {
+//   !!err ? console.log(err) :'';
+// });
 

@@ -1,5 +1,5 @@
 {
-  "name": "customer",
+  "name": "Customer",
   "base": "User",
   "idInjection": true,
   "properties": {
@@ -9,9 +9,8 @@
       "length": 40
     },
     "password": {
-      "type": {
-        "required": false
-      }
+      "type": "String",
+      "required": false
     },
     "phone": {
       "type": "String"
@@ -24,7 +23,9 @@
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    
+  },
   "acls": [
     {
       "accessType": "READ",

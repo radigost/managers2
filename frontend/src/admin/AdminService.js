@@ -16,7 +16,7 @@ class AdminService {
     }
     
     init() {
-        return _restangular.get(this).all('api/v1/customers' ).getList().then((res)=>{
+        return _restangular.get(this).all('api/v1/customers/with-roles' ).getList().then((res)=>{
             _init.set(this,true);
             return _users.set(this,res);
         });
