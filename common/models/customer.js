@@ -81,9 +81,13 @@ module.exports = function(customer,Role) {
         customer.find({include:'role'},(err,customers)=>{
           
           customers.forEach((customer)=> {
+            console.log(customers);
               customer.roles = roles.map(
                 (role)=>rolemap.find(
-                  (rolemap)=>rolemap.principalId===customer.id && role.id===rolemap.roleId
+                  (rolemap)=>{
+                    console.log(rolemap.roleId,role.id,rolemap.principalId,customer.id);
+                    if (rolemap.principalId===customer.id && role.id===rolemap.roleId) return role;
+                  }
                 ) ? role.name : false  
               );
           });

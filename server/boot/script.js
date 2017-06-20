@@ -12,10 +12,11 @@ Customer.findOrCreate({where:
     if (err) throw err;
 
     if (created) Customer.replaceById(user.id,{username: 'Nickolay', email: 'nickolay.pol@gmail.com',password:"adminadmin",emailVerified:"true"},(err,model)=>makeRoles(model,created))
-    else Customer.create({username: 'Nickolay', email: 'nickolay.pol@gmail.com',password:"adminadmin",emailVerified:"true"},(err,model)=>makeRoles(model,true));
+    else Customer.create({username: 'Nickolay', email: 'nickolay.pol@gmail.com',password:"adminadmin",emailVerified:"true"},(err,model)=>makeRoles(model,true,user.id));
   });
 
-    function makeRoles(user,created){
+    function makeRoles(user,created,id){
+        if(id) user.id = id;
         console.log(user);
         //create the admin role
         Role.findOrCreate({
@@ -24,8 +25,8 @@ Customer.findOrCreate({where:
             if (err) throw err;
 
             if (roleCreated) console.log('Created role:', role);
-
-            if(created || roleCreated) role.principals.create({
+            // if(created && roleCreated) 
+            role.principals.create({
                 principalType: RoleMapping.USER,
                 principalId: user.id
             }, function(err, principal) {
