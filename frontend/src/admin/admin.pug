@@ -10,7 +10,8 @@ table(class="table")
         th Last Name
         th Email is verified
         th Roles
-    tr(ng-repeat ="user in $ctrl.users ")
+        th Role To add
+    tr(ng-repeat ="user in $ctrl.adminService.users ")
         td [[user.id]]
         td [[user.username]]
         td [[user.email]]
@@ -20,7 +21,8 @@ table(class="table")
         td [[user.emailVerified]]
         td 
             span(ng-repeat="role in user.roles") [[role]],
-        
+        td 
+            span(ng-repeat="role in $ctrl.adminService.roles" ng-click="$ctrl.adminService.assignRole(role,user)") [[role.name]]
 
 
 

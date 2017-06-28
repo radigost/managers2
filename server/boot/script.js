@@ -17,21 +17,21 @@ Customer.findOrCreate({where:
 
     function makeRoles(user,created,id){
         if(id) user.id = id;
-        console.log(user);
         //create the admin role
         Role.findOrCreate({
         name: 'admin'
         }, function(err, role,roleCreated) {
             if (err) throw err;
 
-            if (roleCreated) console.log('Created role:', role);
+            // if (roleCreated) console.log('Created role:', role);
+             Role.findOrCreate({name: 'editor'});
             // if(created && roleCreated) 
             role.principals.create({
                 principalType: RoleMapping.USER,
                 principalId: user.id
             }, function(err, principal) {
                     if (err) throw err;
-                    console.log('Created principal:', principal);
+                    // console.log('Created principal:', principal);
             });
         
         });

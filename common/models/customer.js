@@ -14,11 +14,9 @@ let path = require('path');
 
 module.exports = function(customer,Role) {
 
-
-
   // //send verification email after registration
   customer.afterRemote('create', function(context, customerInstanse, next) {
-    console.log('> user.afterRemote triggered');
+    // console.log('> user.afterRemote triggered');
 
     var options = {
       type: 'email',
@@ -69,39 +67,27 @@ module.exports = function(customer,Role) {
   // });
 
   customer.withRoles = function(cb){
-
-    // TODO refactor to normal relations find with working 'include'
     let app = customer.app;
     let Role = app.models.Role;
     let RoleMapping = app.models.RoleMapping;
-
     Role.find((err,roles)=>{
       if (err) throw err;
       RoleMapping.find((err,rolemap)=>{
         customer.find({include:'role'},(err,customers)=>{
-          
           customers.forEach((customer)=> {
-            console.log(customers);
               customer.roles = roles.map(
                 (role)=>rolemap.find(
                   (rolemap)=>{
-                    console.log(rolemap.roleId,role.id,rolemap.principalId,customer.id);
                     if (rolemap.principalId===customer.id && role.id===rolemap.roleId) return role;
                   }
                 ) ? role.name : false  
               );
           });
-
           cb(null,customers);
         })
       })
-      
     });
-
-    
-    
   }
- 
   customer.remoteMethod(
     'withRoles', {
       http: {
@@ -115,4 +101,109 @@ module.exports = function(customer,Role) {
       }
     }
   );
+
+
+
+
+customer.addRole = function(data,cb){
+
+    let app = customer.app;
+    let Role = app.models.Role;
+    let RoleMapping = app.models.RoleMapping;
+    cb(null,"ok");
+
+    // Role.find((err,roles)=>{
+    //   if (err) throw err;
+    //   RoleMapping.find((err,rolemap)=>{
+    //     customer.find({include:'role'},(err,customers)=>{
+          
+    //       customers.forEach((customer)=> {
+    //         console.log(customers);
+    //           customer.roles = roles.map(
+    //             (role)=>rolemap.find(
+    //               (rolemap)=>{
+    //                 console.log(rolemap.roleId,role.id,rolemap.principalId,customer.id);
+    //                 if (rolemap.principalId===customer.id && role.id===rolemap.roleId) return role;
+    //               }
+    //             ) ? role.name : false  
+    //           );
+    //       });
+
+    //       cb(null,"ok");
+    //     })
+    //   })
+      
+    // });
+  }
+  customer.remoteMethod(
+    'addRole', {
+      http: {
+        path: '/add-role',
+        verb: 'post'
+      },
+      accepts: { arg: 'data', type: 'object', http: { source: 'req' } },
+
+      returns: {
+        arg: 'data',
+        type: 'string',
+        root:'true'
+      }
+    }
+  )
+
+
+
+
+customer.getRoles = function(req,cb){
+  let tokenId = false;
+  if (req.headers && req.headers.authorization) {
+      tokenId = req.headers.authorization
+  }
+  let app = customer.app;
+  let Role = app.models.Role;
+  let RoleMapping = app.models.RoleMapping;
+    
+  customer.relations.accessTokens.modelTo.findById(tokenId, function(err, accessToken) {
+      if (err) return cb(err);
+      if ( ! accessToken) return cb(new Error('could not find accessToken'));
+
+      customer.findById(accessToken.userId, function (err, user) {
+        if (err) return cb(err);
+        if ( ! user) return cb(new Error('could not find a valid user'));
+
+        RoleMapping.find({where: {principalType: 'USER', principalId: user.id}},(err,rolemap)=>{
+          const roleMaps = [];
+
+          rolemap.forEach((map)=>roleMaps.push(new Promise((resolve,reject)=>{
+            Role.findById(map.roleId,(err,role)=>{
+              if (err) return cb(err);
+              resolve(role.name);
+            })
+          })));
+
+          Promise.all(roleMaps).then((res)=>cb(null,res));
+        });
+      });
+  });
+};
+
+customer.remoteMethod(
+    'getRoles', {
+      http: {
+        path: '/roles',
+        verb: 'get',
+      },
+      accepts:[
+        {arg: 'req', type: 'object', 'http': {source: 'req'}},
+      ],
+      returns: {
+        arg: 'data',
+        type: 'array',
+        root:'true'
+      }
+    }
+  );
+
+
+
 };
