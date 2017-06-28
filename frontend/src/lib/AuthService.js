@@ -4,14 +4,8 @@
 
 import './RestService';
 
+const __ = new WeakMap();
 
-// let _inited = new WeakMap();
-// let _token = new WeakMap();
-// let _loggedIn = new WeakMap();
-// let _restangular = new WeakMap();
-// const _restService = new WeakMap();
-
-let __ = new WeakMap();
 class AuthService {
   constructor(RestService,$timeout) {
     __.set(this,{
@@ -38,9 +32,8 @@ class AuthService {
         __.get(this).token = res.id;
         __.get(this).RestService.setHeaders({'Authorization': __.get(this).token});
         __.get(this).loggedIn = true;
-        __.get(this).RestService.list('customers/roles',{id:res.userId}).then((res)=>{
-          console.log(res);
-          __.get(this).users = res;
+        __.get(this).RestService.list('customers/roles').then((res)=>{
+          __.get(this).$timeout(()=>__.get(this).roles = res);
         });
         
     });
@@ -66,6 +59,13 @@ class AuthService {
   get canSeeEditor(){
     return true;
   }
+
+  has(permission){
+    if (permission ==='canSeeEditor' && __.get(this).roles.find((role)=>role==='admin' || role==='editor')) return true;
+    if (permission ==='admin' && __.get(this).roles.find((role)=>role==='admin' )) return true;
+    return false;
+  }
+
 }
 
 AuthService.$inject = ['RestService','$timeout'];
