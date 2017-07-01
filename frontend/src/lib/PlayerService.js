@@ -2,11 +2,12 @@
  * Created by user on 05.01.17.
  */
 
+import './RestService';
 angular.module('app').service('Player', Player);
 
-Player.$inject = ['Restangular', '$q'];
+Player.$inject = ['RestService', '$q'];
 
-function Player(Restangular,q) {
+function Player(RestService,q) {
   var inited = false;
   var id;
   var type = 'player',
@@ -30,17 +31,18 @@ function Player(Restangular,q) {
   return service;
 
   function init() {
-    var d = q.defer();
+    // TODO why do i need this local storage anymore?
     id = localStorage.getItem("playerId");
-    if (!inited) {
-        Restangular.one('api/v1/persons/', id).get().then((res)=>{
+    return new Promise((resolve,reject)=>{
+      if (!inited) {
+        RestService.get('persons/'+id).then((res)=>{
             _.extend(this, res);
             inited = true;
-            d.resolve();
+            resolve();
         });
-    }
-    else {d.resolve();}
-    return d.promise;
+      }
+      resolve();
+    });
   }
 
   function choosePlayer(playerAvatarID) {

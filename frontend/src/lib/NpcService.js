@@ -1,47 +1,57 @@
 /**
  * Created by user on 05.01.17.
  */
+import './RestService';
+let __ = new WeakMap();
+class Npc{
+  constructor(RestService) {
+    __.set(this,{
+      RestService:RestService,
+      type : 'npc',
+      currentNpc: {},
+      npcList : {}
+    });
+  }
+
+  get type(){
+    return __.get(this).type;
+  }
+
+  get currentNpc(){
+    return __.get(this).currentNpc;
+  }
+
+  get npcList(){
+    return __.get(this).npcList;
+  }
+
+  selectCurrent(id) {
+      this.getNpc(id).then((res)=> __.get(this).currentNpc = res);
+  }
+
+  getCurrentNpc() {
+    return __.get(this).currentNpc;
+  }
+
+  getNpc(id) {
+    return new Promise((resolve,reject)=>{
+      if(__.get(this).npcList[id]){
+        resolve(__.get(this).npcList[id])
+      } 
+      else{
+        __.get(this).RestService.get('npc/'+ id).then((res)=>{
+          __.get(this).npcList[id] = res;
+          resolve(__.get(this).npcList[id]);
+        });
+      } 
+    });
+  }
+
+}
+
+Npc.$inject = ['RestService'];
 angular.module('app').service('Npc',  Npc);
 
-Npc.$inject = ['Restangular', '$q'];
-
-function Npc(Restangular,q) {
-  var type = 'npc',
-  currentNpc = {},
-  npcList = {};
-
-  var service = {
-    type:type,
-    initNew:initNew,
-    getNpc:getNpc,
-    selectCurrent:selectCurrent,
-    getCurrentNpc:getCurrentNpc,
-  };
-  return service;
-
-
-  //factory method
-  function initNew(Restangular, q) {
-    return new Npc(Restangular, q);
-  }
-  function selectCurrent(id) {
-      getNpc(id).then((res)=> currentNpc = res);
-  }
-  function getCurrentNpc() {
-    return currentNpc;
-  }
-  function getNpc(id) {
-    var defer = q.defer();
-    npcList[id] ? defer.resolve(npcList[id]) :  Restangular.one('api/v1/npc/', id).get().then((res)=>{
-      npcList[id] = res;
-     defer.resolve(npcList[id]);
-    });
-    return defer.promise;
-  }
-
-
-
-};
 
 
 

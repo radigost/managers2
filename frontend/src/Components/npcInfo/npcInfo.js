@@ -4,32 +4,44 @@
  */
 
 
-var NpcInfoTpl = require('./npcInfo.pug');
-require('../../lib/NpcService');
+import  template from './npcInfo.pug';
+import '../../lib/NpcService';
 
 
+
+let __ = new WeakMap();
+class NpcInfoCtrl{
+  constructor(Npc,$timeout){
+    __.set(this,{
+      Npc:Npc,
+      $timeout:$timeout
+    });
+    Object.assign(this,{
+      npc : {}
+    })
+}
+
+  $onInit() {
+    __.get(this).Npc.getNpc(this.id).then((res)=>{
+      __.get(this).$timeout(()=>this.npc = res);
+    },(err)=>console.error(err));
+  }
+
+  talk() {
+      __.get(this).Npc.selectCurrent(this.id);
+      this.$router.navigate(['/Talk']);
+  }
+
+};
+
+NpcInfoCtrl.$inject = ['Npc','$timeout'];
 angular.module('app').component('npcInfo',{
   bindings:{
     $router:'<',
     id: '<'
   },
-  template:NpcInfoTpl(),
+  template:template(),
   controller:NpcInfoCtrl,
   controllerAs:'ctrl'
 });
-
-NpcInfoCtrl.$inject = ['Restangular','Npc','$q'];
-function NpcInfoCtrl(Restangular,Npc,q){
-  var npc;
-
-  this.$onInit = function() {
-    Npc.getNpc(this.id).then(res=>this.npc = res);
-  }
-  this.talk = function () {
-      Npc.selectCurrent(this.id);
-      // console.log(this.$router);
-      this.$router.navigate(['/Talk']);
-  }
-};
-
 

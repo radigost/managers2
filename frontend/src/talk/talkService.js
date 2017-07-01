@@ -1,12 +1,13 @@
 /**
  * Created by user on 29.03.17.
  */
-require('../lib/PlayerService');
-require('../lib/NpcService');
+import '../lib/PlayerService';
+import '../lib/NpcService';
+import '../lib/RestService';
 angular.module('app').service('TalkService', TalkService);
 
-TalkService.$inject = ['Restangular', 'Player','Npc','$q'];
-function TalkService(Restangular,player,npc,q) {
+TalkService.$inject = ['RestService', 'Player','Npc','$q','$timeout'];
+function TalkService(RestService,player,npc,q,$timeout) {
     var inited = false;
     var router;
     var state = {
@@ -51,17 +52,15 @@ function TalkService(Restangular,player,npc,q) {
     }
     function update (questionId){
       questionId = questionId||'';
-      var params = {
+      const params = {
         questionId:questionId
       }
       return new Promise((resolve,reject)=>{
-        Restangular.one('api/v1/update').get(params).then((res)=>{
-            if (!!res.error){
-                // console.log(res,router);
-                
-            }
-            _.extend(state, res);
-            resolve();
+        RestService.get('update',params).then((res)=>{
+            $timeout(()=>{
+                _.extend(state, res);
+                resolve();
+            });
         });
       })
         

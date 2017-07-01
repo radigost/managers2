@@ -1,36 +1,44 @@
-// import * as angular from "angular";
-// import * as restangular from "restangular";
-// import {storage} from "angular";
-// import {Player} from "../lib/player";
+
 /**
  * Created by user on 05.01.17.
  */
-require('../lib/PlayerService');
-angular.module('app').service('gameService', GameService);
+import '../lib/PlayerService';
+import '../lib/RestService';
+let __ = new WeakMap();
+class GameService{
+    constructor (RestService,player) {
+        Object.assign(this,{
+        });
 
-GameService.$inject = ['Restangular', 'Player'];
-function GameService(Restangular,player) {
-
-    var inited,companies;
-
-    var inited = false;
-
-    var service =  {
-        inited:inited,
-        companies:companies,
-        player:player,
-        init:init
-    };
-    return service;
-
-    function init() {
-        player.init();
-        Restangular.one('api/v1/companies/').get().then(function(res) {
-          service.companies = res;
-          inited = true;
+        __.set(this,{
+            companies:[],
+            RestService:RestService,
+            isInit :false,
+            player:player,
         });
     }
+
+    init() {
+        __.get(this).player.init();
+        __.get(this).RestService.get('companies/').then((res)=> {
+            __.get(this).companies = res;
+            __.get(this).isInited = true;
+        });
+    }
+    get inited(){
+        return __.get(this).isInit;
+    }
+    get companies(){
+        return __.get(this).companies;
+    }
+    get player (){
+        return __.get(this).player;
+    }
 }
+
+GameService.$inject = ['RestService', 'Player'];
+angular.module('app').service('gameService', GameService);
+
 
 
 

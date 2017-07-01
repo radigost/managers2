@@ -24,7 +24,6 @@ class  GameCtrl{
   }
 
   $routerOnActivate() {
-    console.log(this);
       this.service.init();
   }
 

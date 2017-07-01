@@ -4,40 +4,48 @@
 /**
  * Created by user on 05.01.17.
  */
+import './RestService';
 
-angular.module('app').service('Company', ['Restangular', Company]);
+let __ = new WeakMap();
 
-function Company(Restangular){
-  // public current: {};
-  // public items: Array<any>;
-    var current = {},
-    items = [];
-    var service={
-        current:current,
-        items:items,
-
-        selectCurrent:selectCurrent
-    };
-    return service;
-
-    function selectCurrent(id) {
-        if (service.current.id != id) {
-        Restangular.one('api/v1/companies/', id).get().then((res)=>{
-            service.current = res;
-            Restangular.one('api/v1/companies/'+ id+'/npcs/').get().then((res)=>{
-                var s = [];
-                _.forEach(res,(npc)=>{
-                    s.push(npc.id);
-                })
-                service.current.npc_set = s;
-            });
+class Company{
+    constructor(RestService,$timeout){
+        Object.assign(this,{
         });
+        __.set(this,{
+            RestService:RestService,
+            current:{},
+            items : [],
+            $timeout:$timeout
+        });
+    }
+
+    selectCurrent(id) {
+        if (__.get(this).current.id != id) {
+            __.get(this).RestService.get('companies/'+id).then((res)=>{
+                __.get(this).current = res;
+                __.get(this).RestService.get('companies/'+ id+'/npcs/').then((res)=>{
+                    const s = [];
+                    _.forEach(res,(npc)=>{
+                        s.push(npc.id);
+                    })
+                    __.get(this).current.npc_set = s;
+                });
+            });
         
+        }
     }
+
+
+    get current(){
+        return __.get(this).current;
+    }
+    get items(){
+        return __.get(this).items;
     }
 
-};
+}
 
-
-
+Company.$inject = ['RestService','$timeout'];
+angular.module('app').service('Company',Company);
 

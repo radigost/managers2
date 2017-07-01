@@ -1,17 +1,17 @@
-
+import '../lib/RestService';
 
 class DialogueService {
 
-    constructor(Restangular,q){
+    constructor(RestService,q){
         this.inited = false;
         this.dialogues = [];
         this.q = q;
-        this.Restangular=Restangular;
+        this.RestService=RestService;
     }
     
     init() {
         let deferred = this.q.defer();
-        this.Restangular.all('api/v1/dialogues/').getList().then((res) => {
+        this.RestService.list('dialogues').then((res) => {
             this.dialogues = [];
             res.forEach((dialogue)=>this.dialogues.push(dialogue));
             this.inited = true;
@@ -25,7 +25,7 @@ class DialogueService {
     }
 
     createNewDialogue(name){
-        return this.Restangular.all('api/v1/dialogues').post({name:name});
+        return this.RestService.post('dialogues',{name:name});
     }
 
     deleteDialogue(dialogue){
@@ -36,7 +36,7 @@ class DialogueService {
     }
 }
 
-DialogueService.$inject = ['Restangular', '$q'];
+DialogueService.$inject = ['RestService', '$q'];
 
 angular.module('app').service('DialogueService',DialogueService);
 

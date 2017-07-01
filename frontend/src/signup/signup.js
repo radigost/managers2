@@ -1,6 +1,6 @@
 
 var template= require('./signup.jade');
-
+import '../lib/RestService';
 
 angular.module('app').component('signup',{
    bindings:{
@@ -12,21 +12,17 @@ angular.module('app').component('signup',{
 );
 
 
-SignUpCtrl.$inject = ['Restangular', '$cookies'];
+SignUpCtrl.$inject = ['RestService', '$cookies'];
 
-function SignUpCtrl(Restangular,cookies){
+function SignUpCtrl(RestService,cookies){
     this.user = {};
     var _this = this;
     _this.signup = function(credentials){
         console.log(this.user);
-        Restangular.one('api/v1').post('customers',this.user).then((res)=>{
-          console.log(res);
-          this.$router.navigate(['SignIn',{verify:'true'}]);
-
-
+        RestService.post('customers',this.user).then((res)=>{
+            this.$router.navigate(['SignIn',{verify:'true'}]);
         });
     }
-
 
 };
 

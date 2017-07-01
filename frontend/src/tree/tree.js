@@ -8,14 +8,13 @@ var vis = require('vis');
 
 var template = require('./tree.jade');
 import './tree.css';
-import './modal';
 import './GraphService';
 import './DialogueService';
 require('../lib/NpcService');
 
 
 class TreeCtrl {
-    constructor(player,Npc,Restangular,$q,uibModal,cookies,GraphService,$scope,DialogueService){
+    constructor(player,Npc,$q,uibModal,cookies,GraphService,$scope,DialogueService){
         this.GraphService = GraphService;
         this.groupToAdd = 'player';
         this.phraseList = [];
@@ -178,7 +177,7 @@ class TreeCtrl {
     }
 }
 
-TreeCtrl.$inject =['Player', 'Npc', 'Restangular', '$q', '$uibModal', '$cookies','GraphService','$scope','DialogueService'];
+TreeCtrl.$inject =['Player', 'Npc', '$q', '$uibModal', '$cookies','GraphService','$scope','DialogueService'];
 
 angular.module('app').component('tree',{
     bindings:{

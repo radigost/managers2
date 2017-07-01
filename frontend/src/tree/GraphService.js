@@ -1,14 +1,14 @@
 /**
  * Created by user on 20.04.17.
  */
-let vis = require('vis');
-
+import  vis from 'vis';
+import '../lib/RestService';
 
 
 class GraphService{
-    constructor(Restangular,q) {
+    constructor(RestService,q) {
         this.inited = false;
-        this.Restangular = Restangular;
+        this.RestService = RestService;
         this.q = q;
 
         this.nodes = new vis.DataSet();
@@ -81,12 +81,12 @@ class GraphService{
 
 
     addNode(toAdd) {
-        return this.Restangular.one('api/v1/').post('nodes',{"category":toAdd.group,"text":toAdd.text,"dialogue_id":this.dialogueId,"type":toAdd.type}).then((node)=>{
+        return this.RestService.post('nodes',{"category":toAdd.group,"text":toAdd.text,"dialogue_id":this.dialogueId,"type":toAdd.type}).then((node)=>{
             node.label = node.text;
             node.group = node.category;
             this.nodes.add(node);
 
-            return this.Restangular.one('api/v1').post('links',{'from_node_id':toAdd.fromNodeId,'to_node_id':node.id,"dialogue_id":this.dialogueId}).then((link)=>{
+            return this.RestService.post('links',{'from_node_id':toAdd.fromNodeId,'to_node_id':node.id,"dialogue_id":this.dialogueId}).then((link)=>{
                 link.from = link.from_node_id;
                 link.to = link.to_node_id;
                 link.color = {inherit:'to'};
@@ -96,38 +96,22 @@ class GraphService{
     }
 
     deleteNode(id) {
-        return this.Restangular.one('api/v1/nodes',id).remove().then((node)=>{
+        return this.RestService.remove('nodes',id).then((node)=>{
             this.nodes.remove(id);
         });
     }
 
     updateNode(node){
-        console.log(node);
         node.text = node.label;
-        // return this.Restangular.one('api/v1').
-        var formData = new FormData();
-        var myHeaders = new Headers({'Content-Type': 'application/json'});
-        formData.append('id',node.id);
-        formData.append('text',node.text);
-        var myInit = { method: 'PUT',
-               headers: myHeaders,
-            //    mode: 'cors',
-               cache: 'default',
-               credentials: 'include' ,
-               body:JSON.stringify(node)
-             };
-
-        return new Promise((resolve,reject)=>{
-            fetch('/api/v1/nodes', myInit).then((res)=>res.json()).then((res)=> {
+        return this.RestService.put('nodes',{},node).then((res)=> {
                 this.nodes.update(res);
-                resolve();
-            });
+                return res;
         });
         
     }
 
     addLink(option){
-        return this.Restangular.one('api/v1').post('links',{'from_node_id':option.from,'to_node_id':option.to,"dialogue_id":this.dialogueId}).then((link)=>{
+        return this.RestService.post.post('links',{'from_node_id':option.from,'to_node_id':option.to,"dialogue_id":this.dialogueId}).then((link)=>{
                 link.from = link.from_node_id;
                 link.to = link.to_node_id;
                 link.color = {inherit:'to'};
@@ -139,7 +123,7 @@ class GraphService{
         let toDelete = this.links.get({
             filter: (link) => link.from == option.from && link.to == option.to
         });
-        return this.Restangular.one('api/v1/links',toDelete[0].id).remove().then((link)=>{
+        return this.RestService.remove('links',toDelete[0].id).then((link)=>{
             this.links.remove(toDelete[0].id);
         });
     }
@@ -147,24 +131,17 @@ class GraphService{
 // private
 
     fetchNodes(dialogueId){
-        let deferred = this.q.defer();
-        let  where  = !!dialogueId ? '/?filter[where][dialogue_id]=' + dialogueId : null;
-        fetch('/api/v1/nodes'+where)
-            .then(res => res.json())
-            .then((res)=> deferred.resolve(res));
-        return deferred.promise;
+        const where  = !!dialogueId ? {filter:{where:{dialogue_id:dialogueId }}} : undefined ;
+        if(where != void 0) return this.RestService.list('nodes',where).then((res)=>res);
+        return Promise.resolve([]);
     }
-
 
     fetchLinks(dialogueId){
-        let deferred = this.q.defer();
-        let  where  = !!dialogueId ? '/?filter[where][dialogue_id]=' + dialogueId : null;
-        fetch('/api/v1/links'+where)
-            .then(res => res.json())
-            .then((res)=> deferred.resolve(res));
-        return deferred.promise;
-        
+        const  where  = !!dialogueId ? {filter:{where:{dialogue_id: dialogueId}}} : undefined;
+        if (where != void 0) return this.RestService.list('links',where).then((res)=>res);
+        return Promise.resolve([]);
     }
+
     setLinks(links){
         this.links.clear();
         this.links.add(links);
@@ -194,7 +171,7 @@ class GraphService{
 
 };
 
-GraphService.$inject = ['Restangular', '$q'];
+GraphService.$inject = ['RestService', '$q'];
 
 angular.module('app').service('GraphService', GraphService);
 

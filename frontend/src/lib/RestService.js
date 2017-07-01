@@ -40,16 +40,23 @@ class RestService {
     }
 
     list(path,params){
-        return new Promise((resolve,reject)=>{
-            __.get(this).Restangular.all('api/v1/'+path).getList(params).then((res)=>resolve(res));
-        });
+        return __.get(this).Restangular.all('api/v1/'+path).getList(params).then((res)=>res);
+    }
+
+    get(path,params){
+        return __.get(this).Restangular.one('api/v1/'+path).get(params).then((res)=>res);
     }
 
     post(path,params){
-        return new Promise((resolve,reject)=>{
-            __.get(this).Restangular.one('api/v1').post(path,params).then((res)=>resolve(res));
-        });
-        
+        return __.get(this).Restangular.one('api/v1').post(path,params).then((res)=>res);
+    }
+
+    put(path,params={},element){
+        return __.get(this).Restangular.one('api/v1').customPUT(element,path,params).then((res)=>res);
+    }
+
+    remove(path,params){
+        return __.get(this).Restangular.one('api/v1/'+path,params).remove().then((res)=>res);
     }
   
 }

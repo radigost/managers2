@@ -1,62 +1,56 @@
 import '../lib/AuthService';
+import '../lib/RestService';
 
 
-let _authService = new WeakMap();
-let _init = new WeakMap();
-let _restangular = new WeakMap();
-let _users = new WeakMap();
-let _roles = new WeakMap();
+let __ = new WeakMap();
 
 class AdminService {
 
-    constructor(Restangular,authService){
-        _authService.set(this,authService);
-        _init.set(this,false);
-        _restangular.set(this,Restangular);
-        _users.set(this,[]);
-        _roles.set(this,[]);
+    constructor(RestService,$timeout){
+        __.set(this,{
+            RestService:RestService,
+            $timeout:$timeout,
+            roles:[],
+            users:[],
+            init:false
+        });
     }
     
     init() {
-        return new Promise.all([this.getRoles(),this.getUsers()]).then(()=>_init.set(this,true));
+        return new Promise.all([this.getRoles(),this.getUsers()]).then(()=>__.get(this).init=true);
     }
 
     isInited(){
-        return _init.get(this);
+        return __.get(this).init;
     }
 
     get users(){
-        return _users.get(this);
+        return __.get(this).users;
     }
 
     get roles(){
-        return _roles.get(this);
+        return __.get(this).roles;
     }
 
     getRoles(){
-        return _restangular.get(this).all('api/v1/customers/with-roles' ).getList().then((res)=>{
-            return _users.set(this,res);
+        return __.get(this).RestService.list('customers/with-roles' ).then((res)=>{
+            return __.get(this).$timeout(()=> __.get(this).users=res);
         });
     }
 
     getUsers(){
-        return _restangular.get(this).all('api/v1/roles' ).getList().then((res)=>{
-            
-            return _roles.set(this,res);
+        return __.get(this).RestService.list('roles').then((res)=>{
+            return __.get(this).$timeout(()=>__.get(this).roles = res);
         });
     }
 
     assignRole(role,user){
-        console.log(role,user);
-        return _restangular.get(this).all('api/v1/customers/',).customPOST(
-            {roleId:role.id,userId:user.id},
-             "add-role", {access_token:_authService.get(this).token}, {'Authorization':_authService.get(this).token}
-            );
+        return __.get(this).RestService.post('customers/add-role',{roleId:role.id,userId:user.id});
     }
 
 }
 
-AdminService.$inject = ['Restangular', 'AuthService'];
+AdminService.$inject = ['RestService','$timeout'];
 
 angular.module('app').service('AdminService',AdminService);
 

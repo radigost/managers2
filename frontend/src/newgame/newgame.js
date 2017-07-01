@@ -1,6 +1,6 @@
 
 var newGameTpl= require('./newgame.jade');
-
+import '../lib/RestService';
 
 angular.module('app').component('newgame',{
    bindings:{
@@ -13,8 +13,8 @@ angular.module('app').component('newgame',{
 );
 
 
-NewGameCtrl.$inject = ['Restangular', '$cookies'];
-function NewGameCtrl(Restangular,cookies){
+NewGameCtrl.$inject = ['RestService', '$cookies'];
+function NewGameCtrl(RestService,cookies){
     this.images = [];
     this.gameName = "Экран выбора персонажа";
     this.stats = {
@@ -117,7 +117,7 @@ function NewGameCtrl(Restangular,cookies){
     var vm = this;
 
   vm.$onInit = function() {
-    Restangular.one('api/v1/persons').get().then((res)=> {
+    RestService.list('persons').then((res)=> {
         vm.players = res;
       });
     vm.current = {
@@ -226,7 +226,7 @@ function NewGameCtrl(Restangular,cookies){
     this.current.name = this.current.first_name + this.current.last_name;
     this.current.related_companies = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     this.current.owner = localStorage.getItem("userId");
-    return Restangular.one('api/v1/persons').get().then((function(_this) {
+    return RestService.get('persons').then((function(_this) {
       return function(res) {
         return res.post('', _this.current, '', {
           'X-CSRFToken': s.csrftoken
