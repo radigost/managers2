@@ -1,63 +1,83 @@
 
-.centered
-    h3 Редактор диалога
-    h5 [[ctrl.treeType]]
+.editor.editor__inner
+    .centered
+        h3 Редактор диалога
+        h5 [[ctrl.treeType]]
 
 
-div
-    form.form
-  
-        .row
-            .col-md-4
-                .row
-                    .col-md-12
-                        p(ng-show = "$ctrl.hasNoStart" class="text-danger") У диалога нет точки начала! Вставьте ее чтобы диалог работал!
-                        label Выберите Диалог:
-                        select(name="singleSelect" id="dialogues" ng-model="$ctrl.selectedDialogue" ng-change="$ctrl.chooseDialogue($ctrl.selectedDialogue)" )
-                            option(ng-repeat = "dialogue in $ctrl.DialogueService.getDialogues() track by $index" value="{{dialogue}}") {{dialogue.name}}
-                        button.btn.btn-danger(ng-click="$ctrl.deleteDialogue($ctrl.selectedDialogue)") Удалить
-                        br
-                        label Или создайте новый
-                        input(type="text" ng-model="$ctrl.newDialogueName")
-                        button.btn.btn-info(ng-click="$ctrl.createNewDialogue($ctrl.newDialogueName)") Создать
-                        hr
-                .form-group
-                    label(for='group') Для кого будет фраза:
-                    input(type='radio', ng-model='$ctrl.groupToAdd', name='group', value='npc' ng-click="$ctrl.updateList()")
-                    | Компьютер
-                    input(type='radio', ng-model='$ctrl.groupToAdd', name='group', value='player' ng-click="$ctrl.updateList()")
-                    | Игрок
+    .editor__container
+        form.editor__dialogues
+            fieldset
+                legend Выбор диалога
+                    span(ng-show = "$ctrl.hasNoStart" class="text-danger") У диалога нет точки начала! Вставьте ее чтобы диалог работал!
+                button#dialog-menu-lower-left.mdl-button.mdl-js-button.mdl-button--icon
+                    i.material-icons more_vert
+                ul(class="mdl-list mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="dialog-menu-lower-left")
+                    li(class="mdl-list__item mdl-menu__item" ng-repeat="dialogue in $ctrl.DialogueService.getDialogues() track by $index" ng-click="$ctrl.chooseDialogue(dialogue)")
+                        
+                        span {{dialogue.name}}
+                        button.pull-right.mdl-button.mdl-js-button.mdl-button--icon.mdl-list__item-secondary-action(ng-click="$ctrl.deleteDialogue(dialogue)")
+                                i.material-icons delete
+                                span удалить
+                        
+                .mdl-textfield.mdl-js-textfield.mdl-textfield--expandable.mdl-textfield--floating-label
+                    label.mdl-button.mdl-js-button.mdl-button--icon(for='search-expandable2')
+                        i.material-icons add
+                    .mdl-textfield__expandable-holder
+                        input#search-expandable2(class="mdl-textfield__input" type='text' ng-model="$ctrl.newDialogueName" ng-enter="$ctrl.createNewDialogue($ctrl.newDialogueName)")
+                        label.mdl-textfield__label(for='search-expandable2')
+                            | Название диалога
+                    
+            fieldset(ng-if="$ctrl.selectedDialogue")
+                legend Выбор фразы для ответа
+                label(for='npc_group').mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                    input(type='radio',  id='npc_group' name='group' value='npc' ng-click="$ctrl.updateList()" ng-model='$ctrl.groupToAdd' class="mdl-radio__button")
+                    span(class="mdl-radio__label") Компьютер
+                label(for="player_group" class="mdl-radio mdl-js-radio")
+                    input( autofocus    type='radio', id='player_group',name='group', value='player' ng-click="$ctrl.updateList()", ng-model='$ctrl.groupToAdd' class="mdl-radio__button")
+                    span(class="mdl-radio__label") Игрок
+                
 
+            
+                
+            fieldset(ng-show="$ctrl.selectedDialogue")
+                legend Ответ на какую фразу?:
+                button(id="answerPhrase" class="mdl-button mdl-js-button mdl-button--icon")
+                    i.material-icons more_vert
+                ul(class="mdl-list mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="answerPhrase")
+                    li(class="mdl-list__item mdl-menu__item" ng-repeat='node in $ctrl.nodes' ng-click="$ctrl.selectFromNode(node)") {{ node.label }}
+                        button.mdl-button.mdl-js-button.mdl-button--icon.mdl-list__item-secondary-action(ng-click="$ctrl.editNode(node.id)")
+                            i.material-icons edit
+                        button.mdl-button.mdl-js-button.mdl-button--icon.mdl-list__item-secondary-action(ng-click="$ctrl.deleteNode(node.id)")
+                            i.material-icons delete
 
-                .form-group
-                    label(for='phrase') Ответ на какую фразу?:
-                    div(ng-hide="$ctrl.state.isEditingNode")
-                        select#phrase.form-control(ng-model='$ctrl.fromNodeId', name='to' ng-change="$ctrl.onChange()")
-                            option(ng-repeat='node in $ctrl.nodes' ng-value="node.id") {{ node.label }}
+                    
+                    
 
-                    input(type="text" ng-show="$ctrl.state.isEditingNode" ng-model="$ctrl.editingLabel")
-
-                    button(class="btn btn-danger" ng-click="$ctrl.deleteNode()" ng-hide="$ctrl.state.isEditingNode" )
-                        i(class="fa fa-window-close" aria-hidden="true")
-                    button(class="btn btn-warning" ng-click="$ctrl.editNode($ctrl.fromNodeId)" ng-hide="$ctrl.state.isEditingNode" )
-                        i(class="fa fa-pencil" aria-hidden="true")
-                    button(class="btn btn-success" ng-show="$ctrl.state.isEditingNode"  ng-click="$ctrl.updateNode($ctrl.editingNode)")
-                        i(class="fa fa-check-circle-o" aria-hidden="true")
-
-                .form-group
-                    label(for='text') Текст ответа
+                    
+                div(ng-show="$ctrl.state.isEditingNode").mdl-textfield.mdl-js-textfield
+                    
+                    input(type="text" id="editPhrase" ng-show="$ctrl.state.isEditingNode" ng-enter="$ctrl.updateNode($ctrl.editingNode)" ng-model="$ctrl.editingLabel" ng-blur="$ctrl.state.isEditingNode=false" class="mdl-textfield__input")
+                    label(for="editPhrase").mdl-textfield__label
+                    //- button(class="btn btn-success"   ng-click="$ctrl.updateNode($ctrl.editingNode)")
+                    //-     i(class="fa fa-check-circle-o" aria-hidden="true")
+                    //- button(class="btn btn-success"   ng-click="$ctrl.state.isEditingNode=false")
+                    //-     i(class="fa fa-window-close" aria-hidden="true")
+            fieldset(ng-if="$ctrl.selectedDialogue")
+                    legend Ответная фраза
+                    label(for='text').form-element  Текст ответа
                         input(type="radio" ng-model="$ctrl.addOrEdit" value="edit") 
                         | Добавить существующий
                         input(type="radio" ng-model="$ctrl.addOrEdit" value="new") 
                         | Новый
-                    .form-group(ng-show="$ctrl.addOrEdit==='edit'" )
-                        select#phrase.form-control(ng-model='$ctrl.editNodeId', name='editId' )
+                    .form-element(ng-show="$ctrl.addOrEdit==='edit'" )
+                        select#phrase.phrase-select(ng-model='$ctrl.editNodeId', name='editId' )
                             option(ng-show="$ctrl.notInList(state.id)" ng-repeat='state in $ctrl.oppositeNodes' ng-value="state.id") 
                                 | {{ state.label }}
                         button(ng-click="$ctrl.addLink($ctrl.editNodeId)") Добавить
                     
-                        
-                    .form-group(ng-show="$ctrl.addOrEdit==='new'") 
+
+                    .form-element(ng-show="$ctrl.addOrEdit==='new'") 
                         input#text.form-control(type='text', placeholder='Введите наименование фразы', value='Привет!', ng-model='$ctrl.label', name='label')
                         input(type="radio" ng-model="$ctrl.type" value="none") 
                         | none
@@ -67,10 +87,11 @@ div
                         | failure
                         button.btn.btn-info(ng-click='$ctrl.addNode()')
                             i.fa.fa-plus-circle(aria-hidden='true')
-                            |                 Добавить Реплику
-                    .form-group
-                        p(ng-repeat="phrase in $ctrl.phraseList") {{phrase.text}}
-                            button(ng-click="$ctrl.deleteLink(phrase)") Удалить
+                            | Добавить Реплику
+            fieldset(ng-if="$ctrl.phraseList.length>0")
+                legend Связанные с этой репликой фразы
+                p(ng-repeat="phrase in $ctrl.phraseList").form-element  {{phrase.text}}
+                    button(ng-click="$ctrl.deleteLink(phrase)") Удалить
 
-            .col-md-8
-                div#mynetwork This is amind component
+        .editor__graph
+            div#mynetwork Graph show

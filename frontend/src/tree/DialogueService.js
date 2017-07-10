@@ -29,7 +29,7 @@ class DialogueService {
     }
 
     deleteDialogue(dialogue){
-        const del = JSON.parse(dialogue);
+        const del = dialogue;
         let toDelete = this.dialogues.find((d)=> d.id===del.id);
         return toDelete.remove();
 

@@ -1,3 +1,75 @@
 #mynetwork{
     /*width: 50%;*/
 }
+
+.editor__inner{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: stretch;
+    margin: 2em;
+}
+
+.editor__container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
+    border: 1px solid green;
+    flex-wrap: wrap;
+}
+
+.editor__dialogues{
+    border: 1px solid purple;
+    flex-basis: 49%;
+}
+@media screen and (max-width: 900px) {
+    .editor__dialogues{
+        flex-basis: 100%;
+    }   
+}
+
+.editor__graph{
+    border: 1px solid blue;
+    flex-basis: 49%;
+
+}
+@media screen and (max-width: 900px) {
+    .editor__graph{
+        flex-basis: 100%;
+    }   
+    
+}
+
+.text-danger{
+    color:red;
+}
+
+.form-fieldset{
+    display: flex;
+    flex-flow: column;
+    justify-content: space-around;
+}
+
+.form-element{
+    margin-top: 1em;
+    margin-bottom: 1em;
+    display: flex;
+    flex-flow: row;
+    justify-content: flex-start;
+}
+
+.button-group{
+    display: flex;
+    flex-flow: row;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+.phrase-select{
+    width:10em;
+}
+
+.pull-right{
+    text-align: right;
+}

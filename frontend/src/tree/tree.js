@@ -20,7 +20,7 @@ class TreeCtrl {
         this.phraseList = [];
         this.$q = $q;
         this.$scope = $scope;
-        this.hasNoStart = true;
+        this.hasNoStart = false;
         this.state = {
             isEditingNode: false
         };
@@ -32,6 +32,7 @@ class TreeCtrl {
         });
 
         this.DialogueService = DialogueService;
+        this.showNewDialogue = false;
 
         
         
@@ -42,7 +43,6 @@ class TreeCtrl {
             this.GraphService.init(),
             this.DialogueService.init()
             ]).then(()=>{
-            this.checkStartingPoint();
             this.network = this.GraphService.getNetwork();
 
             this.network.on("selectNode",  (params)=> {
@@ -84,6 +84,11 @@ class TreeCtrl {
         this.getLinkedToNodes();
     }
 
+    selectFromNode(node){
+        this.fromNodeId = node.id;
+        this.onChange()
+    }
+
     addNode() {
         let toAdd = {
             group:this.groupToAdd,
@@ -98,8 +103,9 @@ class TreeCtrl {
         });
     }
 
-    deleteNode() {
-        this.GraphService.deleteNode(this.fromNodeId);
+    deleteNode(id) {
+        id = id || this.fromNodeId;
+        this.GraphService.deleteNode(id);
     }
 
     editNode(id){
@@ -112,7 +118,7 @@ class TreeCtrl {
     updateNode(node){
         node.label =  this.editingLabel;
         this.GraphService.updateNode(node).then(()=>{
-            this.isEditingNode = false;
+            this.state.isEditingNode = false;
             this.onChange()
         });
     }
@@ -161,8 +167,12 @@ class TreeCtrl {
     
     // dialogue
     createNewDialogue(name){
-        this.DialogueService.createNewDialogue(name).then(()=>this.DialogueService.init());
+        this.DialogueService.createNewDialogue(name).then((dialogue)=>{
+            this.DialogueService.init();
+            this.chooseDialogue(dialogue);
+        });
         this.newDialogueName = '';
+        this.showNewDialogue = false;
     }
 
     deleteDialogue(dialogue){
@@ -171,8 +181,9 @@ class TreeCtrl {
     }
 
     chooseDialogue(dialogue){
-        let chosenDialogue = JSON.parse(dialogue);
-        this.GraphService.init(chosenDialogue.id).then(res => this.checkStartingPoint());
+        this.selectedDialogue = (dialogue);
+        // let chosenDialogue = JSON.parse(dialogue);
+        this.GraphService.init(dialogue.id).then(res => this.checkStartingPoint());
         
     }
 }
