@@ -1,14 +1,19 @@
-import  menuTpl from './menu.jade';
+import  menuTpl from './menu.pug';
+import './menu.css';
 import '../lib/AuthService';
 import '../lib/RestService';
+import '../lib/PlayerService';
+import '../signin/signin';
+
 
 const __ = new WeakMap();
 class MenuCtrl{
 
-  constructor(uibModal,Restangular,cookies,AuthService,RestService)  {
+  constructor(uibModal,Restangular,cookies,AuthService,RestService,player)  {
     __.set(this,{
       RestService:RestService,
       uibModal:uibModal,
+      player:player
       
     });
 
@@ -22,12 +27,15 @@ class MenuCtrl{
    $onInit(){
       __.get(this).RestService.init().then(()=>{
         this.canSeeEditor = this.AuthService.canSeeEditor;
-        this.players = __.get(this).RestService.players;
+        __.get(this).player.getPlayers().then(()=>{
+            this.players = __.get(this).player.players;
+        });
+        
       });
     }
 
     goToGame(playerId) {
-      localStorage.setItem("playerId",playerId );
+      __.get(this).player.init(playerId);
       this.$router.navigate(['Game']);
     }
 
@@ -53,7 +61,7 @@ class MenuCtrl{
     // }
 }
 
-MenuCtrl.$inject = ['$uibModal', 'Restangular', '$cookies','AuthService','RestService'];
+MenuCtrl.$inject = ['$uibModal', 'Restangular', '$cookies','AuthService','RestService','Player'];
 
 angular.module('app')
   .component('menu',{

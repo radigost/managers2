@@ -1,5 +1,5 @@
 
-var template= require('./signup.jade');
+var template= require('./signup.pug');
 import '../lib/RestService';
 
 angular.module('app').component('signup',{
@@ -20,7 +20,7 @@ function SignUpCtrl(RestService,cookies){
     _this.signup = function(credentials){
         console.log(this.user);
         RestService.post('customers',this.user).then((res)=>{
-            this.$router.navigate(['SignIn',{verify:'true'}]);
+            this.$router.navigate(['Menu',{verify:'true'}]);
         });
     }
 

@@ -1,84 +1,84 @@
-
+.talk.talk__inner
 .centered
     h3 [[ctrl.gameName]]
-.container
-    .row
-        .col-lg-4
-            .panel.panel-default(style="background-color:#C4D9D4;")
-                .panel-body
-                    .media
-                        .media-left.media-middle
-                            img(ng-src="static/managers/img/[[ctrl.player.image_path]]" width=100 height=150)
-                        .media-body
-                            ul
-                                li [[ctrl.player.name]]
-                                li "[[ctrl.player.company]]"
-                                li [[ctrl.player.position]]
-                    .media
-                        .media-left
+    .talk__persons
+        md-card.talk__player-card
+            md-card-title
+                md-card-title-text
+                    span.md-headline Card with image
+                    span.md-subhead Large
+                md-card-title-media
+                    .md-media-lg.card-media
+                        img(ng-src="static/managers/img/[[ctrl.player.image_path]]" width=100 height=150)
+            md-card-actions(layout='row', layout-align='end center')
+                md-button(ng-link="['Game']").btn.btn-default.btn-lg.btn-block Закончить разговор
+                //md-button Action 2
+            md-card-content
+                ul
+                    li [[ctrl.player.name]]
+                    li "[[ctrl.player.company]]"
+                    li [[ctrl.player.position]]
 
-                        .media-body
-                            a(ng-link="['Game']").btn.btn-default.btn-lg.btn-block Закончить разговор
-                    //p [[ctrl.next.question]]
-        .col-lg-4
-            .panel.panel-default(style="background-color:#C4D9D4;")
-                .panel-body(ng-class="ctrl.checkColor()")
-                    p Оставшееся время
-                        .progress
-                            .progress-bar.progress-bar-info(
-                            role='progressbar'
-                            aria-valuenow='[[ctrl.getTime()]]'
-                            aria-valuemin='0'
-                            aria-valuemax='100'
-                            style='width: [[ctrl.getTime()]]%'
-                            )
-                                //| [[ctrl.time]]
-                    //ol
-                    //    li(ng-repeat='item in ctrl.history') -[[item]]
-        .col-lg-4
-            .panel.panel-default(style="background-color:#C4D9D4;")
-                .panel-body
-                    .media
-                        .media-left.media-middle
-                            img.media-object(
-                            src="static/managers/img/[[ctrl.npc.image_path]]"
-                            width=100 height=150)
-                        .media-body
-                            ul
-                                li [[ctrl.npc.name]]
-                                li "[[ctrl.npc.company]]"
-                                li [[ctrl.npc.position]]
+        md-card.talk__time-left
+            md-card-title
+                md-card-title-text
+                    span.md-headline Оставшееся время
+            md-card-content
+                md-progress-linear(md-mode='determinate', ng-value='ctrl.getTime()')
 
-    .row
-        .col-lg-6
-            .panel.panel-default(ng-show="!ctrl.notTheEnd()")
-                .panel-body
-                    p [[ctrl.player.current.text]]
-            .panel.panel-default(
-                ng-show="ctrl.notTheEnd()"
-                style="background-color:#C4D9D4;"
-                )
-                  .panel-header
+                .progress
+                    .progress-bar.progress-bar-info(
+                    role='progressbar'
+                    aria-valuenow='[[ctrl.getTime()]]'
+                    aria-valuemin='0'
+                    aria-valuemax='100'
+                    style='width: [[ctrl.getTime()]]%'
+                    )
 
-                  .panel-body
-                    h5
-                       b Выберите варианты ответа
+        md-card.talk__npc-card
+            md-card-title
+                md-card-title-text
+                    span.md-headline Card with image
+                    span.md-subhead Large
+                md-card-title-media
+                    .md-media-lg.card-media
+                        img.media-object(src="static/managers/img/[[ctrl.npc.image_path]]" width=100 height=150)
+            md-card-actions(layout='row', layout-align='end center')
+                //md-button(ng-link="['Game']").btn.btn-default.btn-lg.btn-block Закончить разговор
+                //md-button Action 2
+            md-card-content
+                ul
+                    li [[ctrl.npc.name]]
+                    li "[[ctrl.npc.company]]"
+                    li [[ctrl.npc.position]]
 
-                    .list-group
-                      a(
-                        href=""
-                      ).list-group-item(
-                          ng-repeat='element in ctrl.getPlayerQuestions()'
-                          ng-click='ctrl.update(element.to_node_id)'
-                          style="background-color:#F8FBF4;"
-                          ) -&nbsp;[[element.node_to.text]]
+    .talk__phrases
+        .panel.panel-default(ng-show="!ctrl.notTheEnd()")
+            .panel-body
+                p [[ctrl.player.current.text]]
+        .panel.panel-default(
+            ng-show="ctrl.notTheEnd()"
+            style="background-color:#C4D9D4;"
+            )
+              .panel-header
+
+              .panel-body
+                h5
+                   b Выберите варианты ответа
+
+                .list-group
+                  a(
+                    href=""
+                  ).list-group-item(
+                      ng-repeat='element in ctrl.getPlayerQuestions()'
+                      ng-click='ctrl.update(element.to_node_id)'
+                      style="background-color:#F8FBF4;"
+                      ) -&nbsp;[[element.node_to.text]]
         .col-lg-6
             .panel.panel-default(style="background-color:#C4D9D4;")
                 .panel-body
                     p [[ctrl.getNpcAnswers().text]]
-        .col-lg-12
-            .panel.panel-default
-                .panel-body
-                    p История разговора
-                    ol
-                        li(ng-repeat='item in ctrl.getHistory()') -[[item.text]]
+    .talk__history
+        p История разговора
+        ol
+            li(ng-repeat='item in ctrl.getHistory()') -[[item.text]]

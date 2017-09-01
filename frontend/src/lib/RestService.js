@@ -8,8 +8,8 @@ class RestService {
     constructor(Restangular) {
         __.set(this,{
             Restangular:Restangular,
-            inited:false,
-            players:[],
+            inited:false    
+            
         });
     
 // Restangular.setDefaultRequestParams('get', {limit: 10});
@@ -22,9 +22,7 @@ class RestService {
             __.get(this).Restangular.one('api/v1/my/').get().then( (res)=> {
                  localStorage.setItem("userId",res.user_id);
             });
-            __.get(this).Restangular.one('api/v1/persons').get().then( (res)=>{
-                __.get(this).players=res;
-            });
+
             resolve();
         })
     }

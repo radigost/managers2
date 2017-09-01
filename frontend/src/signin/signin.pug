@@ -1,0 +1,19 @@
+.signin__inner
+    p(ng-show="$ctrl.needVerify") необходимо подтверждение по email
+
+    form
+        md-input-container
+            label Email*
+            input(type="email" placeholder="Email" ng-model="$ctrl.user.email" required="true")
+        md-input-container
+            label Password*
+            input(type="password" placeholder="Password" ng-model="$ctrl.user.password" required="true" ng-enter="$ctrl.signin()")
+
+        //.form-group
+        //    label Email*
+        //    input(type="email" placeholder="Email" ng-model="$ctrl.user.email" required="true").form-control
+        //.form-group
+        //    label Password*
+        //    input(type="password" placeholder="Password" ng-model="$ctrl.user.password" required="true").form-control
+
+    md-button(ng-click="$ctrl.signin()" style="align:'center';") Вход

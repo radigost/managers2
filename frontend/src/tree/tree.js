@@ -10,7 +10,7 @@ var template = require('./tree.jade');
 import './tree.css';
 import './GraphService';
 import './DialogueService';
-require('../lib/NpcService');
+import '../lib/NpcService';
 
 
 class TreeCtrl {
@@ -33,6 +33,8 @@ class TreeCtrl {
 
         this.DialogueService = DialogueService;
         this.showNewDialogue = false;
+        this.addOrEdit = 'new';
+        this.type='none';
 
         
         
@@ -99,7 +101,8 @@ class TreeCtrl {
         this.GraphService.addNode(toAdd).then(()=>{
             this.type='none';
             this.label='';
-            this.onChange()
+            this.onChange();
+            this.fromNodeId = null;
         });
     }
 
@@ -175,6 +178,10 @@ class TreeCtrl {
         this.showNewDialogue = false;
     }
 
+    showDialogue(){
+        this.showNewDialogue = true;
+    }
+
     deleteDialogue(dialogue){
         this.DialogueService.deleteDialogue(dialogue).then(()=>this.DialogueService.init());
         
@@ -184,6 +191,7 @@ class TreeCtrl {
         this.selectedDialogue = (dialogue);
         // let chosenDialogue = JSON.parse(dialogue);
         this.GraphService.init(dialogue.id).then(res => this.checkStartingPoint());
+        this.fromNodeId = null;
         
     }
 }
@@ -192,10 +200,10 @@ TreeCtrl.$inject =['Player', 'Npc', '$q', '$uibModal', '$cookies','GraphService'
 
 angular.module('app').component('tree',{
     bindings:{
-    $router:'<'
-  },
-  template:template(),
-  controller : TreeCtrl,
+        $router:'<'
+    },
+    template:template(),
+    controller : TreeCtrl,
 });
 
 

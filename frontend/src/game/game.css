@@ -1,0 +1,11 @@
+.game__inner{
+    display: flex;
+    flex-direction: column;
+    /*justify-content: space-around;*/
+}
+.game__player-info{
+    /*flex-basis: 20%;*/
+}
+.game__content{
+    /*flex-basis: 80%;*/
+}

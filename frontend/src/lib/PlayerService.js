@@ -3,55 +3,96 @@
  */
 
 import './RestService';
-angular.module('app').service('Player', Player);
 
-Player.$inject = ['RestService', '$q'];
+const __ = new WeakMap();
 
-function Player(RestService,q) {
-  var inited = false;
-  var id;
-  var type = 'player',
-  name = "",
-  fakeName = "Иван Иванович",
-  company = "",
-  money = "",
-  position = "";
+class Player {
+    constructor(RestService, $timeout) {
+        __.set(this, {
+            inited: false,
+            id: undefined,
+            type: 'player',
+            name: "",
+            fakeName: "Иван 2Иванович",
+            company: "",
+            money: 0,
+            position: "",
+            players: [],
+            $timeout: $timeout
+        });
 
-  var service = {
-      type:type,
-      name:name,
-      fakeName:fakeName,
-      company:company,
-      money:money,
-      position:position,
+        Object.assign(this, {
+            RestService: RestService
+        });
+    }
 
-      init:init,
-      choosePlayer:choosePlayer,
-    };
-  return service;
-
-  function init() {
-    // TODO why do i need this local storage anymore?
-    id = localStorage.getItem("playerId");
-    return new Promise((resolve,reject)=>{
-      if (!inited) {
-        RestService.get('persons/'+id).then((res)=>{
-            _.extend(this, res);
-            inited = true;
+    init(id) {
+        // TODO why do i need this local storage anymore?
+        // __.get(this).id = localStorage.getItem("playerId");
+        __.get(this).id = id;
+        return new Promise((resolve, reject) => {
+            if (!__.get(this).inited) {
+                this.RestService.get('persons/' + __.get(this).id).then((res) => {
+                    __.set(this, res);
+                    __.get(this).inited = true;
+                    resolve();
+                });
+            }
             resolve();
         });
-      }
-      resolve();
-    });
-  }
-
-  function choosePlayer(playerAvatarID) {
-    if (playerAvatarID) {
-      return this.playerAvatarID = playerAvatarID;
     }
-  }
+
+    get type() {
+        return __.get(this).type;
+    }
+
+    get id() {
+        return __.get(this).id;
+    }
+
+    get name() {
+        return __.get(this).name;
+    }
+
+    get fakeName() {
+        return __.get(this).fakeName;
+    }
+
+    get company() {
+        return __.get(this).company;
+    }
+
+    get money() {
+        return __.get(this).money;
+    }
+
+    get position() {
+        return __.get(this).company;
+    }
+
+    get image_path() {
+        return __.get(this).image_path;
+    }
+
+    get players() {
+        return __.get(this).players;
+    }
 
 
-};
+    choosePlayer(playerAvatarID) {
+        if (this.playerAvatarID) {
+            return this.playerAvatarID = playerAvatarID;
+        }
+    }
+
+    getPlayers() {
+        return this.RestService.get('persons').then((res) => {
+            __.get(this).players = res;
+        });
+    }
 
 
+}
+
+Player.$inject = ['RestService', '$timeout'];
+angular.module('app').service('Player', Player);

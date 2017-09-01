@@ -16,7 +16,6 @@ class AuthService {
       loggedIn:false,
       roles:[]
     });
-
   }
 
   init() {
@@ -61,9 +60,10 @@ class AuthService {
   }
 
   has(permission){
-    if (permission ==='canSeeEditor' && __.get(this).roles.find((role)=>role==='admin' || role==='editor')) return true;
-    if (permission ==='admin' && __.get(this).roles.find((role)=>role==='admin' )) return true;
-    return false;
+      let res = false;
+      if (permission ==='canSeeEditor' && __.get(this).roles.find((role)=>role==='admin' || role==='editor')) res = true;
+      if (permission ==='admin' && __.get(this).roles.find((role)=>role==='admin' )) res = true;
+      return res;
   }
 
 }

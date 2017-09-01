@@ -1,0 +1,53 @@
+md-toolbar
+    section(layout="row" flex)
+        md-button.md-icon-button(aria-label="Settings" ng-click="$ctrl.toggle()")
+            i.material-icons menu
+        md-list-item
+            a(ng-link="['Game','Profile']")
+                img.md-avatar(alt='[[$ctrl.Player.name ]]', ng-src="static/managers/img/[[$ctrl.Player.image_path]]")
+            p [[ $ctrl.Player.name  ]]
+            //md-checkbox.md-secondary(ng-model='person.selected')
+            md-icon.md-secondary.md-hue-3(md-svg-icon='communication:email', ng-click='doSecondaryAction($event)', aria-label='Send Email')
+            //md-icon.md-secondary(ng-click='doSecondaryAction($event)', aria-label='Chat', md-svg-icon='communication:message')
+md-sidenav.md-sidenav-left(md-component-id="left"  md-whiteframe="4")
+    md-toolbar
+        h2.md-toolbar-tools Игра менеджеры
+
+    md-content(layout-margin)
+        md-list(flex)
+            md-list-item
+                .md-list-item-text(layout="column")
+                    p(ng-click="$ctrl.goTo(['Menu'])" ) Мeню
+
+                    p(ng-click="$ctrl.goTo(['SignUp'])" ng-hide="$ctrl.AuthService.isLoggedIn") Регистрация
+                    //p(ng-link="['SignIn']" ng-hide="$ctrl.AuthService.isLoggedIn") Вход
+
+                    p(ng-click="$ctrl.goTo(['NewGame'])" ng-show="$ctrl.AuthService.isLoggedIn")  Новый персонаж
+
+                    p(ng-click="$ctrl.goTo(['Admin'])" ng-show="$ctrl.AuthService.has('admin')") Админка
+                    p(ng-click="$ctrl.goTo(['Tree'])" ng-show="$ctrl.AuthService.has('canSeeEditor') ") Редактор диалогов
+
+                    p(ng-click="$ctrl.logout()" ng-show="$ctrl.AuthService.isLoggedIn")
+                        | Выход
+                        i.material-icons exit_to_app
+
+                    p(ng-click="$ctrl.help()")
+                        | Помощь
+                        i.material-icons help_outline
+
+        md-divider
+            .thumbnail(style="background-color:#FFF7EC;" ng-show="$ctrl.AuthService.isLoggedIn")
+                h4.text-center Играть за:
+                div(ng-repeat="player in $ctrl.players")
+                    button.close(ng-click='$ctrl.deletePerson(player.id)' )
+                        i.fa.fa-trash
+                    a(ng-click="$ctrl.goToGame(player.id)" ).btn.btn-default.btn-lg.btn-block [[player.name]]
+
+                        img(src="static/managers/img/[[player.image_path]]" height="50px" width="50px" align="middle").img-responsive
+
+
+
+
+.centered
+
+    ng-outlet

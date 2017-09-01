@@ -7,7 +7,8 @@ angular
       'ui.bootstrap',
       'ngCookies',
       'ngSanitize',
-      'ui.select'
+      'ui.select',
+      'ngMaterial'
     ])
     .config(function($interpolateProvider) {
       $interpolateProvider.startSymbol('[[');

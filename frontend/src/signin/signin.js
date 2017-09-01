@@ -1,5 +1,5 @@
 
-let template= require('./signin.jade');
+let template= require('./signin.pug');
 
 import '../lib/AuthService';
 
@@ -9,13 +9,11 @@ class SignInCtrl{
             user:{},
             AuthService:AuthService
         });
-        console.log(this);
     }
 
     signin(){
-        console.log(this.user);
         this.AuthService.login(this.user).then((res)=>{
-          this.$router.navigate(['Menu']);
+          // this.$router.navigate(['Menu']);
         });
     };
 

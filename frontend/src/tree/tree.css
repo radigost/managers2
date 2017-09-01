@@ -15,12 +15,12 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: stretch;
-    border: 1px solid green;
+    /*border: 1px solid green;*/
     flex-wrap: wrap;
 }
 
 .editor__dialogues{
-    border: 1px solid purple;
+    /*border: 1px solid purple;*/
     flex-basis: 49%;
 }
 @media screen and (max-width: 900px) {
@@ -30,7 +30,7 @@
 }
 
 .editor__graph{
-    border: 1px solid blue;
+    /*border: 1px solid blue;*/
     flex-basis: 49%;
 
 }
@@ -45,26 +45,7 @@
     color:red;
 }
 
-.form-fieldset{
-    display: flex;
-    flex-flow: column;
-    justify-content: space-around;
-}
 
-.form-element{
-    margin-top: 1em;
-    margin-bottom: 1em;
-    display: flex;
-    flex-flow: row;
-    justify-content: flex-start;
-}
-
-.button-group{
-    display: flex;
-    flex-flow: row;
-    flex-wrap: nowrap;
-    align-items: center;
-}
 
 .phrase-select{
     width:10em;
@@ -72,4 +53,8 @@
 
 .pull-right{
     text-align: right;
+}
+
+#mynetwork{
+    height: 600px;
 }

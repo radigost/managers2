@@ -11,6 +11,7 @@ import './gameService';
 import './companyList/companyList';
 import './companyDetail/companyDetail';
 import './profile/profile';
+import './game.css';
 
 
 

@@ -1,18 +1,28 @@
-.panel(style="background-color:#C4D9D4;")
+.company-list.company-list__inner
     h3 Список организаций
-    .panel.panel-default(
-        ng-repeat="lead in ctrl.service.companies"
-        style="background-color:#F8FBF4;"
-        )
-        .panel-body
-            .media
-                .media-left.media-middle
-                    img(src="static/managers/img/building[[lead.id]].png" width=100 height=150)
-                .media-body
-                    h1
-                        a(ng-link="['CompanyDetail',{companyId:lead.id}]" ) [[lead.name]]
-                    .row
-                        .col-md-6
-                            p Размер компании: [[lead.size]]
-                            p История сделок:
-                                i.fa.fa-dollar(aria-hidden='true' style="color:#A14E71;")
+
+    md-content.md-padding
+        md-card(ng-repeat="lead in $ctrl.service.companies"  class="noright")
+            md-card-title
+                md-card-title-text
+                    span.md-headline [[lead.name]]
+                    span.md-subhead Размер компании: [[lead.size]]
+                md-card-title-media
+                    .md-media-lg.card-media
+                        img(alt="[[ lead.name ]]" height=152 width=100 ng-src="[['static/managers/img/building'+ lead.id +'.png']]"  )
+            md-card-content
+                p
+                    | История сделок:
+                    i.fa.fa-dollar(aria-hidden='true' style="color:#A14E71;")
+
+            md-card-actions(layout="row" layout-align="end center")
+                md-button Позвонить
+                md-button(ng-click="$ctrl.goToCompany(lead.id)") Подробнее
+
+
+
+
+
+
+
+

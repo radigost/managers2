@@ -1,0 +1,6 @@
+.talk__persons{
+    display: flex;
+    align-content: space-around;
+    flex-wrap: wrap;
+
+}

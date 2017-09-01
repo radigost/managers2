@@ -1,0 +1,10 @@
+.menu__inner{
+    display: flex;
+    flex-direction: column;
+}
+
+.menu__players{
+    flex-basis: 3rem;
+    /*max-width: 40%;*/
+    align-self: center;
+}

@@ -1,0 +1,42 @@
+.nemu.menu__inner
+    .menu__logo
+        img(src="static/managers/img/winner.jpg" height="250px" width="250px" align="middle").img-responsive
+    .menu__actions
+
+        md-button.md-raised(ng-link="['SignUp']" ng-hide="$ctrl.AuthService.isLoggedIn") Регистрация
+        .menu__login(ng-hide="$ctrl.AuthService.isLoggedIn")
+            //md-button.md-raised(ng-link="['SignIn']" )  Вход
+            signin
+        md-button.md-raised(ng-click="$ctrl.logout()" ng-show="$ctrl.AuthService.isLoggedIn") Выход
+        md-button.md-raised(ng-link="['Admin']" ng-if="$ctrl.AuthService.has('admin')" ng-show="$ctrl.AuthService.isLoggedIn") Админка
+        md-button.md-raised(ng-link="['NewGame']" ng-show="$ctrl.AuthService.isLoggedIn")  Новая игра
+
+        md-button.md-raised(ng-link="['Tree']" ng-if="$ctrl.AuthService.has('canSeeEditor')" ng-show="$ctrl.AuthService.isLoggedIn") Редактор диалогов
+        md-button.md-raised(ng-click="$ctrl.help()") Помощь
+    .menu__players(ng-show="$ctrl.AuthService.isLoggedIn")
+        h4.text-center Играть за:
+        md-card(ng-repeat="player in $ctrl.players" ng-click="$ctrl.goToGame(player.id)" )
+            md-card-title
+                md-card-title-text
+                    span.md-headline [[player.name]]
+                    //span.md-subhead Small
+                md-card-title-media
+                    .md-media-sm.card-media
+                        img(src="static/managers/img/[[player.image_path]]" height="80px" width="60px" align="middle").img-responsive
+            md-card-content
+                p Статистика
+            md-card-actions(layout='row', layout-align='end center' )
+                md-button(ng-click='$ctrl.deletePerson(player.id)' )
+                    i.fa.fa-trash
+                md-button() Подробнее
+
+
+
+        //div(ng-repeat="player in $ctrl.players")
+        //    button.close(ng-click='$ctrl.deletePerson(player.id)' )
+        //        i.fa.fa-trash
+        //    a(ng-click="$ctrl.goToGame(player.id)" ).btn.btn-default.btn-lg.btn-block [[player.name]]
+        //
+        //        img(src="static/managers/img/[[player.image_path]]" height="50px" width="50px" align="middle").img-responsive
+        //
+

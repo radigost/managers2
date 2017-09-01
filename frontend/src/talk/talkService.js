@@ -36,7 +36,6 @@ function TalkService(RestService,player,npc,q,$timeout) {
     };
     return service;
     function init() {
-        
         return new Promise ((resolve,reject)=>{
             state.time = 100;
             state.end= false;
@@ -92,7 +91,6 @@ function TalkService(RestService,player,npc,q,$timeout) {
 
     function setRouter(newrouter){
         router = newrouter;
-        console.log(router);
     }
 
 

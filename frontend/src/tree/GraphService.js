@@ -81,7 +81,13 @@ class GraphService{
 
 
     addNode(toAdd) {
-        return this.RestService.post('nodes',{"category":toAdd.group,"text":toAdd.text,"dialogue_id":this.dialogueId,"type":toAdd.type}).then((node)=>{
+        console.log(toAdd);
+        return this.RestService.post('nodes',{
+            "category":toAdd.group,
+            "text":toAdd.text,
+            "dialogue_id":this.dialogueId,
+            "type":toAdd.type
+        }).then((node)=>{
             node.label = node.text;
             node.group = node.category;
             this.nodes.add(node);
@@ -111,7 +117,7 @@ class GraphService{
     }
 
     addLink(option){
-        return this.RestService.post.post('links',{'from_node_id':option.from,'to_node_id':option.to,"dialogue_id":this.dialogueId}).then((link)=>{
+        return this.RestService.post('links',{'from_node_id':option.from,'to_node_id':option.to,"dialogue_id":this.dialogueId}).then((link)=>{
                 link.from = link.from_node_id;
                 link.to = link.to_node_id;
                 link.color = {inherit:'to'};
